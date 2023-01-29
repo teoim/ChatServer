@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b61c3012-fbac-466b-a5e2-953fa8d0171e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/net/PostgresConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/logger/ErrorLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/logger/ErrorLogger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/logger/MessageLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/logger/MessageLogger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/server/ChatServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/server/ChatServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/net/PostgressConnection.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ConnectionTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ConnectionTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,23 +47,69 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
   }
 }</component>
-  <component name="RunManager">
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="org.mtr.Main" />
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="" />
+      <recent name="org.mtr.net" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.ConnectionTest">
+    <configuration name="ConnectionTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ChatServer" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.mtr.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="ConnectionTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ConnectionTest.testLoginBlankParameterEmail" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ChatServer" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="ConnectionTest" />
+      <option name="METHOD_NAME" value="testLoginBlankParameterEmail" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ConnectionTest.testLoginBlankParameterPassword" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ChatServer" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="ConnectionTest" />
+      <option name="METHOD_NAME" value="testLoginBlankParameterPassword" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ConnectionTest.testLoginEmptyParameterPassword" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ChatServer" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="ConnectionTest" />
+      <option name="METHOD_NAME" value="testLoginEmptyParameterPassword" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ConnectionTest.testLoginNullParameterPassword" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ChatServer" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="ConnectionTest" />
+      <option name="METHOD_NAME" value="testLoginNullParameterPassword" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.ConnectionTest" />
+        <item itemvalue="JUnit.ConnectionTest.testLoginNullParameterPassword" />
+        <item itemvalue="JUnit.ConnectionTest.testLoginEmptyParameterPassword" />
+        <item itemvalue="JUnit.ConnectionTest.testLoginBlankParameterPassword" />
+        <item itemvalue="JUnit.ConnectionTest.testLoginBlankParameterEmail" />
       </list>
     </recent_temporary>
   </component>
@@ -78,5 +123,9 @@
       <updated>1673546420646</updated>
     </task>
     <servers />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/ChatServer$ConnectionTest_testLogin.ic" NAME="ConnectionTest.testLogin Coverage Results" MODIFIED="1675021345401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/ChatServer$ConnectionTest.ic" NAME="ConnectionTest Coverage Results" MODIFIED="1675025139460" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>
