@@ -9,6 +9,7 @@ public class ErrorLogger {
     static LocalDateTime now;
 
     static Date date;
+
     public static void log(Exception e, String className, String methodName) {
         //now = LocalDateTime.now();
         date = new java.util.Date();
