@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ChatServer srl</title>
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+</head>
+<body>
+
+    <p><h3>Hello ChatServer world!</h3></p>
+
+    <form action="/login" method="post">
+        <div class="formDiv">
+            <label class="fl">Email
+                <input type="email" id="email" class="fi common" name="email" required>
+            </label>
+        </div>
+        <div class="formDiv">
+            <label class="fl">Password
+                <input type="password" id="password" class="fi common" name="password" required>
+            </label>
+        </div>
+
+        <div id="divSmBn" class="formDiv">
+            <button type="submit" id="submitBtn">Login</button>
+        </div>
+    </form>
+
+</body>
+</html>
