@@ -17,6 +17,12 @@ public class UserService {
         return daoToDto( this.userRepository.getUserByEmail(email));
     }
 
+    public int registerUser(UserDTO newUserDto) {
+        // TODO: Criptare password
+        UserDAO newUserDao = dtoToDao(newUserDto);
+        return this.userRepository.registerUser(newUserDao);
+    }
+
     private UserDTO daoToDto(UserDAO userDao) {
         return new UserDTO( userDao.getId(),
                 userDao.getNick(),
@@ -28,4 +34,17 @@ public class UserService {
                 userDao.getBio(),
                 userDao.getPassword());
     }
+
+    private UserDAO dtoToDao(UserDTO userDto) {
+        return new UserDAO( userDto.getId(),
+                userDto.getNick(),
+                userDto.getName(),
+                userDto.getSurname(),
+                userDto.getDob(),
+                userDto.getPhonenr(),
+                userDto.getEmail(),
+                userDto.getBio(),
+                userDto.getPassword());
+    }
+
 }

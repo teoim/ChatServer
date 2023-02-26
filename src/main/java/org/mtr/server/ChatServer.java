@@ -35,7 +35,7 @@ public class ChatServer implements Runnable {
     @Override
     public void run() {
         this.threadPool = Executors.newCachedThreadPool();
-        msgLog.log("SERVER - run () - Client thread pool started: " + threadPool);
+        msgLog.log("SERVER - run() - Client thread pool started: " + threadPool);
         Socket clientSocket;
         msgLog.log("SERVER - run() - Running. Waiting for connections ...");
         try {

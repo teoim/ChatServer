@@ -2,8 +2,10 @@ package org.mtr.web.api.controller;
 
 import org.mtr.web.api.component.UserSession;
 import org.mtr.web.api.controller.dto.LoginDTO;
+import org.mtr.web.api.controller.dto.UserDTO;
 import org.mtr.web.api.repository.dao.UserDAO;
 import org.mtr.web.api.service.AuthenticationService;
+import org.mtr.web.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,8 @@ public class AuthenticationController {
     @Autowired
     AuthenticationService authService;
     @Autowired
+    UserService userService;
+    @Autowired
     UserSession userSession;
 
     @GetMapping(path="/login")
@@ -25,7 +29,7 @@ public class AuthenticationController {
 
     @PostMapping(path="/login")
     public ModelAndView login(LoginDTO logindto){
-        // TODO: validari
+        // TODO: validari pe input
 
         ModelAndView mv = null;
 
@@ -39,5 +43,17 @@ public class AuthenticationController {
             mv = new ModelAndView("redirect:/register");
         }
         return mv;
+    }
+
+    @GetMapping(path="/register")
+    public ModelAndView register(){ return new ModelAndView("register"); }
+
+    @PostMapping(path="/register")
+    public ModelAndView register(UserDTO newUser){
+        // TODO: Validari pe input
+
+        int x = this.userService.registerUser(newUser);
+        userSession.setEmail( "SQL insert code: " + x + " - " + newUser.getEmail());
+        return new ModelAndView("redirect:/dashboard");
     }
 }
