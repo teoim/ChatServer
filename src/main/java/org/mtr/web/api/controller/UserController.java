@@ -1,5 +1,6 @@
 package org.mtr.web.api.controller;
 
+import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.controller.dto.UserDTO;
 import org.mtr.web.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ public class UserController {
 
     @GetMapping(path="/users/{email}")
     public ModelAndView getUserByEmail(@PathVariable(name="email") String userEmail){
+        MessageLogger.log( "UserController - getUserByEmail() - get");
+
         ModelAndView mv = new ModelAndView("userByEmail");
         mv.addObject("user", this.userService.getUserByEmail(userEmail));
 

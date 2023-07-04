@@ -1,0 +1,133 @@
+
+div#mainDiv{
+    /*border: 1px solid blue;*/
+    height: 99vh;
+    padding: 1%;
+}
+
+
+div.middleDivs{
+    border: 1px solid green;
+    position: relative;
+    top: 80px;
+	background-color: hsla(170, 18%, 46%, 0.8);
+    display: inline-block;
+    border-radius: 15px;
+    padding: 1rem;
+    height: 80%;
+    vertical-align: middle;
+}
+
+div#friendList{
+    width: 15%;
+    text-align: left;
+    overflow-x: auto;
+    resize: horizontal;
+}
+
+article.friendsListArticle{
+    border: 1px solid green;
+    background-color: hsla(170, 18%, 40%, 1);
+    margin: 1em;
+    padding: 1em;
+}
+
+a.friendsAnchor{
+    text-decoration: none;
+    color: #e9f2ff;
+}
+
+div#chatScreen{
+    /*border: 1px solid red;*/
+    width: 78%;
+    margin: 0 auto;
+}
+
+
+div#chatBox{
+    background-color: hsla(200, 18%, 30%, 0.6);
+    width: 95%;
+    height: 90%;
+    border: 1px;
+    padding: 5px;
+    margin: 0 auto;
+    overflow-x: auto;
+}
+
+article.chatArticle{
+    /*border: 1px solid red;*/
+    display: grid;
+    border-radius: 8px;
+    background-color: hsla(180, 18%, 50%, 1);
+    /*width: 40%;*/
+    width: inherit;
+    max-width: 60%;
+    padding: 1%;
+    margin: 1em;
+}
+
+article.private{
+    float: right;
+    width: inherit;
+    max-width: 60%;
+    background-color: hsl(180, 55%, 32%);
+}
+
+p.chatP{
+    color: #333333;
+    text-shadow: 2px 2px 5px #999999;   /* horizontalOffset verticalOffset blurRadius shaddowColor */
+    font-style: italic;
+    font-weight: bolder;
+    overflow-wrap: break-word;
+}
+
+form#sendTextForm{
+    background-color: hsla(170, 18%, 40%, 1);
+    width: 95%;
+    height: 5%;
+    padding: 5px;
+    margin: 0 auto;
+}
+
+input#writeText{
+    color: #111111;
+    background-color: hsla(170, 18%, 50%, 1);
+    width: 90%;
+    height: 90%;
+    border: 0;
+    border-radius: 6px;
+}
+
+input#submitBtn {
+	width: 5%;
+	background-color: #456;
+	height: 90%;
+	color: white;
+	font-weight: bold;
+	border: 0;
+	border-radius: 6px;
+}
+
+input#submitBtn:hover, input#logoutBtn:hover{
+	cursor: pointer;
+	background-color: #567;
+}
+
+input#submitBtn:active, input#logoutBtn:active{
+	background-color: #345;
+}
+
+form#logoutForm {
+    position: fixed;
+    top: 2%;
+    right: 2%;
+}
+
+input#logoutBtn{
+    background-color: #26777c;
+    color: white;
+    font-weight: bold;
+    border: 0;
+    border-radius: 6px;
+    padding: 1em;
+}

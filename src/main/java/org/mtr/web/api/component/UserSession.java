@@ -15,4 +15,6 @@ public class UserSession {
     // Tinem minte date despre client in sesiunea curenta
 
     private String email;
+    private String username;
+    private String bio;
 }

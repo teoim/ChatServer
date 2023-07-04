@@ -4,7 +4,9 @@ import org.mtr.web.api.repository.dao.UserDAO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface AuthenticationRespository extends JpaRepository<UserDAO, Integer> {
-    public UserDAO findByEmailAndPassword(String email, String password);
+public interface UserRepositoryJpa extends JpaRepository<UserDAO, Integer> {
+    Optional<UserDAO> findByEmail(String email);
 }

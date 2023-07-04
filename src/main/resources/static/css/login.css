@@ -1,9 +1,10 @@
 /* */
 body{
-	//background-image:url(bg6.gif);
+	/*background-image:url('../images/pexels-miguel-á-padriñán-127567 (2).jpg');*/
+	/*background-size: cover;*/
 }
 
-form#loginForm{
+form{
 	position: relative;
 	top: 100px;
 	width: 70%;
@@ -11,10 +12,6 @@ form#loginForm{
 	padding: 1%;
 	border-radius: 15px;
 	background-color: hsla(170, 18%, 46%, 0.8);
-}
-
-#loginForm legend{
-	margin-bottom: 5px;
 }
 
 div.formDiv{
@@ -46,7 +43,7 @@ div.formDiv{
 	font-weight: bold;
 }
 
-button#submitBtn{
+#submitBtn{
 	width: 6em;
 	background-color: #456;
 	height: 2.5em;
@@ -57,12 +54,12 @@ button#submitBtn{
 	border-radius: 6px;
 }
 
-button#submitBtn:hover{
+#submitBtn:hover{
 	cursor: pointer;
 	background-color: #567;
 }
 
-button#submitBtn:active{
+#submitBtn:active{
 	background-color: #345;
 }
 

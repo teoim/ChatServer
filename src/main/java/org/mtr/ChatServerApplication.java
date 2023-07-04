@@ -11,13 +11,7 @@ public class ChatServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(ChatServerApplication.class, args);
         // Start a server on port 9999
-        ChatServer server = new ChatServer(9999);
-        server.run();
+        //ChatServer server = new ChatServer(9999);
+        //server.run();
     }
-
-//    void ChatServerApplication(){
-//        // Start a server on port 9999
-//        ChatServer server = new ChatServer(9999);
-//        server.run();
-//    }
 }

@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>ChatServer srl</title>
+    <title>Register - ChatServer srl</title>
     <link rel="stylesheet" type="text/css" href="/css/login.css" />
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
 </head>
 <body>
 
-    <form action="/register" method="post" >
+    <h4> Already have an account? <a th:href="@{/api/auth/authenticate}">Log in</a></h4>
+
+    <form th:action="@{/api/auth/register}" method="post" >
         <div class="formDiv">
             <label class="fl">Email
                 <input type="email" id="email" class="fi common" name="email" required>
@@ -49,6 +51,9 @@
                 <input type="password" id="password" class="fi common" name="password" required>
             </label>
         </div>
+
+        <!-- CSRF token hidden field -->
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
         <div id="divSmBn" class="formDiv">
             <button type="submit" id="submitBtn">Register</button>

@@ -5,13 +5,46 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b61c3012-fbac-466b-a5e2-953fa8d0171e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/register.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/configuration/ApplicationConfiguration.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/dto/TextMessageDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/ChatRepositoryJpa.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/UserRepositoryJpa.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/dao/RoleDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/dao/TextMessageDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/dao/compositeKey/TextMessageID.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/service/ChatService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/utilities/SecurityConstants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/utilities/TokenUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/import.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/images/pexels-dids-2969925 (1).jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/images/pexels-emma-pollard-1534925 (2).jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/images/pexels-jess-bailey-designs-1007025 (2).jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/images/pexels-mo-eid-2598040 (3).jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/js/authenticate.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/server/ChatServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/server/ChatServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/ChatServerApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/ChatServerApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/component/UserSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/component/UserSession.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/AuthenticationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/AuthenticationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/DashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/DashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/dto/LoginDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/dto/AuthenticationDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/dto/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/dto/UserDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/AuthenticationRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/AuthenticationRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/AuthenticationRespository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/AuthenticationRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/dao/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/dao/UserDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/rowmapper/UserRowMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/rowmapper/UserRowMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/service/AuthenticationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/service/AuthenticationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/mtr/web/api/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/login.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/login.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/main.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/authenticate.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/userByEmail.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/userByEmail.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +54,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -38,35 +72,60 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="ProjectId" id="2KEj0YT4lO58oDxMEVw7z8MUtED" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "C:/Users/Bruce/IdeaProjects/Licenta/ChatServerSpringboot/src/main/resources/templates",
-    "project.structure.last.edited": "SDKs",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "MavenSettings"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_directory_selection&quot;: &quot;C:/Users/Bruce/IdeaProjects/Licenta/ChatServerSpringboot/src/main/java/org/mtr/web/api&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Bruce/IdeaProjects/Licenta/ChatServerSpringboot/src/main/resources/static/images&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;c03a31a5ad296c1fabf8258223621f0b&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="org.mtr.web.api.repository" />
       <recent name="org.mtr.web.api.service" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Bruce\IdeaProjects\Licenta\ChatServerSpringboot\src\main\resources\static\images" />
       <recent name="C:\Users\Bruce\IdeaProjects\Licenta\ChatServerSpringboot\src\main\resources\templates" />
       <recent name="C:\Users\Bruce\IdeaProjects\Licenta\ChatServerSpringboot\src\main\resources\static\css" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Bruce\IdeaProjects\Licenta\ChatServerSpringboot\src\main\resources" />
+      <recent name="C:\Users\Bruce\IdeaProjects\Licenta\ChatServerSpringboot\src\main\resources\static" />
+      <recent name="C:\Users\Bruce\IdeaProjects\Licenta\ChatServerSpringboot" />
+      <recent name="C:\Users\Bruce\IdeaProjects\Licenta\ChatServerSpringboot\src\main\java\org\mtr\web\api\configuration" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.mtr.web.api.controller.dto" />
       <recent name="" />
       <recent name="org.mtr.net" />
     </key>
@@ -124,6 +183,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ChatServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="ChatServerSpringboot" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.mtr.ChatServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.ChatServerApplication" />
@@ -142,16 +208,83 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1673546420646</updated>
+      <workItem from="1684569549847" duration="8738000" />
+      <workItem from="1684661571901" duration="2956000" />
+      <workItem from="1684747261713" duration="3348000" />
+      <workItem from="1684846873520" duration="2127000" />
+      <workItem from="1684909626475" duration="23183000" />
+      <workItem from="1685025163064" duration="12437000" />
+      <workItem from="1685043328991" duration="5760000" />
+      <workItem from="1685096342727" duration="19852000" />
+      <workItem from="1685121525479" duration="16127000" />
+      <workItem from="1685180582880" duration="9388000" />
+      <workItem from="1685213772707" duration="1310000" />
+      <workItem from="1685218342171" duration="5185000" />
+      <workItem from="1685269192436" duration="21334000" />
+      <workItem from="1685712285897" duration="609000" />
+      <workItem from="1686763702289" duration="1362000" />
+      <workItem from="1687003741319" duration="11362000" />
+      <workItem from="1687340104830" duration="703000" />
+      <workItem from="1687348397419" duration="13836000" />
+      <workItem from="1687427843483" duration="3339000" />
+      <workItem from="1687442828293" duration="10264000" />
+      <workItem from="1687609343460" duration="1822000" />
+      <workItem from="1687777966024" duration="1246000" />
+      <workItem from="1687958735690" duration="4559000" />
+      <workItem from="1688297883365" duration="20021000" />
+      <workItem from="1688321741475" duration="97000" />
+      <workItem from="1688380724465" duration="5290000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/AuthenticationController.java</url>
-          <line>35</line>
-          <option name="timeStamp" value="12" />
+        <breakpoint type="java-exception">
+          <properties class="org.springframework.security.authentication.InternalAuthenticationServiceException" package="org.springframework.security.authentication" />
+          <option name="timeStamp" value="4" />
+        </breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/mtr/web/api/utilities/StompEndpointHandshakeHandler.java</url>
+          <line>24</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/mtr/web/api/service/ChatService.java</url>
+          <line>19</line>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/ChatController.java</url>
+          <line>33</line>
+          <option name="timeStamp" value="39" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/mtr/web/api/controller/ChatController.java</url>
+          <line>45</line>
+          <option name="timeStamp" value="40" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/org/mtr/web/api/repository/ChatRepositoryJpa.java</url>
+          <line>12</line>
+          <properties class="org.mtr.web.api.repository.ChatRepositoryJpa" method="save">
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="41" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -161,7 +294,10 @@
     <select />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ChatServer$ConnectionTest_testLogin.ic" NAME="ConnectionTest.testLogin Coverage Results" MODIFIED="1675021345401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/ChatServerSpringboot$ChatServerApplication.ic" NAME="ChatServerApplication Coverage Results" MODIFIED="1688313555959" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>org.mtr.*</FILTER>
+    </SUITE>
     <SUITE FILE_PATH="coverage/ChatServer$ConnectionTest.ic" NAME="ConnectionTest Coverage Results" MODIFIED="1675025716109" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/ChatServer$ConnectionTest_testLogin.ic" NAME="ConnectionTest.testLogin Coverage Results" MODIFIED="1675021345401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

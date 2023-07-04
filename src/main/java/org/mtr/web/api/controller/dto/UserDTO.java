@@ -1,6 +1,5 @@
 package org.mtr.web.api.controller.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -17,4 +16,5 @@ public class UserDTO {
     private String email;
     private String bio;
     private String password;
+    private String profilePhotoLink;
 }

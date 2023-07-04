@@ -1,5 +1,6 @@
 package org.mtr.web.api.repository;
 
+import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.repository.dao.UserDAO;
 import org.mtr.web.api.repository.rowmapper.UserRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,16 @@ public class UserRepository {
     private JdbcTemplate jdbcTemplate;
 
     public UserDAO getUserByEmail(String email){
+        MessageLogger.log( "UserRepository - getUserByEmail(String)");
         return this.jdbcTemplate.queryForObject( "SELECT * FROM users WHERE email = ?", new UserRowMapper(), email);
     }
 
     public int registerUser(UserDAO userDao){
-        return this.jdbcTemplate.update( "INSERT INTO users VALUES (? , ? , ? , ? , ? , ? , ? , ? , ?)",
-                UUID.randomUUID(),
+        MessageLogger.log( "UserRepository - registerUser(UserDAO)");
+        return this.jdbcTemplate.update(
+                "INSERT INTO users(nick, name, surname, dob, phonenr, email, bio, password, profile_photo_link) " +
+                        "VALUES ( ? , ? , ? , ? , ? , ? , ? , ?, ?)",
+                //UUID.randomUUID(),
                 userDao.getNick(),
                 userDao.getName(),
                 userDao.getSurname(),
@@ -28,6 +33,7 @@ public class UserRepository {
                 userDao.getPhonenr(),
                 userDao.getEmail(),
                 userDao.getBio(),
-                userDao.getPassword());
+                userDao.getPassword(),
+                userDao.getProfilePhotoLink());
     }
 }

@@ -18,6 +18,7 @@ public class UserRowMapper implements RowMapper<UserDAO> {
                 rs.getString("phonenr"),
                 rs.getString("email"),
                 rs.getString("bio"),
-                rs.getString("password"));
+                rs.getString("password"),
+                rs.getString("profilePhotoLink"));
     }
 }

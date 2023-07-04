@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Authenticate - ChatServer srl</title>
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="/css/commonNotMain.css" />
+    <script type="text/javascript" src="/js/authenticate.js"></script>
+</head>
+<body>
+
+<h1 id="h1PleaseLogIn"><span id="spanPlease">Please</span> <span id="spanLogIn">Log In</span></h1>
+    <div th:if="${param.error}">
+        Invalid username and password.
+    </div>
+    <div th:if="${param.logout}">
+        You have been logged out.
+    </div>
+
+    <form th:action="@{/api/auth/authenticate-post}" method="post">
+        <div class="formDiv">
+            <label class="fl">Email/Username
+                <input type="email" id="username" class="fi common" name="username" required>
+            </label>
+        </div>
+        <div class="formDiv">
+            <label class="fl">Password
+                <input type="password" id="password" class="fi common" name="password" required>
+            </label>
+        </div>
+
+        <!-- CSRF token hidden field -->
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+        <div id="divSmBn" class="formDiv">
+            <input type="submit" id="submitBtn" value="Login">
+        </div>
+    </form>
+
+    <div>
+        <a th:href="@{/dashboard}">Dashboard</a>
+    </div>
+</body>
+</html>

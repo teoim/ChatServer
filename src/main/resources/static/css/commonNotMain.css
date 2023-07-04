@@ -1,0 +1,106 @@
+
+/* styles common to all pages except home.html */
+
+header{
+	background-color: hsla(200, 18%, 26%, 0.95);
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+p#nume{
+	color: #ECEFF1;
+	background-color: hsla(24, 15%, 94%, 0);
+}
+
+
+/* ################################  MEDIA  ################################ */
+
+@media screen and (max-width: 1024px){
+    header{
+        height: 70px;
+    }
+
+    a#i-nav{
+		text-decoration: none;
+		font-size: 1.5em;
+		font-weight: 900;
+		text-align: center;
+        display: block;
+		color: #36464e;
+		background-color: #a89e8e;/*787268;*/
+		width: 45px;
+		height: 30px;
+		position: absolute;
+		right: 20px;
+		top: 20px;
+		border-radius: 8px;
+		border-top-right-radius: 0px;
+		/* border-bottom-left-radius: 0px; */
+		z-index:300;
+    }
+
+	a#i-nav:hover{
+		background-color: #FDD835;
+	}
+
+    ul#menuList, ul#galleryList{
+        width: 100%;
+        /* display: none; */
+    }
+
+	.show{
+		display: inline-block;
+	}
+
+    ul.mainMenu li{
+		display: block;
+        width: 100%;
+		/* height: 5em; */
+        margin: 0px;
+    }
+
+    ul#menuList a{
+        width: 100%;
+        text-align: center;
+        padding: 0px;
+        outline: #aaaaaa solid 1px;
+	}
+
+    ul#menuList a:hover{
+        background: #aaa;
+    }
+
+	div#galContainer{
+		margin-top: 70px;
+	}
+	/*
+	img#displayedImg{
+		object-fit: contain;  //NOT WORKING
+	}*/
+}
+
+@media screen and (max-width: 800px){
+	p#nume{
+		background-color: #FDD835;
+		opacity: 1;
+		color: #000000; /* ??? not working */
+	}
+
+	#homeFooter{
+		background-color: #FDD835;
+		opacity: 1;
+	}
+}
+
+@media screen and (max-width: 600px){
+	a#i-nav{
+		width: 35px;
+		height: 20px;
+		top: 25px;
+		right: 25px;
+		font-size: 1em;
+		font-weight: 900;
+		border-radius: 5px;
+		border-top-right-radius: 0px;
+	}
+}
