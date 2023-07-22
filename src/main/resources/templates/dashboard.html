@@ -6,8 +6,7 @@
     <title>Dashboard - ChatServer srl</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
     <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
-<!--    <script type="text/javascript" src="/js/dashboard.js"></script>-->
-    <!--script src="/webjars/jquery/jquery.min.js"></script-->
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script type="text/javascript" src="/js/WebSockets.js"></script>
@@ -17,12 +16,11 @@
 
     <div id="mainDiv">
 
-        <header>
+        <header id="pageHeader">
             <h1>Chat DASHBOARD</h1>
             <h2> Welcome, <span id="emailSpan" th:text="${email}"/> - <span th:text="${role}"/> </h2>
 
             <form id="logoutForm" action="#" th:action="@{/logout}" method="post">
-<!--                <button id="logoutBtn" type="submit">Logout</button>-->
                 <input id="logoutBtn" type="submit" value="Logout"/>
             </form>
         </header>
@@ -36,7 +34,6 @@
             </article>
             <article th:each="friend : ${session.friendsList}" class="friendsListArticle">
                 <a href="#" class="friendsAnchor"><h3 class="friendsListH3" th:text="${friend}"> </h3></a>
-<!--                <td><span th:text="${book.author}"> Author </span></td>-->
             </article>
         </div>
 
@@ -44,9 +41,19 @@
         <div id="chatScreen" class="middleDivs">
 
             <div id="chatBox" name="chatFrame">
-<!--                <article class="chatArticle">-->
-<!--                    <p class="chatP"> test article in div chatBox</p>-->
-<!--                </article>-->
+
+                <article class="chatArticle general">
+                    <header class="messageTimeHeader">
+                        <time> <h3> From: someone@whatever.com, 12:55:32 </h3> </time>
+                    </header>
+
+                    <p class="chatP"> <h1>TEST article in div chatBox </h1> </p>
+
+                    <footer class="messageDateFooter">
+                        <date> <h3> Sut Jul 15 2023 </h3> </date>
+                    </footer>
+                </article>
+
             </div>
 
 

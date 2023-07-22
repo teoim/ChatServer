@@ -52,6 +52,8 @@ div#chatBox{
     padding: 5px;
     margin: 0 auto;
     overflow-x: auto;
+    display: flex;      /** TO BE TESTED (CHAT ARTICLES ARE MOVED FROM RIGHT TO LEFT? */
+    flex-direction: column-reverse;
 }
 
 article.chatArticle{
@@ -64,12 +66,20 @@ article.chatArticle{
     max-width: 60%;
     padding: 1%;
     margin: 1em;
+    float: left;
 }
 
-article.private{
-    float: right;
+article.sent{
+    margin-left: auto;
     width: inherit;
     max-width: 60%;
+    background-color: hsl(180, 55%, 32%);
+}
+
+article.general{
+    /*width: 80%;*/
+    max-width: 80%;
+    margin: 1em auto;
     background-color: hsl(180, 55%, 32%);
 }
 
@@ -79,7 +89,31 @@ p.chatP{
     font-style: italic;
     font-weight: bolder;
     overflow-wrap: break-word;
+    /*padding: 0.5em;*/
+    background-color: #333333;
+    border-radius: 15px;
+    padding: 1em;
 }
+
+header.messageTimeHeader, footer.messageDateFooter {
+    color: #333333;
+}
+
+header.messageTimeHeader{
+    text-align: right;
+}
+
+.chatP > h1{
+    color: white;
+}
+
+footer.messageDateFooter{
+    text-align: right;
+}
+
+
+
+    /** Message form **/
 
 form#sendTextForm{
     background-color: hsla(170, 18%, 40%, 1);
@@ -108,6 +142,8 @@ input#submitBtn {
 	border-radius: 6px;
 }
 
+    /** Message form and Logout form **/
+
 input#submitBtn:hover, input#logoutBtn:hover{
 	cursor: pointer;
 	background-color: #567;
@@ -116,6 +152,9 @@ input#submitBtn:hover, input#logoutBtn:hover{
 input#submitBtn:active, input#logoutBtn:active{
 	background-color: #345;
 }
+
+
+    /** Logout form **/
 
 form#logoutForm {
     position: fixed;

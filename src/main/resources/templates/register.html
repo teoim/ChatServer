@@ -5,10 +5,17 @@
     <title>Register - ChatServer srl</title>
     <link rel="stylesheet" type="text/css" href="/css/login.css" />
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <script type="text/javascript" src="/js/authenticate.js"></script>
 </head>
 <body>
 
     <h4> Already have an account? <a th:href="@{/api/auth/authenticate}">Log in</a></h4>
+    <h1 id="h1PleaseLogIn">
+        <span id="spanPlease">Already have an account? </span>
+        <span id="spanLogIn">
+            <a th:href="@{/api/auth/authenticate}">Log in</a>
+        </span>
+    </h1>
 
     <form th:action="@{/api/auth/register}" method="post" >
         <div class="formDiv">

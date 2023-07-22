@@ -3,12 +3,16 @@
 	padding: 0;
 }
 
+html {
+	height: 100%;
+}
+
 body{
 	background-color: hsla(199, 18%, 40%, 1);
 	font-family: monospace, serif, sans-serif;  /* the browser parses the list left to right and picks the first one that is available */
 
 	/*background-image:url('../images/pexels-emma-pollard-1534925 (2).jpg');*/
-	background-image:url('../images/pexels-dids-2969925 (1).jpg');
+	background-image:url('../images/pexels-dids-2969925 (3).jpg');
 	background-repeat:no-repeat;
 	background-attachment: fixed;
 	background-position: center center;
@@ -24,7 +28,7 @@ body > h1#h1PleaseLogIn {
 }
 
 
-header{
+header#pageHeader{
 	position: fixed;
 	left: 0px;
 	top: 0px;

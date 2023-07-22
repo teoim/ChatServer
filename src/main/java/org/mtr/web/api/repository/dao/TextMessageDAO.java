@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "messages")
 @IdClass(TextMessageID.class)
-public class TextMessageDAO {
+public class TextMessageDAO implements Comparable<TextMessageDAO>{
 
     @Id
     private Timestamp timestamp;
@@ -25,4 +25,8 @@ public class TextMessageDAO {
     private String txtTo;
     private String content;
 
+    @Override
+    public int compareTo(TextMessageDAO o) {
+        return this.getTimestamp().compareTo(o.getTimestamp());
+    }
 }

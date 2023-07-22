@@ -11,8 +11,13 @@ var stompClientUsernameDestination = "";
 var sendButton;
 var messageInputBox;
 
-var currentUser = "";
+var currentUser;
+var lastMessageFetchedTimestamp = new Map();    // lastMessageFetchedTimestamp(username : lastTimestamp)
+var iAmChattingWith = "generalChat";
 
+const cachedTextMessagesWithUser = new Map();
+const textMessagesToUrl = "http://localhost:8080/messages-with"
+const generalChatUrl = "http://localhost:8080/general-chat"
 
 function main(){
     console.log("Page loaded, starting WebSockets and STOMP...");
@@ -40,16 +45,30 @@ function main(){
         subscription001 = stompClient.subscribe("/topic/generalChat", function(message){     //    "/topic/generalChat" is a broker destination
             console.log("stompClient received general message: " + message.body);
 
-            receivedMessage(message, "general");
+            let msg = JSON.parse(message.body);
+
+            if(iAmChattingWith == "generalChat") {
+                // console.log(msg.to);
+                appendMessageToChatScreen(msg, "general");
+            } else {
+                cacheReceivedMessage(msg);
+            }
         }
         , {id : mysubid001});
 
         subscription002 = stompClient.subscribe("/user/queue/sendPrivateText", function(message){
-                console.log("stompClient received private message: " + message);
+            console.log("stompClient received private message: " + message);
 
-                receivedMessage(message, "private");
+            let msg = JSON.parse(message.body);
+
+            if(iAmChattingWith == msg.from){
+                console.log(msg.from);
+                appendMessageToChatScreen(msg, "");
+            } else {
+                cacheReceivedMessage(msg);
             }
-            , {id : mysubid002});
+        }
+        , {id : mysubid002});
     }
 
     // stompClient.subscribe() returns a subscription object containing the ide and a method:
@@ -96,10 +115,16 @@ function main(){
         // stompClient.send("/app/generalChat", {}, document.getElementById("writeText").value);  // "/app" will farward messages to the @Controller with a "/generalChat" endpoint
         //stompClient.send("/app/generalChat", {}, inputText);  // "/app" will forward messages to the @Controller with a "/generalChat" endpoint
 
-        let message = { from : currentUser, to : stompClientUsernameDestination, content : inputText, timestamp : Date.now() };
+        let message = { from : currentUser, to : stompClientUsernameDestination, content : inputText, timestamp : new Date(Date.now()).toISOString() };
 
         //stompClient.send(stompClientMessageDestination, {}, inputText);  // "/app" will forward messages to the @Controller with a "/generalChat" endpoint
         stompClient.send(stompClientMessageDestination, {}, JSON.stringify(message));  // "/app" will forward messages to the @Controller with a "/generalChat" endpoint
+
+        // When i send a private message, append that message to my window also
+        if( stompClientUsernameDestination != "") {
+            // appendSentMessage(message, "sent");
+            appendMessageToChatScreen(message, "sent");     // TODO do better
+        }
 
         messageInputBox.value = "";
         focusOnMessageInputBox();
@@ -109,17 +134,65 @@ function main(){
 
 }
 
-function receivedMessage(message, channelType){
-    let article = document.createElement("article");
-    article.classList.add("chatArticle");
-    article.classList.add(channelType);   // "general" or "private" chat
-    let p = document.createElement("p");
-    p.classList.add("chatP");
+function appendMessageToChatScreen(message, sentOrReceived){
+    let articleElement = document.createElement("article");
+    let headerElement = document.createElement("header");
+    let footerElement = document.createElement("footer");
+    let timeElement = document.createElement("time");
+    let dateElement = document.createElement("date");
+    let h1ContentElement = document.createElement("h1");
+    let h3TimeElement = document.createElement("h3");
+    let h3DateElement = document.createElement("h3");
+    let pElement = document.createElement("p");
 
-    var data = JSON.parse(message.body);
-    p.append("From: " + data.from + "\n " + data.content + "\n" + data.timestamp);
-    article.append(p);
-    document.getElementById('chatBox').append(article);
+    articleElement.classList.add("chatArticle");
+    if(sentOrReceived != "") {
+        // sentOrReceived will only have "sent" or "" values - we only add the non-null value to the classlist
+        articleElement.classList.add(sentOrReceived);
+    }
+
+    headerElement.classList.add("messageTimeHeader");
+    footerElement.classList.add("messageDateFooter");
+
+    pElement.classList.add("chatP");
+
+    let msgDate = new Date(message.timestamp);
+    let dateString = msgDate.toDateString();
+    let timeString = msgDate.getHours() + ":" + msgDate.getMinutes() + ":" + msgDate.getSeconds();  // TODO: make sure this is the local time
+
+    h3TimeElement.append("From: " + message.from + ", " + timeString);
+    timeElement.append(h3TimeElement);
+    headerElement.append(timeElement);
+
+    h3DateElement.append(dateString);
+    dateElement.append(h3DateElement);
+    footerElement.append(dateElement);
+
+    h1ContentElement.append(message.content);
+    pElement.append(h1ContentElement);
+
+    articleElement.append(headerElement);
+    articleElement.append(pElement);
+    articleElement.append(footerElement);
+
+    document.getElementById('chatBox').prepend(articleElement);
+}
+
+function cacheReceivedMessage(message){
+    var timestampedMapOfMessages;
+    var msgFromUser = message.from;
+
+    if(cachedTextMessagesWithUser.has(msgFromUser)){
+        timestampedMapOfMessages = cachedTextMessagesWithUser.get(msgFromUser);
+    } else {
+        timestampedMapOfMessages = new Map();
+    }
+
+    timestampedMapOfMessages.set( message.timestamp, message);
+    lastMessageFetchedTimestamp.set(msgFromUser, message.timestamp);
+
+    cachedTextMessagesWithUser.set(msgFromUser, timestampedMapOfMessages);
+    console.log("New messages from " + msgFromUser + ". TODO: call function to blink " + msgFromUser + " chat box link.")
 }
 
 function setFriendsListEventListener(){
@@ -135,6 +208,7 @@ function setFriendsListEventListener(){
             stompClientMessageDestination = "/app/sendPrivateText";
             stompClientUsernameDestination = usernameEmail;
             loadUserChats(usernameEmail);
+            iAmChattingWith = usernameEmail;
             focusOnMessageInputBox();
         });
     }
@@ -143,6 +217,7 @@ function setFriendsListEventListener(){
     document.getElementById("friendsListGeneralH3").addEventListener("click", () => {
         stompClientMessageDestination = "/app/generalChat";
         stompClientUsernameDestination = "";
+        iAmChattingWith = "generalChat";
         loadGeneralChats();
         focusOnMessageInputBox()
     });
@@ -151,13 +226,102 @@ function setFriendsListEventListener(){
 
 function loadUserChats(username){
     console.log( "Loading user chats for " + username );
-    // TODO
+
+    // Clear current chat screen:
+    document.getElementById('chatBox').replaceChildren();
+
+    // Build API url:
+    let toUserTextMessagesFinalURL = textMessagesToUrl + "/" + username;
+
+    if(lastMessageFetchedTimestamp.has(username)){
+        toUserTextMessagesFinalURL = toUserTextMessagesFinalURL + "/" + lastMessageFetchedTimestamp.get(username);
+        console.log("API URL toUserTextMessagesFinalURL : " + toUserTextMessagesFinalURL);
+    }
+
+    // Fetch messages from database through API call:
+    $.get( toUserTextMessagesFinalURL, function(data, status){
+        if(status=="success"){
+            console.log("Chats successfully fetched from DB. " + data.length + " messages fetched.");
+            /** timestampedMapOfMessages( timestamp : message[from,to,content,timestamp] )    */
+            let timestampedMapOfMessages = new Map();
+            if(cachedTextMessagesWithUser.has(username)){
+                timestampedMapOfMessages = cachedTextMessagesWithUser.get(username);
+            }
+
+            for( let i = 0; i < data.length; i++){
+                console.log(data[i]);
+                let msg = data[i];
+                if(timestampedMapOfMessages.has( msg.timestamp)) break;
+                timestampedMapOfMessages.set( msg.timestamp, msg);
+                // appendSentMessage( msg, "general");
+                lastMessageFetchedTimestamp.set(username, msg.timestamp);
+            }
+            cachedTextMessagesWithUser.set( username, timestampedMapOfMessages);
+            timestampedMapOfMessages.forEach( function(value, key, map){
+               // appendSentMessage(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
+                if(value.from == currentUser) {
+                    // Message sent by the current user
+                    appendMessageToChatScreen(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
+                } else {
+                    // Message received by the current user
+                    appendMessageToChatScreen(value, "");
+                }
+            });
+            console.log("Chats local map complete.\nLast message: " + lastMessageFetchedTimestamp.get(username));
+        }
+    });
 }
 
 function loadGeneralChats(){
     console.log( "Loading general chats ");
-    // TODO
+
+    // TODO refactor this method and loadUserChats(username) [reduce duplicate code, etc]
+
+    // Clear current chat screen:
+    document.getElementById('chatBox').replaceChildren();
+
+    // Build API url:
+    let toUserTextMessagesFinalURL = generalChatUrl + "/" + iAmChattingWith;    // iAmChattingWith should be "generalChat"
+
+    if(lastMessageFetchedTimestamp.has(iAmChattingWith)){
+        toUserTextMessagesFinalURL = toUserTextMessagesFinalURL + "/" + lastMessageFetchedTimestamp.get(iAmChattingWith);
+        console.log("API URL toUserTextMessagesFinalURL : " + toUserTextMessagesFinalURL);
+    }
+
+    // Fetch messages from database through API call:
+    $.get( toUserTextMessagesFinalURL, function(data, status){
+        if(status=="success"){
+            console.log("Chats successfully fetched from DB. " + data.length + " messages fetched.");
+            /** timestampedMapOfMessages( timestamp : message[from,to,content,timestamp] )    */
+            let timestampedMapOfMessages = new Map();
+            if(cachedTextMessagesWithUser.has(iAmChattingWith)){
+                timestampedMapOfMessages = cachedTextMessagesWithUser.get(iAmChattingWith);
+            }
+
+            for( let i = 0; i < data.length; i++){
+                console.log(data[i]);
+                let msg = data[i];
+                if(timestampedMapOfMessages.has( msg.timestamp)) break;
+                timestampedMapOfMessages.set( msg.timestamp, msg);
+                // appendSentMessage( msg, "general");
+                lastMessageFetchedTimestamp.set(iAmChattingWith, msg.timestamp);
+            }
+            cachedTextMessagesWithUser.set( iAmChattingWith, timestampedMapOfMessages);
+            timestampedMapOfMessages.forEach( function(value, key, map){
+                // appendSentMessage(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
+                if(value.from == currentUser) {
+                    // Message sent by the current user
+                    appendMessageToChatScreen(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
+                } else {
+                    // Message received by the current user
+                    appendMessageToChatScreen(value, "");
+                }
+            });
+            console.log("Chats local map complete.\nLast message: " + lastMessageFetchedTimestamp.get(iAmChattingWith));
+        }
+    });
 }
+
 function focusOnMessageInputBox(){
     messageInputBox.focus();
 }
