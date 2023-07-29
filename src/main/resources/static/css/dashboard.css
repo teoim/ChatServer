@@ -154,6 +154,67 @@ input#submitBtn:active, input#logoutBtn:active{
 }
 
 
+    /** Call and video call icons **/
+
+div#iconsDiv, div#inCallIconsDiv{
+    /*border: 1px solid red;*/
+    border-radius: 5px;
+    background-color: hsla(203, 20%, 55%, 0.6);
+    /*width: fit-content;*/
+    /*height: fit-content;*/
+    padding: 5px;
+    display: flow;
+    position: absolute;
+    top: 5%;
+    right: 5%;
+}
+div#inCallIconsDiv{
+    background-color: hsla(0, 100%, 50%, 0.6);
+}
+
+
+img.callIcons{
+    border: 1px solid black;
+    width: 35px;
+    /*height: 35px;*/
+}
+
+
+    /** Video box **/
+
+div#videoBox{
+    border: 1px solid red;
+    background-color: hsla(200, 18%, 30%, 0.6);
+    width: 800px;
+    height: 600px;
+    /*display: flow;*/
+    display: none;
+    position: absolute;
+}
+
+video#receivedVideo{
+    background-color: #333333;
+    width: 98%;
+    height: 98%;
+    /*margin: 1% 1% 1% 1%;*/
+    margin: 1% 1%;
+}
+
+video#localVideo{
+    border: 1px solid red;
+    background-color: #444444;
+    width: 20%;
+    height: 20%;
+    position: absolute;
+    right: 2%;
+    bottom: 2%;
+}
+
+button#hangupButton{
+
+}
+
+
     /** Logout form **/
 
 form#logoutForm {

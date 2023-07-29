@@ -1,5 +1,7 @@
 
-window.onload = main;
+// window.onload = main;
+window.addEventListener("load", main);
+// window.addEventListener("DOMContentLoaded", main);   // triggeres after dom elements are loaded
 
 var ws;
 var stompClient;

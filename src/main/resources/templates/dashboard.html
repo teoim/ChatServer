@@ -6,10 +6,12 @@
     <title>Dashboard - ChatServer srl</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
     <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+
     <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script type="text/javascript" src="/js/WebSockets.js"></script>
+    <script type="text/javascript" src="/js/WebRTC.js"></script>
 </head>
 
 <body>
@@ -40,7 +42,23 @@
 
         <div id="chatScreen" class="middleDivs">
 
-            <div id="chatBox" name="chatFrame">
+            <div id="iconsDiv">
+                <img id="callIcon" class="callIcons" src="/images/icons/call.png" alt="Start voice call.">
+                <img id="videoCallIcon" class="callIcons" src="/images/icons/videocall.png" alt="Start video call.">
+            </div>
+
+            <div id="videoBox">
+                <video id="receivedVideo" autoplay></video>
+                <video id="localVideo" autoplay muted></video>
+
+                <div id="inCallIconsDiv">
+                    <img id="inCallIcon" class="callIcons" src="/images/icons/call.png" alt="End voice call.">
+                    <img id="inVideoCallIcon" class="callIcons" src="/images/icons/videocall.png" alt="End video call.">
+                </div>
+            </div>
+
+
+            <div id="chatBox">
 
                 <article class="chatArticle general">
                     <header class="messageTimeHeader">
