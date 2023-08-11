@@ -72,6 +72,7 @@ public class ChatController {
     )
     @ResponseBody
     public List<TextMessageDTO> getMessagesFrom(@PathVariable(name="txtTo") String generalChat){
+        MessageLogger.log("ChatController - getMessagesFrom(...) - @RequestMapping(\"/general-chat/{txtTo}\")");
         ArrayList<TextMessageDTO> messages = null;
 
         messages = (ArrayList<TextMessageDTO>) chatService.getGeneralMessages(generalChat);
@@ -86,6 +87,7 @@ public class ChatController {
     )
     @ResponseBody
     public List<TextMessageDTO> getMessagesFrom(@PathVariable(name="txtTo") String generalChat, @PathVariable(name="timestamp") String javascriptUTCTimestamp){
+        MessageLogger.log("ChatController - getMessagesFrom(...) - @RequestMapping(\"/general-chat/{txtTo}/{timestamp}\")");
         ArrayList<TextMessageDTO> messages = null;
 
         messages = (ArrayList<TextMessageDTO>) chatService.getGeneralMessagesAfterTimestamp(generalChat, javascriptUTCTimestamp);
@@ -101,6 +103,7 @@ public class ChatController {
     )
     @ResponseBody
     public List<TextMessageDTO> getMessagesFromCurrentUserToUser(@PathVariable(name="email") String toUserEmail, Principal principal){
+        MessageLogger.log("ChatController - getMessagesFrom(...) - @RequestMapping(\"/messages-with/{email}\")");
         ArrayList<TextMessageDTO> messages = null;
 
         messages = (ArrayList<TextMessageDTO>) chatService.getMessagesBetweenUsers( principal.getName(), toUserEmail);
@@ -115,6 +118,7 @@ public class ChatController {
     )
     @ResponseBody
     public List<TextMessageDTO> getMessagesFromCurrentUserToUserAfterTimestamp(@PathVariable(name="email") String toUserEmail, @PathVariable(name="timestamp") String javascriptUTCTimestamp, Principal principal){
+        MessageLogger.log("ChatController - getMessagesFrom(...) - @RequestMapping(\"/messages-with/{email}/{timestamp\")");
         ArrayList<TextMessageDTO> messages = null;
 
         messages = (ArrayList<TextMessageDTO>) chatService.getMessagesBetweenUsersAfterTimestamp( principal.getName(), toUserEmail, javascriptUTCTimestamp);

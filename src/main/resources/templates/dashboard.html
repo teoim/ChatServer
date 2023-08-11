@@ -43,8 +43,12 @@
         <div id="chatScreen" class="middleDivs">
 
             <div id="iconsDiv">
-                <img id="callIcon" class="callIcons" src="/images/icons/call.png" alt="Start voice call.">
-                <img id="videoCallIcon" class="callIcons" src="/images/icons/videocall.png" alt="Start video call.">
+                <div id="callIconDiv" class="innerDivsCallAndVideo">
+                    <img id="callIcon" class="callIcons" src="/images/icons/call.png" alt="Start voice call.">
+                </div>
+                <div id="videoCallIconDiv" class="innerDivsCallAndVideo">
+                    <img id="videoCallIcon" class="callIcons" src="/images/icons/videocall.png" alt="Start video call.">
+                </div>
             </div>
 
             <div id="videoBox">
@@ -52,15 +56,15 @@
                 <video id="localVideo" autoplay muted></video>
 
                 <div id="inCallIconsDiv">
-                    <img id="inCallIcon" class="callIcons" src="/images/icons/call.png" alt="End voice call.">
-                    <img id="inVideoCallIcon" class="callIcons" src="/images/icons/videocall.png" alt="End video call.">
+                    <img id="inCallIcon" class="callIcons inCallIcons" src="/images/icons/call.png" alt="End voice call.">
+                    <img id="inVideoCallIcon" class="callIcons inCallIcons" src="/images/icons/videocall.png" alt="End video call.">
                 </div>
             </div>
 
 
             <div id="chatBox">
 
-                <article class="chatArticle general">
+<!--                <article id="dummyArticle" class="chatArticle general">
                     <header class="messageTimeHeader">
                         <time> <h3> From: someone@whatever.com, 12:55:32 </h3> </time>
                     </header>
@@ -71,6 +75,7 @@
                         <date> <h3> Sut Jul 15 2023 </h3> </date>
                     </footer>
                 </article>
+-->
 
             </div>
 

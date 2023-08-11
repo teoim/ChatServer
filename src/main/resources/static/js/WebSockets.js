@@ -17,6 +17,7 @@ var currentUser;
 var lastMessageFetchedTimestamp = new Map();    // lastMessageFetchedTimestamp(username : lastTimestamp)
 var iAmChattingWith = "generalChat";
 
+// TODO define these and other constants in a properties/configuration file
 const cachedTextMessagesWithUser = new Map();
 const textMessagesToUrl = "http://localhost:8080/messages-with"
 const generalChatUrl = "http://localhost:8080/general-chat"
@@ -132,6 +133,8 @@ function main(){
         focusOnMessageInputBox();
     }
 
+    loadGeneralChats();
+
     setFriendsListEventListener();
 
 }
@@ -194,7 +197,7 @@ function cacheReceivedMessage(message){
     lastMessageFetchedTimestamp.set(msgFromUser, message.timestamp);
 
     cachedTextMessagesWithUser.set(msgFromUser, timestampedMapOfMessages);
-    console.log("New messages from " + msgFromUser + ". TODO: call function to blink " + msgFromUser + " chat box link.")
+    console.log("New messages from " + msgFromUser + ". TODO: call function to blink " + msgFromUser + " chat box link.");  // TODO
 }
 
 function setFriendsListEventListener(){

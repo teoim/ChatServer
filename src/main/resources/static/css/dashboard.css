@@ -157,26 +157,48 @@ input#submitBtn:active, input#logoutBtn:active{
     /** Call and video call icons **/
 
 div#iconsDiv, div#inCallIconsDiv{
-    /*border: 1px solid red;*/
     border-radius: 5px;
-    background-color: hsla(203, 20%, 55%, 0.6);
-    /*width: fit-content;*/
-    /*height: fit-content;*/
     padding: 5px;
     display: flow;
     position: absolute;
     top: 5%;
     right: 5%;
 }
-div#inCallIconsDiv{
-    background-color: hsla(0, 100%, 50%, 0.6);
+
+div.innerDivsCallAndVideo{
+    display: inline-block;
+    height: 35px;
+    width: 35px;
 }
 
+/*div#iconsDiv{*/
+/*    background-color: hsla(203, 20%, 55%, 0.3);*/
+/*}*/
+
+div#inCallIconsDiv{
+    background-color: hsla(0, 100%, 50%, 0.3);
+    border: 1px solid #6c0000;
+    border-radius: 50px;
+}
+
+/*div#callIconDiv:hover, div#videoCallIconDiv:hover{*/
+div.innerDivsCallAndVideo:hover{
+    background-color: hsla(138, 100%, 32%, 0.7);
+    border-radius: 50px;
+}
+
+div#inCallIconsDiv:hover{
+    background-color: hsla(0, 100%, 50%, 0.70);
+}
 
 img.callIcons{
-    border: 1px solid black;
     width: 35px;
-    /*height: 35px;*/
+    border: 1px solid green;
+    border-radius: 50px;
+}
+
+img.inCallIcons{
+    border: none;
 }
 
 
