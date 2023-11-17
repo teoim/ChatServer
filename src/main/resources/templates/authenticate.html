@@ -35,11 +35,13 @@
 
         <div id="divSmBn" class="formDiv">
             <input type="submit" id="submitBtn" value="Login">
+            <a id="registerLink" th:href="@{/api/auth/register}">Register</a>
         </div>
     </form>
 
     <div>
-        <a th:href="@{/dashboard}">Dashboard</a>
+        <p><a th:href="@{/dashboard}">Dashboard</a></p>
+<!--        <p><a th:href="@{/api/auth/register}">Register</a></p>-->
     </div>
 </body>
 </html>

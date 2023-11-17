@@ -30,6 +30,7 @@ article.friendsListArticle{
     background-color: hsla(170, 18%, 40%, 1);
     margin: 1em;
     padding: 1em;
+    border-radius: 5px;
 }
 
 a.friendsAnchor{

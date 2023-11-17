@@ -1,17 +1,15 @@
 
 window.onload = main;
 
-var spanLogIn;
-// var spanPlease;
+let spanLogIn;
 
 function main(){
     spanLogIn = document.getElementById("spanLogIn");
-    // spanPlease = document.getElementById("spanPlease");
 
     executeAsynchronously( spanLogInVisualEffect(spanLogIn));
-    // executeAsynchronously( spanLogInVisualEffect(spanPlease));
 }
 
+// Make the "Log In" message turn on and off
 async function spanLogInVisualEffect(htmlElement){
     while(true) {
         htmlElement.hidden = !htmlElement.hidden;

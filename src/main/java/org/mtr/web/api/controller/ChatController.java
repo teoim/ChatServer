@@ -1,5 +1,6 @@
 package org.mtr.web.api.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.component.UserSession;
 import org.mtr.web.api.controller.dto.TextMessageDTO;
@@ -102,11 +103,11 @@ public class ChatController {
             produces = "application/json"
     )
     @ResponseBody
-    public List<TextMessageDTO> getMessagesFromCurrentUserToUser(@PathVariable(name="email") String toUserEmail, Principal principal){
+    public List<TextMessageDTO> getMessagesFromCurrentUserToUser(@PathVariable(name="email") String toUserEmail, Principal principal, HttpServletRequest request){
         MessageLogger.log("ChatController - getMessagesFrom(...) - @RequestMapping(\"/messages-with/{email}\")");
         ArrayList<TextMessageDTO> messages = null;
 
-        messages = (ArrayList<TextMessageDTO>) chatService.getMessagesBetweenUsers( principal.getName(), toUserEmail);
+        messages = (ArrayList<TextMessageDTO>) chatService.getMessagesBetweenUsers( principal.getName(), toUserEmail, request);
 
         return messages;
     }
@@ -117,11 +118,11 @@ public class ChatController {
             produces = "application/json"
     )
     @ResponseBody
-    public List<TextMessageDTO> getMessagesFromCurrentUserToUserAfterTimestamp(@PathVariable(name="email") String toUserEmail, @PathVariable(name="timestamp") String javascriptUTCTimestamp, Principal principal){
+    public List<TextMessageDTO> getMessagesFromCurrentUserToUserAfterTimestamp(@PathVariable(name="email") String toUserEmail, @PathVariable(name="timestamp") String javascriptUTCTimestamp, Principal principal, HttpServletRequest request){
         MessageLogger.log("ChatController - getMessagesFrom(...) - @RequestMapping(\"/messages-with/{email}/{timestamp\")");
         ArrayList<TextMessageDTO> messages = null;
 
-        messages = (ArrayList<TextMessageDTO>) chatService.getMessagesBetweenUsersAfterTimestamp( principal.getName(), toUserEmail, javascriptUTCTimestamp);
+        messages = (ArrayList<TextMessageDTO>) chatService.getMessagesBetweenUsersAfterTimestamp( principal.getName(), toUserEmail, javascriptUTCTimestamp, request);
 
         return messages;
     }

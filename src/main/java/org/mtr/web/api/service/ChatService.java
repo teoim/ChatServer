@@ -1,5 +1,7 @@
 package org.mtr.web.api.service;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.mtr.logger.ErrorLogger;
 import org.mtr.web.api.controller.dto.TextMessageDTO;
 import org.mtr.web.api.repository.ChatRepositoryJpa;
@@ -31,10 +33,12 @@ public class ChatService {
             TextMessageDAO savedMessage = chatRepositoryJpa.save(messageDAO);
         }
         catch(IllegalArgumentException e ){
-            ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
+//            ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
+            ErrorLogger.log(e, Thread.currentThread().getStackTrace()[1]);
         }
         catch(OptimisticLockingFailureException e ){
-            ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
+//            ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
+            ErrorLogger.log(e, Thread.currentThread().getStackTrace()[1]);
         }
     }
 
@@ -103,9 +107,12 @@ public class ChatService {
         return messagesDTO;
     }
 
-    public List<TextMessageDTO> getMessagesBetweenUsers(String fromUserEmail, String toUserEmail) {
+    public List<TextMessageDTO> getMessagesBetweenUsers(String fromUserEmail, String toUserEmail, HttpServletRequest request) {
         List<TextMessageDAO> messagesDAO;
         List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
+
+//        HttpSession session = request.getSession(true);
+//        session.setAttribute("iAmChattingWith", toUserEmail);
 
         Collection<String> messagesBetweenUsers = new ArrayList<>();
         messagesBetweenUsers.add(fromUserEmail);
@@ -124,9 +131,12 @@ public class ChatService {
         return messagesDTO;
     }
 
-    public List<TextMessageDTO> getMessagesBetweenUsersAfterTimestamp(String fromUserEmail, String toUserEmail, String javascriptUTCTimestamp) {
+    public List<TextMessageDTO> getMessagesBetweenUsersAfterTimestamp(String fromUserEmail, String toUserEmail, String javascriptUTCTimestamp, HttpServletRequest request) {
         List<TextMessageDAO> messagesDAO;
         List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
+
+//        HttpSession session = request.getSession(true);
+//        session.setAttribute("iAmChattingWith", toUserEmail);
 
         Collection<String> messagesBetweenUsers = new ArrayList<>();
         messagesBetweenUsers.add(fromUserEmail);

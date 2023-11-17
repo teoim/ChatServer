@@ -23,7 +23,8 @@ public class AuthenticationRepositoryImpl {
         try{
             user = this.jdbcTemplate.queryForObject("SELECT * FROM users WHERE email = ? AND password = ?", new UserRowMapper(), email, password);
         } catch (DataAccessException e){
-            ErrorLogger.log(e, this.getClass().getSimpleName(), "findUserByEmailAndPassword(String,String)");
+            //ErrorLogger.log(e, this.getClass().getSimpleName(), "findUserByEmailAndPassword(String,String)");
+            ErrorLogger.log(e, Thread.currentThread().getStackTrace()[1]);
         }
         finally {
             return user;

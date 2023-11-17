@@ -2,6 +2,7 @@ package org.mtr.web.api.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.mtr.logger.ErrorLogger;
 import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.component.UserSession;
 import org.mtr.web.api.controller.dto.AuthenticationDTO;
@@ -9,6 +10,7 @@ import org.mtr.web.api.repository.AuthenticationRepositoryImpl;
 import org.mtr.web.api.repository.AuthenticationRepository;
 import org.mtr.web.api.repository.dao.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -67,8 +69,15 @@ public class AuthenticationService {
 
 
             List<String> friendsList = new ArrayList<>();
+//            for( UserDAO friend : user.getFriends().stream().toList()){
             for( UserDAO friend : user.getFriends()){
-                friendsList.add(friend.getEmail());
+                if(friendsList.contains(friend.getEmail())){
+                    ErrorLogger.log( new Exception("Friend email duplicate detected: " + friend.getEmail()
+                            + "\nIn list: " + friendsList.toString()
+                            + "\nDB friends list: " + user.getFriends().toString()), this.getClass().getSimpleName(), "login(AuthenticationDTO, HttpServletRequest)");
+                } else {
+                    friendsList.add(friend.getEmail());
+                }
             }
             session.setAttribute("friendsList", friendsList);
 

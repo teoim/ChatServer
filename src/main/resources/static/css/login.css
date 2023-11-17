@@ -63,6 +63,11 @@ div.formDiv{
 	background-color: #345;
 }
 
+a#registerLink {
+	color: white;
+	text-decoration: none;
+}
+
 
 
 /* ################################  MEDIA  ################################ */

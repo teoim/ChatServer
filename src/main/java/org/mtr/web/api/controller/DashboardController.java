@@ -47,7 +47,7 @@ public class DashboardController {
             //mv.addObject("email", this.userSession.getEmail() != null ? this.userSession.getEmail() : "email-not-defined" );
             mv.addObject("email", email != null ? email : "email-not-defined" );
             //mv.addObject("nick", this.userSession.getUsername() != null ? this.userSession.getUsername() : "username-not-defined" );
-            mv.addObject("role", roles != null ? roles : "role-not-defined" );
+            mv.addObject("role", !roles.equals("") ? roles : "role-not-defined" );
         //} else {
         //    return new ModelAndView("redirect:/api/auth/authenticate");
         //}

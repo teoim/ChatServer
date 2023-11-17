@@ -15,6 +15,7 @@ public class UserRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+
     public UserDAO getUserByEmail(String email){
         MessageLogger.log( "UserRepository - getUserByEmail(String)");
         return this.jdbcTemplate.queryForObject( "SELECT * FROM users WHERE email = ?", new UserRowMapper(), email);
@@ -22,6 +23,7 @@ public class UserRepository {
 
     public int registerUser(UserDAO userDao){
         MessageLogger.log( "UserRepository - registerUser(UserDAO)");
+
         return this.jdbcTemplate.update(
                 "INSERT INTO users(nick, name, surname, dob, phonenr, email, bio, password, profile_photo_link) " +
                         "VALUES ( ? , ? , ? , ? , ? , ? , ? , ?, ?)",

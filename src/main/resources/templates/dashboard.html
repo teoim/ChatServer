@@ -3,15 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
+<!--    <meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>-->
     <title>Dashboard - ChatServer srl</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
     <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+    <link rel="stylesheet" type="text/css" href="/css/userSearchResults.css" />
 
     <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script type="text/javascript" src="/js/WebSockets.js"></script>
     <script type="text/javascript" src="/js/WebRTC.js"></script>
+    <script type="text/javascript" src="/js/searchUsers.js"></script>
 </head>
 
 <body>
@@ -27,9 +30,15 @@
             </form>
         </header>
 
-
         <div id="friendList" class="middleDivs">
-            <h1>Contacts:</h1>
+            <div id="searchDiv">
+                <h1>Contacts:</h1>
+                <label>
+                    <input id="searchInput" type="search" placeholder="Search users...">
+                </label>
+<!--                <div id="searchResultsDiv">-->
+<!--                </div>-->
+            </div>
 
             <article class="friendsListArticle">
                 <a href="#" class="friendsAnchor"><h3 id="friendsListGeneralH3">General</h3></a>
@@ -41,6 +50,10 @@
 
 
         <div id="chatScreen" class="middleDivs">
+            <div id="searchResultsDiv">
+            </div>
+            <input type="hidden" id="iAmChattingWith" value=""/>
+
 
             <div id="iconsDiv">
                 <div id="callIconDiv" class="innerDivsCallAndVideo">
