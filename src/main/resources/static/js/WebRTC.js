@@ -3,7 +3,13 @@
 window.addEventListener("load", main);  // triggered after dom elements AND images, stylesheets, fonts etc are loaded
 
 var callIcon, videoCallIcon, inCallIcon, inVideoCallIcon;
-var targetUsername;
+var targetUsername, myUsername;
+
+var myPeerConnection
+
+var ws;
+var stompClient;
+var subscription001;
 
 
 const mediaConstraints = {
@@ -25,12 +31,33 @@ function main(){
     inCallIcon.addEventListener("click", endCall);
     inVideoCallIcon.addEventListener("click", endVideoCall);
 
+    // Connect and listen to the ICE server
+
+    ws = new SockJS("/api/webrtc");   // unlike WebSocket(), SockJS() provides fall-back protocols, if WebSockets are not supported in the browser
+
+    stompClient = Stomp.over(ws);
+
+    // Custom subscription ID, passed to stompClient.subscribe ( if it's not passed, stomp automatically creates an ID )
+    var myICEsubId001 = 'my-ICE-subscription-id-001';
+
+    // Prepare Stomp.connect() parameters - stompCallbackFunction and stompConnectError:
+    stompCallbackFunction = function(frame){
+        subscription001 = stompClient.subscribe("/user/queue/sendICEMessage", function(message){     //    "/topic/generalChat" is a broker destination
+                console.log("stompClient received general message: " + message.body);
+
+                let msg = JSON.parse(message.body);
+                console.log("Received ICE message: " + msg);
+
+            }
+            , {id : myICEsubId001});
+
+    }
 
     console.log("WebRTC module loaded.");
 
 }
 
-function startCall(){
+function startCall(event){
     console.log("WebRTC.startCall()");
     document.getElementById("videoBox").style.display = "flow";
     document.getElementById("iconsDiv").style.display = "none";
@@ -39,10 +66,10 @@ function startCall(){
 
     mediaConstraints.audio = true;
     mediaConstraints.video = false;
-    invite();
+    invite(event);
 }
 
-function startVideoCall(){
+function startVideoCall(event){
     console.log("WebRTC.startVideoCall()");
     document.getElementById("videoBox").style.display = "flow";
     document.getElementById("iconsDiv").style.display = "none";
@@ -51,7 +78,7 @@ function startVideoCall(){
 
     mediaConstraints.audio = true;
     mediaConstraints.video = true;
-    invite();
+    invite(event);
 }
 
 function endCall(){
@@ -70,20 +97,30 @@ function endVideoCall(){
 
 
 async function sendMessageToServer(message){
-    console.log("WebRTC.sendMessageToServer() - message: " + message);
+    // console.log("WebRTC.sendMessageToServer() - message: " + message);
     let msg = JSON.stringify(message);
+    console.log("WebRTC.sendMessageToServer() - message: " + msg);
+
 
     // TODO create a controller method(s) for the signalling server and build the connection object (jQuery?)
     // something like $.get( toUserTextMessagesFinalURL, function(data, status){ ... }
     // connection.send(msg);
 
-    // Test csrf
-    var token_value = document.getElementsByName("_csrf")[0].value;
-    var token_name = document.getElementsByName("_csrf")[0].name;
-    console.log(token_name + " : " + token_value);
+    var token_value = "";
+    var token_name = "";
+    // Used when csrf is enabled
+    if(document.getElementsByName("_csrf").length > 0){
+        var token_value = document.getElementsByName("_csrf")[0].value;
+        var token_name = document.getElementsByName("_csrf")[0].name;
+        // console.log( "CSRF token name: " + token_name + " value: " + token_value);
+    } else {
+        console.log("Csrf may be disabled - check system configuration - csrf token not found.");
+    }
+
+    console.log( "CSRF token name: " + token_name + " value: " + token_value);
 
     try {
-        const response = await fetch("http://localhost:8080/api/webrtc/message", {
+        const response = await fetch("http://localhost:8080/api/webrtc/ice-server/message", {
             method: "POST",
             headers: {
                 credentials: "include",
@@ -94,24 +131,28 @@ async function sendMessageToServer(message){
             body: JSON.stringify(message),
         });
 
-        const result = await response.json();
+        // const result = await response.json();
+        const result = await response;  // TODO: change to hson after finishing the controller method
         console.log("Success:", result);
     } catch (error) {
         console.error("Error:", error);
     }
 
-    /*$.post("http://localhost:8080/api/webrtc/message", JSON.stringify(message), (data, status) => {
+    /*$.post("http://localhost:8080/api/webrtc/ice-server/message", JSON.stringify(message), (data, status) => {
         console.log(data);
     });*/
 }
 
 
 function invite(event) {
-    console.log("WebRTC.invite() - event: " + event.target);
+    // console.log("WebRTC.invite() - event: " + event.type);  // click
+    // console.log("Inviting " + event.target + " for a call");    // [object HTMLImageElement]
+
     if (myPeerConnection) {
         alert("A call is already in progress...");
     } else {
-        const clickedUsername = event.target.textContent;
+        const clickedUsername = document.getElementById("iAmChattingWith").value;
+        console.log("Inviting " + clickedUsername + " for a call");
 
         if (clickedUsername === myUsername) {
             alert(
@@ -291,7 +332,7 @@ function handleRemoveTrackEvent(event) {
 function hangUpCall() {
     console.log("WebRTC.hangUpCall()");
     closeVideoCall();
-    sendToServer({
+    sendMessageToServer({
         name: myUsername,
         target: targetUsername,
         type: "hang-up",

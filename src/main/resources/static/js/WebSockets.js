@@ -1,7 +1,7 @@
 
 // window.onload = main;
 window.addEventListener("load", main);
-// window.addEventListener("DOMContentLoaded", main);   // triggeres after dom elements are loaded
+// window.addEventListener("DOMContentLoaded", main);   // triggers after dom elements are loaded
 
 var ws;
 var stompClient;
@@ -19,8 +19,8 @@ var iAmChattingWith = "generalChat";
 
 // TODO define these and other constants in a properties/configuration file
 const cachedTextMessagesWithUser = new Map();
-const textMessagesToUrl = "http://localhost:8080/messages-with"
-const generalChatUrl = "http://localhost:8080/general-chat"
+const textMessagesToUrl = "http://localhost:8080/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
+const generalChatUrl = "http://localhost:8080/general-chat"         // TODO: same as above
 
 function main(){
     console.log("Page loaded, starting WebSockets and STOMP...");
@@ -214,6 +214,7 @@ function setFriendsListEventListener(){
             stompClientUsernameDestination = usernameEmail;
             loadUserChats(usernameEmail);
             iAmChattingWith = usernameEmail;
+            document.getElementById("iAmChattingWith").value=iAmChattingWith
             focusOnMessageInputBox();
         });
     }
@@ -223,6 +224,7 @@ function setFriendsListEventListener(){
         stompClientMessageDestination = "/app/generalChat";
         stompClientUsernameDestination = "";
         iAmChattingWith = "generalChat";
+        document.getElementById("iAmChattingWith").value=iAmChattingWith
         loadGeneralChats();
         focusOnMessageInputBox()
     });

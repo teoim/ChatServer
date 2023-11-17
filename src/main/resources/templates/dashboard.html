@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+<!--    <meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>-->
     <title>Dashboard - ChatServer srl</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
     <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
@@ -27,7 +28,6 @@
             </form>
         </header>
 
-
         <div id="friendList" class="middleDivs">
             <h1>Contacts:</h1>
 
@@ -42,6 +42,11 @@
 
         <div id="chatScreen" class="middleDivs">
 
+            <input type="hidden" id="iAmChattingWith" value=""/>
+
+<!--            <form>-->
+                <!-- CSRF token hidden field -->
+
             <div id="iconsDiv">
                 <div id="callIconDiv" class="innerDivsCallAndVideo">
                     <img id="callIcon" class="callIcons" src="/images/icons/call.png" alt="Start voice call.">
@@ -50,10 +55,12 @@
                     <img id="videoCallIcon" class="callIcons" src="/images/icons/videocall.png" alt="Start video call.">
                 </div>
             </div>
+<!--            </form>-->
 
             <div id="videoBox">
                 <video id="receivedVideo" autoplay></video>
                 <video id="localVideo" autoplay muted></video>
+<!--                <a hidden><h6 id="videoAndCallTargetId" th:text="${session.iAmChattingWith}"></h6></a>-->
 
                 <div id="inCallIconsDiv">
                     <img id="inCallIcon" class="callIcons inCallIcons" src="/images/icons/call.png" alt="End voice call.">
