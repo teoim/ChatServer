@@ -8,7 +8,9 @@ import org.mtr.web.api.component.UserSession;
 import org.mtr.web.api.controller.dto.AuthenticationDTO;
 import org.mtr.web.api.repository.AuthenticationRepositoryImpl;
 import org.mtr.web.api.repository.AuthenticationRepository;
+import org.mtr.web.api.repository.UserRelationshipRepositoryJpa;
 import org.mtr.web.api.repository.dao.UserDAO;
+import org.mtr.web.api.repository.dao.UserRelationshipDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,6 +40,9 @@ public class AuthenticationService {
     AuthenticationRepository authRepository;
 
     @Autowired
+    UserRelationshipRepositoryJpa userRelationshipRepositoryJpa;
+
+    @Autowired
     AuthenticationRepositoryImpl authRepositoryImpl;
 
     @Autowired
@@ -49,6 +54,7 @@ public class AuthenticationService {
         UserDAO user =  this.authRepository.findByEmailAndPassword( authenticationDto.getUsername(), authenticationDto.getPassword());
         //return this.authRepositoryImpl.findUserByEmailAndPassword(authenticationDto.getUsername(), authenticationDto.getPassword());
 
+        List<UserRelationshipDAO> userRelationshipDAOList;
 
         if ( user != null) {
             DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -68,15 +74,17 @@ public class AuthenticationService {
             // request.getSession().getId()
 
 
+            userRelationshipDAOList = this.userRelationshipRepositoryJpa.findByUserId(user.getEmail());
+
             List<String> friendsList = new ArrayList<>();
-//            for( UserDAO friend : user.getFriends().stream().toList()){
-            for( UserDAO friend : user.getFriends()){
-                if(friendsList.contains(friend.getEmail())){
-                    ErrorLogger.log( new Exception("Friend email duplicate detected: " + friend.getEmail()
-                            + "\nIn list: " + friendsList.toString()
-                            + "\nDB friends list: " + user.getFriends().toString()), this.getClass().getSimpleName(), "login(AuthenticationDTO, HttpServletRequest)");
+            for( UserRelationshipDAO friend : userRelationshipDAOList){
+                if(friendsList.contains(friend.getFriendId())){
+                    ErrorLogger.log( new Exception("Friend email duplicate detected: " + friend.getFriendId()
+                            + "\nIn list: " + friendsList.toString())
+                                    , this.getClass().getSimpleName()
+                                    , "login(AuthenticationDTO, HttpServletRequest)");
                 } else {
-                    friendsList.add(friend.getEmail());
+                    friendsList.add(friend.getFriendId());
                 }
             }
             session.setAttribute("friendsList", friendsList);

@@ -38,26 +38,10 @@ public class UserDAO implements UserDetails, CredentialsContainer {
     private String password;
     private String profilePhotoLink;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_email", referencedColumnName = "email"),
         inverseJoinColumns = @JoinColumn(name = "role_name", referencedColumnName = "name"))
     private List<RoleDAO> userRoles = new ArrayList<>();
-
-    @ToString.Exclude
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
-    @JoinTable(name = "user_friends", joinColumns = @JoinColumn(name = "user_email", referencedColumnName = "email"),
-        inverseJoinColumns = @JoinColumn(name = "friend_email", referencedColumnName = "email"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"user_email", "friend_email" }))
-    private List<UserDAO> friends = new ArrayList<>();
-//    private Set<UserDAO> friends = new HashSet<>();
-
-/*    @ManyToMany     //(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_friends", joinColumns = @JoinColumn(name = "friend_email", referencedColumnName = "email"),
-            inverseJoinColumns = @JoinColumn(name = "user_email", referencedColumnName = "email"))*/
-    @ToString.Exclude
-    @ManyToMany(mappedBy = "friends")
-    private List<UserDAO> friendsOf = new ArrayList<>();
-//    private Set<UserDAO> friendsOf = new HashSet<>();
 
 
     public UserDAO( Long id, String nick, String name, String surname, Date dob, String phonenr, String email, String bio, String password, String profilePhotoLink){

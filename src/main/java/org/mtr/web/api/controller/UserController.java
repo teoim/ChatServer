@@ -6,6 +6,7 @@ import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.controller.dto.TextMessageDTO;
 import org.mtr.web.api.controller.dto.UserDTO;
 import org.mtr.web.api.repository.dao.UserDAO;
+import org.mtr.web.api.repository.dao.UserRelationshipDAO;
 import org.mtr.web.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 public class UserController {
 
     @Autowired
@@ -71,8 +72,8 @@ public class UserController {
             ErrorLogger.log(e, this.getClass().getSimpleName(), "addUserToFriendsList(HttpServletRequest)");
         }
 
-        UserDAO myself = this.userService.addUserToFriendsList( principal.getName(), newFriendEmail);
+        UserRelationshipDAO newRelationship = this.userService.addUserToFriendsList( principal.getName(), newFriendEmail);
 
-        return "New friend request sent.";
+        return "New relationship:  " + newRelationship.getFriendId() + " is " + newRelationship.getStatus();
     }
 }

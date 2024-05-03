@@ -4,10 +4,7 @@ import org.mtr.logger.ErrorLogger;
 import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.controller.dto.UserDTO;
 import org.mtr.web.api.repository.*;
-import org.mtr.web.api.repository.dao.RoleDAO;
-import org.mtr.web.api.repository.dao.RolesIdSeqDAO;
-import org.mtr.web.api.repository.dao.UserDAO;
-import org.mtr.web.api.repository.dao.UsersIdSeqDAO;
+import org.mtr.web.api.repository.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.management.relation.RoleNotFoundException;
-import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +25,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepositoryJpa userRepositoryJpa;
+
+    @Autowired
+    private UserRelationshipRepositoryJpa userRelationshipJpa;
 
     @Autowired
     private UsersIdSeqRepositoryJPA lastUserSeqRepoJPA;
@@ -63,7 +63,7 @@ public class UserService implements UserDetailsService {
         return daoToDto( this.userRepository.getUserByEmail(email));
     }
 
-//    @Transactional
+
     public UserDAO registerUser(UserDTO newUserDto) {
         MessageLogger.log( "UserService - registerUser(UserDTO)");
 
@@ -122,24 +122,24 @@ public class UserService implements UserDetailsService {
         return clientResult;
     }
 
-    public UserDAO addUserToFriendsList( String myEmail, String myNewFriendEmail) {
-        UserDAO myself = this.userRepositoryJpa.getUserByEmail(myEmail);
-        UserDAO myNewFriend = this.userRepositoryJpa.getUserByEmail(myNewFriendEmail);
+    public UserRelationshipDAO addUserToFriendsList( String myEmail, String myNewFriendEmail) {
 
-        if(myself.getFriends().contains(myNewFriend)){
-            ErrorLogger.log(new Exception(" User " +myNewFriendEmail + " is already a friend."), Thread.currentThread().getStackTrace()[1]);
+        UserRelationshipDAO relationship = this.userRelationshipJpa.findByUserIdAndFriendId(myEmail, myNewFriendEmail);
+
+        if(relationship==null){
+            relationship = new UserRelationshipDAO();
+            relationship.setUserId(myEmail);
+            relationship.setFriendId(myNewFriendEmail);
+            relationship.setStatus("FRIEND");
+            relationship.setInRelationshipSince( new Timestamp( System.currentTimeMillis()));
+            relationship = this.userRelationshipJpa.save(relationship);
         } else {
-            myself.getFriends().add(myNewFriend);
-            try {
-                myself = this.userRepositoryJpa.save(myself);
-            } catch (Exception e) {
-//            ErrorLogger.log(e, this.getClass().getSimpleName(), "addUserToFriendsList(String, String)");
-                ErrorLogger.log(e, Thread.currentThread().getStackTrace()[1]);
-            }
+            MessageLogger.log("User " + myNewFriendEmail + " is already a friend of " + myEmail);
         }
 
-        return myself;
+        return relationship;
     }
+
 
     private UserDTO daoToDto(UserDAO userDao) {
         return new UserDTO(
