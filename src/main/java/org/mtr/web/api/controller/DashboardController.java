@@ -4,6 +4,8 @@ import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.component.UserSession;
 import org.mtr.web.api.repository.dao.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Controller
@@ -21,6 +24,9 @@ public class DashboardController {
 
     @Autowired
     UserSession userSession;
+
+    @Autowired
+    private MessageSource messageSource;
 
 
     @GetMapping(path="/dashboard")
@@ -48,6 +54,8 @@ public class DashboardController {
             mv.addObject("email", email != null ? email : "email-not-defined" );
             //mv.addObject("nick", this.userSession.getUsername() != null ? this.userSession.getUsername() : "username-not-defined" );
             mv.addObject("role", !roles.equals("") ? roles : "role-not-defined" );
+
+            mv.addObject("welcomeMessage", messageSource.getMessage("message.welcome", new String[]{email}, "Welcome!", LocaleContextHolder.getLocale()));
         //} else {
         //    return new ModelAndView("redirect:/api/auth/authenticate");
         //}
