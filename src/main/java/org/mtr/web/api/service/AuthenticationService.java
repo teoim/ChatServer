@@ -88,6 +88,7 @@ public class AuthenticationService {
                 }
             }
             session.setAttribute("friendsList", friendsList);
+            session.setAttribute("bio", user.getBio());
 
             SecurityContextHolder.setContext(context);
 

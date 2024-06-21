@@ -188,11 +188,11 @@ div.innerDivsCallAndVideo:hover{
     border-radius: 50px;
 }
 
-div#inCallIconsDiv:hover{
+div#inCallIconsDiv:hover, img#blockUserIcon:hover{
     background-color: hsla(0, 100%, 50%, 0.70);
 }
 
-img.callIcons{
+img.callIcons, img.userIcons{
     width: 35px;
     border: 1px solid green;
     border-radius: 50px;

@@ -56,17 +56,21 @@ public class UserController {
 
 
     @RequestMapping(
-            value = "/addUserToFriendsList",       // TODO: Secure endpoint (any logged user can see messages by any other user)
+            value = "/addUserToFriendsList",       // TODO: Secure endpoint ?
             method = RequestMethod.PUT,
             produces = "application/json"
     )
     @ResponseBody
+//    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.PUT})
     public String addUserToFriendsList(HttpServletRequest request, Principal principal){
         MessageLogger.log("UserController - addUserToFriendsList(...) - @RequestMapping(\"addUserToFriendsList\")");
 
         String newFriendEmail = null;
         try {
             newFriendEmail = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            if(newFriendEmail.isBlank() || newFriendEmail==null){
+                throw new IOException("UserController - addUserToFriendsList - newFriendEmail is null");
+            }
         } catch (IOException e) {
             //throw new RuntimeException(e);
             ErrorLogger.log(e, this.getClass().getSimpleName(), "addUserToFriendsList(HttpServletRequest)");
@@ -75,5 +79,28 @@ public class UserController {
         UserRelationshipDAO newRelationship = this.userService.addUserToFriendsList( principal.getName(), newFriendEmail);
 
         return "New relationship:  " + newRelationship.getFriendId() + " is " + newRelationship.getStatus();
+    }
+
+    @RequestMapping(
+            value = "/blockUser",       // TODO: Secure endpoint ?
+            method = RequestMethod.PUT,
+            produces = "application/json"
+    )
+    @ResponseBody
+//    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.PUT})
+    public String blockUser(HttpServletRequest request, Principal principal){
+        MessageLogger.log("UserController - blockUser(...) - @RequestMapping(\"blockUser\")");
+
+        String blockedUserEmail = null;
+        try {
+            blockedUserEmail = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+        } catch (IOException e) {
+            //throw new RuntimeException(e);
+            ErrorLogger.log(e, this.getClass().getSimpleName(), "addUserToFriendsList(HttpServletRequest)");
+        }
+
+        UserRelationshipDAO newRelationship = this.userService.blockUser( principal.getName(), blockedUserEmail);
+
+        return "Blocked relationship:  " + newRelationship.getFriendId() + " is " + newRelationship.getStatus();
     }
 }

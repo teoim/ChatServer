@@ -1,6 +1,7 @@
 package org.mtr.web.api.repository.dao;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,8 +20,10 @@ public class UserRelationshipDAO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotEmpty(message = "UserRelationshipDAO.userId cannot be empty.")
     private String userId;
 
+    @NotEmpty(message = "UserRelationshipDAO.friendId cannot be empty.")
     private String friendId;
     private String status;
 

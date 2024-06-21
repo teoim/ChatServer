@@ -140,6 +140,15 @@ public class UserService implements UserDetailsService {
         return relationship;
     }
 
+    public UserRelationshipDAO blockUser(String myEmail, String blockedUserEmail) {
+
+        UserRelationshipDAO relationship = this.userRelationshipJpa.findByUserIdAndFriendId(myEmail, blockedUserEmail);
+        relationship.setStatus("BLOCKED");
+
+        this.userRelationshipJpa.save(relationship);
+
+        return relationship;
+    }
 
     private UserDTO daoToDto(UserDAO userDao) {
         return new UserDTO(

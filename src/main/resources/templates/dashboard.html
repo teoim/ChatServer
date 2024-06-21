@@ -15,6 +15,7 @@
     <script type="text/javascript" src="/js/WebSockets.js"></script>
     <script type="text/javascript" src="/js/WebRTC.js"></script>
     <script type="text/javascript" src="/js/searchUsers.js"></script>
+    <script type="text/javascript" src="/js/dashboard.js"></script>
 </head>
 
 <body>
@@ -24,6 +25,9 @@
         <header id="pageHeader">
             <h1>Chat DASHBOARD</h1>
             <h2> Welcome, <span id="emailSpan" th:text="${email}"/> - <span th:text="${role}"/> </h2>
+            <!--            <h2> Welcome, <span id="emailSpan" th:text="${email}"/> - <span th:text="|${role} - objects in session: ${session.size()}|"/> </h2>-->
+<!--            <h2> <span id="emailSpan" th:text="|${welcomeMessage} - ${role}|"/> </h2>-->
+<!--            <h3> <span id="bioSpan" th:text="${session.bio}"/> </h3>-->
 
             <form id="logoutForm" action="#" th:action="@{/logout}" method="post">
                 <input id="logoutBtn" type="submit" value="Logout"/>
@@ -61,6 +65,17 @@
                 </div>
                 <div id="videoCallIconDiv" class="innerDivsCallAndVideo">
                     <img id="videoCallIcon" class="callIcons" src="/images/icons/videocall.png" alt="Start video call.">
+                </div>
+
+                <div id="addFriendIconDiv" class="innerDivsCallAndVideo">
+                    <a href="#">
+                        <img id="addFriendIcon" class="userIcons" src="/images/icons/add-user-50.png" alt="Add friend.">
+                    </a>
+                </div>
+                <div id="blockUserIconDiv" class="innerDivsCallAndVideo">
+                    <a href="#">
+                        <img id="blockUserIcon" class="userIcons" src="/images/icons/unfriend-50.png" alt="Block user.">
+                    </a>
                 </div>
             </div>
 
