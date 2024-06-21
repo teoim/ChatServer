@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Setter
 @Getter
 @Entity
@@ -16,6 +19,10 @@ public class RoleDAO implements GrantedAuthority {
     private int id;
 
     private String name;
+
+
+//    @ManyToMany(mappedBy = "userRoles")     // mapped by UserDAO.roles list
+//    private List<UserDAO> userRoles = new ArrayList<>();
 
     @Override
     public String getAuthority() {

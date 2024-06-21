@@ -1,5 +1,4 @@
 
-// window.onload = main;
 window.addEventListener("load", main);
 // window.addEventListener("DOMContentLoaded", main);   // triggeres after dom elements are loaded
 
@@ -7,15 +6,12 @@ var ws;
 var stompClient;
 var subscription001;
 var subscription002;
-var stompClientMessageDestination = "/app/generalChat"
-var stompClientUsernameDestination = "";
 
 var sendButton;
 var messageInputBox;
 
 var currentUser;
 var lastMessageFetchedTimestamp = new Map();    // lastMessageFetchedTimestamp(username : lastTimestamp)
-var iAmChattingWith = "generalChat";
 
 // TODO define these and other constants in a properties/configuration file
 const cachedTextMessagesWithUser = new Map();
@@ -24,6 +20,10 @@ const generalChatUrl = "http://localhost:8080/general-chat"
 
 function main(){
     console.log("Page loaded, starting WebSockets and STOMP...");
+
+    sessionStorage.setItem("stompClientMessageDestination", "/app/generalChat");
+    sessionStorage.setItem("stompClientUsernameDestination", "");
+    sessionStorage.setItem("iAmChattingWith", "generalChat");
 
     currentUser = document.getElementById("emailSpan").textContent;
 
@@ -50,8 +50,7 @@ function main(){
 
             let msg = JSON.parse(message.body);
 
-            if(iAmChattingWith == "generalChat") {
-                // console.log(msg.to);
+            if(sessionStorage.getItem("iAmChattingWith") == "generalChat") {
                 appendMessageToChatScreen(msg, "general");
             } else {
                 cacheReceivedMessage(msg);
@@ -64,7 +63,7 @@ function main(){
 
             let msg = JSON.parse(message.body);
 
-            if(iAmChattingWith == msg.from){
+            if(sessionStorage.getItem("iAmChattingWith") == msg.from){
                 console.log(msg.from);
                 appendMessageToChatScreen(msg, "");
             } else {
@@ -118,13 +117,12 @@ function main(){
         // stompClient.send("/app/generalChat", {}, document.getElementById("writeText").value);  // "/app" will farward messages to the @Controller with a "/generalChat" endpoint
         //stompClient.send("/app/generalChat", {}, inputText);  // "/app" will forward messages to the @Controller with a "/generalChat" endpoint
 
-        let message = { from : currentUser, to : stompClientUsernameDestination, content : inputText, timestamp : new Date(Date.now()).toISOString() };
+        let message = { from : currentUser, to : sessionStorage.getItem("stompClientUsernameDestination"), content : inputText, timestamp : new Date(Date.now()).toISOString() };
 
-        //stompClient.send(stompClientMessageDestination, {}, inputText);  // "/app" will forward messages to the @Controller with a "/generalChat" endpoint
-        stompClient.send(stompClientMessageDestination, {}, JSON.stringify(message));  // "/app" will forward messages to the @Controller with a "/generalChat" endpoint
+        stompClient.send(sessionStorage.getItem("stompClientMessageDestination"), {}, JSON.stringify(message));  // "/app" will forward messages to the @Controller with a "/generalChat" endpoint
 
         // When i send a private message, append that message to my window also
-        if( stompClientUsernameDestination != "") {
+        if( sessionStorage.getItem("stompClientUsernameDestination") != "") {
             // appendSentMessage(message, "sent");
             appendMessageToChatScreen(message, "sent");     // TODO do better
         }
@@ -210,19 +208,19 @@ function setFriendsListEventListener(){
         let usernameEmail = listOfFriendsH3[i].innerText
 
         listOfFriendsH3[i].addEventListener("click", (event) => {
-            stompClientMessageDestination = "/app/sendPrivateText";
-            stompClientUsernameDestination = usernameEmail;
+            sessionStorage.setItem("stompClientMessageDestination", "/app/sendPrivateText");
+            sessionStorage.setItem("stompClientUsernameDestination", usernameEmail);
+            sessionStorage.setItem("iAmChattingWith", usernameEmail);
             loadUserChats(usernameEmail);
-            iAmChattingWith = usernameEmail;
             focusOnMessageInputBox();
         });
     }
 
     // Set general chat click listener
     document.getElementById("friendsListGeneralH3").addEventListener("click", () => {
-        stompClientMessageDestination = "/app/generalChat";
-        stompClientUsernameDestination = "";
-        iAmChattingWith = "generalChat";
+        sessionStorage.setItem("stompClientMessageDestination", "/app/generalChat");
+        sessionStorage.setItem("stompClientUsernameDestination", "");
+        sessionStorage.setItem("iAmChattingWith", "generalChat");
         loadGeneralChats();
         focusOnMessageInputBox()
     });
@@ -273,12 +271,15 @@ function loadUserChats(username){
                 }
             });
             console.log("Chats local map complete.\nLast message: " + lastMessageFetchedTimestamp.get(username));
+            sessionStorage.setItem("iAmChattingWith", username);
         }
     });
 }
 
 function loadGeneralChats(){
     console.log( "Loading general chats ");
+
+    let iAmChattingWith = sessionStorage.getItem("iAmChattingWith");
 
     // TODO refactor this method and loadUserChats(username) [reduce duplicate code, etc]
 
@@ -323,6 +324,7 @@ function loadGeneralChats(){
                 }
             });
             console.log("Chats local map complete.\nLast message: " + lastMessageFetchedTimestamp.get(iAmChattingWith));
+            //sessionStorage.setItem("iAmChattingWith", "");  // TODO: what whas this for?
         }
     });
 }

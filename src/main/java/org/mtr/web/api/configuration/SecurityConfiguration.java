@@ -33,7 +33,8 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
-            http.csrf().and().cors().disable();
+            http.csrf().disable();
+            http.cors().disable();
 
             //https://blog.devgenius.io/spring-boot-security-configuration-practically-explained-part6-a-deep-intro-to-56ce03860ad
             /*http

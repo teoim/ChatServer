@@ -1,19 +1,15 @@
 package org.mtr.web.api.repository.dao;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -23,8 +19,9 @@ import java.util.UUID;
 @Table(name = "users")
 public class UserDAO implements UserDetails, CredentialsContainer {
     @Id
-    @Column(columnDefinition = "bigserial", nullable = false)
-    private String id;
+    @Column(columnDefinition = "bigserial", nullable = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
 //    @GeneratedValue(strategy = GenerationType.UUID)
 //    private UUID uuid;
@@ -34,24 +31,20 @@ public class UserDAO implements UserDetails, CredentialsContainer {
     private Date dob;
     @Column(unique = true)
     private String phonenr;
+    @PrimaryKeyJoinColumn
     @Column(unique = true, nullable = false)
     private String email;
     private String bio;
     private String password;
     private String profilePhotoLink;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_email", referencedColumnName = "email"),
         inverseJoinColumns = @JoinColumn(name = "role_name", referencedColumnName = "name"))
-    private List<RoleDAO> roles = new ArrayList<>();
-
-    @ManyToMany
-    @JoinTable(name = "user_friends", joinColumns = @JoinColumn(name = "user_email", referencedColumnName = "email"),
-        inverseJoinColumns = @JoinColumn(name = "friend_email", referencedColumnName = "email"))
-    private List<UserDAO> friends = new ArrayList<>();
+    private List<RoleDAO> userRoles = new ArrayList<>();
 
 
-    public UserDAO( String id, String nick, String name, String surname, Date dob, String phonenr, String email, String bio, String password, String profilePhotoLink){
+    public UserDAO( Long id, String nick, String name, String surname, Date dob, String phonenr, String email, String bio, String password, String profilePhotoLink){
         this.id = id;
         this.nick = nick;
         this.name = name;
@@ -66,7 +59,12 @@ public class UserDAO implements UserDetails, CredentialsContainer {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.getRoles();
+        return this.getUserRoles();
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
@@ -100,4 +98,17 @@ public class UserDAO implements UserDetails, CredentialsContainer {
         this.setEmail(null);
         this.setPhonenr(null);
     }
+
+//    @Override
+//    public String toString(){
+//        String separator = ", ";
+//        return "UserDAO { id : " + this.getId() + separator +
+//                " nick : " + this.getNick() + separator +
+//                " name : " + this.getName() + separator +
+//                " surname : " + this.getSurname() + separator +
+//                " dob : " + this.getDob() + separator +
+//                " phonenr : " + this.getPhonenr() + separator +
+//                " email : " + this.getEmail() + separator +
+//                " bio : " + this.getBio() + " };";
+//    }
 }
