@@ -16,4 +16,8 @@ public class ErrorLogger {
 
         System.err.println( date + ": " + className + " - " + methodName + " error: " + e.toString());
     }
+
+    public static void log(Exception e, StackTraceElement stackTraceElement) {
+        log(e, stackTraceElement.getClassName(), stackTraceElement.getMethodName() + " line " + stackTraceElement.getLineNumber());
+    }
 }

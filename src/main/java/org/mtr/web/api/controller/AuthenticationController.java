@@ -9,6 +9,7 @@ import org.mtr.web.api.repository.dao.UserDAO;
 import org.mtr.web.api.service.AuthenticationService;
 import org.mtr.web.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,6 +34,8 @@ public class AuthenticationController {
     @Autowired
     UserSession userSession;    // setat in authService.login
 
+    @Autowired
+    private Environment env;
 
     @GetMapping(path="/authenticate")
     public ModelAndView login(){
@@ -63,7 +66,9 @@ public class AuthenticationController {
             mv = new ModelAndView("redirect:/dashboard");
         } else  {
             // Authentication failed
-            mv = new ModelAndView("redirect:/api/auth/register");
+//            mv = new ModelAndView("redirect:/api/auth/register");
+            mv = new ModelAndView("redirect:/authenticate");
+            mv.addObject("error", "Wrong username/password combination.");
         }
         return mv;
     }
@@ -80,8 +85,11 @@ public class AuthenticationController {
 
         // TODO: Validari pe input
 
-        int x = this.userService.registerUser(newUser);
-        userSession.setEmail( "SQL insert code: " + x + " - " + newUser.getEmail());
+        //int x = this.userService.registerUser(newUser);
+        //userSession.setEmail( "SQL insert code: " + x + " - " + newUser.getEmail());
+        //MessageLogger.log( "User registration\nSQL insert code: " + x + " - " + newUser.getEmail());
+        UserDAO newUserDao = this.userService.registerUser(newUser);
+        MessageLogger.log( "User registration\nNew user: \n\t" + newUserDao.toString() + "\n\t - " + newUser.getEmail());
         return new ModelAndView("redirect:/dashboard");
     }
 

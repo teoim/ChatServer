@@ -1,0 +1,76 @@
+
+div#searchDiv{
+    width: 100%;
+    /*border: 1px solid red;*/
+}
+
+input#searchInput {
+    background-color: hsla(165, 88%, 90%, 0.8);
+    padding: 15px;
+    width: 100%;
+    height: 2em;
+    border: none;
+    border-radius: 10px;
+}
+
+div#searchResultsDiv {
+    position: absolute;
+    float: left;
+    min-width: 30%;
+    max-width: 60%;
+}
+
+article.searchResultArticles{
+    background-color: hsla(165, 88%, 90%, 0.8);
+    border: 1px solid #003fb4;
+    border-radius: 5px;
+    padding: 0.3em;
+    max-width: 80%;
+    min-width: 25%;
+    width: fit-content(50%);
+}
+
+article.searchResultArticles:hover {
+    background-color: #99c8c9;
+}
+
+article.searchResultArticles > img.searchResultProfilePicture {
+    width: 32px;
+    height: 32px;
+    float: left;
+    background-color: hsla(0, 0%, 59%, 0.8);
+    border: 1px solid rgba(77, 77, 77, 0.8);
+    border-radius: 15px;
+}
+
+article.searchResultArticles > header {
+    width: 100%;
+    /*width: fit-content;*/
+    color: #262e2f;
+    font-weight: bold;
+}
+
+article.searchResultArticles > footer {
+    width: 100%;
+    /*width: fit-content;*/
+    text-align: right;
+    color: #262e2f;
+    font-style: italic;
+}
+
+article.searchResultArticles > h4 {
+    /*width: 100%;*/
+    width: fit-content(100%);
+}
+
+article.searchResultArticles > h4 > a {
+    width: fit-content(100%);
+    margin: 2px;
+    padding: 7px;
+    text-decoration: none;
+    /*border: 1px solid #163b1b;*/
+}
+
+article.searchResultArticles > h4 > a:hover {
+    color: white;
+}
