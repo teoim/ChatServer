@@ -2,24 +2,30 @@
 // window.addEventListener("DOMContentLoaded", main);   // triggeres after dom elements are loaded
 window.addEventListener("load", main);  // triggered after dom elements AND images, stylesheets, fonts etc are loaded
 
+// UI Elements
 var callIcon, videoCallIcon, inCallIcon, inVideoCallIcon;
 var targetUsername, myUsername;
 
+// RTCPeerConnection
 var myPeerConnection
 
-var ws;
-var stompClient;
-var subscription001;
+// WebSocket & STOMP
+var wskt;
+var webRtcStompClient;
+var webRtcSubscription001;
 
-
+// RTCPeerConnection media constraints
 const mediaConstraints = {
-    audio: true, // Audio track on / off
-    video: true, // Video track on / off
+    audio: false, // Audio track on / off
+    video: false, // Video track on / off
 };
+
 
 function main(){
 
-    console.log("Loading WebRTC module...");
+    console.debug("WebRTC.main()\nLoading WebRTC module...");
+
+    myUsername = document.getElementById("emailSpan").textContent;
 
     callIcon = document.getElementById("callIcon");
     videoCallIcon = document.getElementById("videoCallIcon");
@@ -33,32 +39,60 @@ function main(){
 
     // Connect and listen to the ICE server
 
-    ws = new SockJS("/api/webrtc");   // unlike WebSocket(), SockJS() provides fall-back protocols, if WebSockets are not supported in the browser
+    wskt = new SockJS("/sendICEMessage");   // unlike WebSocket(), SockJS() provides fall-back protocols, if WebSockets are not supported in the browser
 
-    stompClient = Stomp.over(ws);
+    webRtcStompClient = Stomp.over(wskt);
 
-    // Custom subscription ID, passed to stompClient.subscribe ( if it's not passed, stomp automatically creates an ID )
+    // Custom subscription ID, passed to webRtcStompClient.subscribe ( if it's not passed, stomp automatically creates an ID )
     var myICEsubId001 = 'my-ICE-subscription-id-001';
 
-    // Prepare Stomp.connect() parameters - stompCallbackFunction and stompConnectError:
-    stompCallbackFunction = function(frame){
-        subscription001 = stompClient.subscribe("/user/queue/sendICEMessage", function(message){     //    "/topic/generalChat" is a broker destination
-                console.log("stompClient received general message: " + message.body);
+    // Prepare Stomp.connect() parameters - rtcStompCallbackFunction and rtcStompConnectError:
+    rtcStompCallbackFunction = function(frame){
+        console.debug("WebRTC.js rtcStompCallbackFunction");
+        webRtcSubscription001 = webRtcStompClient.subscribe("/user/queue/sendICEMessage", function(message){     //    "/user/queue/sendICEMessage" is a broker destination
 
-                let msg = JSON.parse(message.body);
-                console.log("Received ICE message: " + msg);
+                let parsedMsgBody = JSON.parse(message.body);
+
+                switch (parsedMsgBody.type) {
+                    case "new-ice-candidate":
+                        console.info("Received ice candidate...");
+                        handleNewICECandidateMsg(parsedMsgBody);
+                        break;
+                    case "video-offer":
+                        console.info("Received video offer...");
+                        handleVideoOfferMsg(parsedMsgBody);
+                        break;
+                    case "video-answer":
+                        console.info("Received video answer...");
+                        handleVideoAnswerMsg(parsedMsgBody);
+                        break;
+                    case "hang-up":
+                        console.info("Received video answer...");
+                        console.warn("TODO hang-up: double check flow for endVideoCall().");
+                        endVideoCall()
+                        break;
+                    default:
+                        console.warn("parsedMsgBody.type not treated: ", parsedMsgBody.type);
+                        break;
+                }
 
             }
             , {id : myICEsubId001});
 
     }
 
-    console.log("WebRTC module loaded.");
+    rtcStompConnectError = function(err){
+        console.error("WebRTC.js - STOMP  connection error: \n", err);
+    }
+
+    webRtcStompClient.connect( {}, rtcStompCallbackFunction, rtcStompConnectError);
+
+    console.debug("WebRTC module loaded.");
 
 }
 
 function startCall(event){
-    console.log("WebRTC.startCall()");
+    console.debug("WebRTC.startCall()");
     document.getElementById("videoBox").style.display = "flow";
     document.getElementById("iconsDiv").style.display = "none";
     document.getElementById("inCallIcon").style.display = "block";
@@ -70,26 +104,26 @@ function startCall(event){
 }
 
 function startVideoCall(event){
-    console.log("WebRTC.startVideoCall()");
+    console.debug("WebRTC.startVideoCall()");
     document.getElementById("videoBox").style.display = "flow";
     document.getElementById("iconsDiv").style.display = "none";
     document.getElementById("inCallIcon").style.display = "none";
     document.getElementById("inVideoCallIcon").style.display = "block";
 
-    mediaConstraints.audio = true;
+    mediaConstraints.audio = false;
     mediaConstraints.video = true;
     invite(event);
 }
 
 function endCall(){
-    console.log("WebRTC.endCall()");
+    console.debug("WebRTC.endCall()");
     document.getElementById("videoBox").style.display = "none";
     document.getElementById("iconsDiv").style.display = "flow";
     hangUpCall();
 }
 
 function endVideoCall(){
-    console.log("WebRTC.endVideoCall()");
+    console.debug("WebRTC.endVideoCall()");
     document.getElementById("videoBox").style.display = "none";
     document.getElementById("iconsDiv").style.display = "flow";
     hangUpCall();
@@ -97,14 +131,9 @@ function endVideoCall(){
 
 
 async function sendMessageToServer(message){
-    // console.log("WebRTC.sendMessageToServer() - message: " + message);
+    // console.debug("WebRTC.sendMessageToServer() - message: ", message);
     let msg = JSON.stringify(message);
-    console.log("WebRTC.sendMessageToServer() - message: " + msg);
-
-
-    // TODO create a controller method(s) for the signalling server and build the connection object (jQuery?)
-    // something like $.get( toUserTextMessagesFinalURL, function(data, status){ ... }
-    // connection.send(msg);
+    console.debug("WebRTC.sendMessageToServer() - message: ", msg);
 
     var token_value = "";
     var token_name = "";
@@ -112,12 +141,10 @@ async function sendMessageToServer(message){
     if(document.getElementsByName("_csrf").length > 0){
         var token_value = document.getElementsByName("_csrf")[0].value;
         var token_name = document.getElementsByName("_csrf")[0].name;
-        // console.log( "CSRF token name: " + token_name + " value: " + token_value);
+        //console.log( "CSRF token name: " + token_name + " value: " + token_value);
     } else {
         console.log("Csrf may be disabled - check system configuration - csrf token not found.");
     }
-
-    console.log( "CSRF token name: " + token_name + " value: " + token_value);
 
     try {
         const response = await fetch("http://localhost:8080/api/webrtc/ice-server/message", {
@@ -128,46 +155,42 @@ async function sendMessageToServer(message){
                 "Content-Type": "application/json; charset=UTF-8",
                 token_name: token_value,
             },
-            body: JSON.stringify(message),
+//            body: message,
+            body: msg,
         });
 
-        // const result = await response.json();
         const result = await response;  // TODO: change to hson after finishing the controller method
-        console.log("Success:", result);
+
+        // result: { type, url, status, redirected, ok, statusText, headers, body, bodyUsed }
+        console.info("POST ", result.status, result.url);
+
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error while sending message to server:", error);
     }
 
-    /*$.post("http://localhost:8080/api/webrtc/ice-server/message", JSON.stringify(message), (data, status) => {
-        console.log(data);
-    });*/
 }
 
 
 function invite(event) {
-    // console.log("WebRTC.invite() - event: " + event.type);  // click
-    // console.log("Inviting " + event.target + " for a call");    // [object HTMLImageElement]
+    console.debug("WebRTC.invite()");
 
     if (myPeerConnection) {
-        alert("A call is already in progress...");
+        console.warn("A call is already in progress...");
     } else {
-        const clickedUsername = document.getElementById("iAmChattingWith").value;
-        console.log("Inviting " + clickedUsername + " for a call");
+        targetUsername = sessionStorage.getItem("iAmChattingWith");
+        console.info("Inviting " + targetUsername + " for a call");
 
-        if (clickedUsername === myUsername) {
-            alert(
-                "You could talk to yourself but that would be weird.",
-            );
+        if (targetUsername === myUsername) {
+            console.warn("You don't want to talk to yourself..");
             return;
         }
 
-        targetUsername = clickedUsername;
         createPeerConnection();
 
         navigator.mediaDevices
             .getUserMedia(mediaConstraints)
             .then((localStream) => {
-                document.getElementById("localVideo").srcObject = localStream;
+                document.getElementById("smallScreen").srcObject = localStream;
                 localStream
                     .getTracks()
                     .forEach((track) => myPeerConnection.addTrack(track, localStream));
@@ -178,10 +201,10 @@ function invite(event) {
 
 
 function handleGetUserMediaError(e) {
-    console.log("WebRTC.handleGetUserMediaError()");
+    console.debug("WebRTC.handleGetUserMediaError()");
     switch (e.name) {
         case "NotFoundError":
-            alert(
+            console.error(
                 "Unable to open your call because no camera and/or microphone" +
                 "were found.",
             );
@@ -191,7 +214,7 @@ function handleGetUserMediaError(e) {
             // Do nothing; this is the same as the user canceling the call.
             break;
         default:
-            alert(`Error opening your camera and/or microphone: ${e.message}`);
+            console.error(`Error opening your camera and/or microphone: ${e.message}`);
             break;
     }
 
@@ -200,14 +223,23 @@ function handleGetUserMediaError(e) {
 
 
 function createPeerConnection() {
-    console.log("WebRTC.createPeerConnection()");
+    console.debug("WebRTC.createPeerConnection()");
+
+    if (myPeerConnection) {
+        console.info("A call is already in progress!");
+        return;
+    }
+    console.info("Creating new peer connection.");
+
     myPeerConnection = new RTCPeerConnection({
         iceServers: [
-            // Information about ICE servers (STUN and/or TURN servers) - TODO: should create and use my own ICE servers
+            // Information about ICE servers (STUN and/or TURN servers) - TODO: should create and use my own ICE servers maybe
             {
                 // Known public STUN server:
-                urls: "stun:stun.stunprotocol.org",
-            },
+                urls: "stun:stun.stunprotocol.org"
+            }
+            ,{ urls: "stun:stun4.l.google.com:19302" }
+            ,{ urls: "stun:stun4.l.google.com:5349" }
         ],
     });
 
@@ -226,7 +258,7 @@ function createPeerConnection() {
 
 
 function handleNegotiationNeededEvent() {
-    console.log("WebRTC.handleNegotiationNeededEvent()");
+    console.debug("WebRTC.handleNegotiationNeededEvent()");
     myPeerConnection
         .createOffer()
         .then((offer) => myPeerConnection.setLocalDescription(offer))
@@ -244,7 +276,8 @@ function handleNegotiationNeededEvent() {
 
 // We receive a video call from someone
 function handleVideoOfferMsg(msg) {
-    console.log("WebRTC.handleVideoOfferMsg() - msg: " + msg);
+    console.debug("WebRTC.handleVideoOfferMsg() - msg: ", msg);
+    startVideoCall();
     let localStream = null;
 
     targetUsername = msg.name;
@@ -257,7 +290,7 @@ function handleVideoOfferMsg(msg) {
         .then(() => navigator.mediaDevices.getUserMedia(mediaConstraints))
         .then((stream) => {
             localStream = stream;
-            document.getElementById("local_video").srcObject = localStream;
+            document.getElementById("smallScreen").srcObject = localStream;
 
             localStream
                 .getTracks()
@@ -278,11 +311,42 @@ function handleVideoOfferMsg(msg) {
         .catch(handleGetUserMediaError);
 }
 
+// We received an answer to our video call
+function handleVideoAnswerMsg(msg) {
+    console.debug("WebRTC.handleVideoAnswerMsg()");
+    const desc = new RTCSessionDescription(msg.sdp);
+    myPeerConnection.setRemoteDescription(desc)
+        .then(() => navigator.mediaDevices.getUserMedia(mediaConstraints))
+            .then((stream) => {
+                localStream = stream;
+                document.getElementById("bigScreen").srcObject = localStream;
+
+                localStream
+                    .getTracks()
+                    .forEach((track) => myPeerConnection.addTrack(track, localStream));
+            })
+//            .then(() => myPeerConnection.createAnswer())
+//            .then((answer) => myPeerConnection.setLocalDescription(answer))
+//            .then(() => {
+//                const msg = {
+//                    name: myUsername,
+//                    target: targetUsername,
+//                    type: "video-answer",
+//                    sdp: myPeerConnection.localDescription
+//                };
+//
+//                sendMessageToServer(msg);
+//            })
+            .catch(handleGetUserMediaError);
+    //.catch(window.reportError);
+}
+
 
 // SENDING ice candidates:
 // When we receive an ice candidate from the browser, we send it to the server for the other peer.
 function handleICECandidateEvent(event) {
-    console.log("WebRTC.handleICECandidateEvent() - event: " + event);
+    console.debug("WebRTC.handleICECandidateEvent()");
+//    console.log("WebRTC.handleICECandidateEvent() - event: \n", event);
     if (event.candidate) {
         sendMessageToServer({
             type: "new-ice-candidate",
@@ -296,9 +360,14 @@ function handleICECandidateEvent(event) {
 // RECEIVEING ice candidates:
 // The handleNewICECandidateMsg() function is called by our main WebSocket incoming message code.
 function handleNewICECandidateMsg(msg) {
-    console.log("WebRTC.handleNewICECandidateMsg() - msg: " + msg);
+    console.debug("WebRTC.handleNewICECandidateMsg()");
+
+    var msgCandidate = msg.candidate;
+
     // Build ice candidate object
-    const candidate = new RTCIceCandidate(msg.candidate);
+    const candidate = new RTCIceCandidate(msgCandidate);
+
+    createPeerConnection();     // TODO double check whole function
 
     // Deliver candidate to ICE layer
     myPeerConnection.addIceCandidate(candidate).catch(reportError);
@@ -307,19 +376,19 @@ function handleNewICECandidateMsg(msg) {
 
 // RECEIVING new streams
 function handleTrackEvent(event) {
-    console.log("WebRTC.handleTrackEvent() - event: " + event);
+    console.debug("WebRTC.handleTrackEvent()");
     // TODO: check track type (audio/video/etc)
 
     // Add video track to html element
-    document.getElementById("receivedVideo").srcObject = event.streams[0];
+    document.getElementById("bigScreen").srcObject = event.streams[0];
     //document.getElementById("hangup-button").disabled = false;
 }
 
 
 // REMOVE streams
 function handleRemoveTrackEvent(event) {
-    console.log("WebRTC.handleRemoveTrackEvent() - event: " + event);
-    const stream = document.getElementById("receivedVideo").srcObject;
+    console.debug("WebRTC.handleRemoveTrackEvent() - event: ", event);
+    const stream = document.getElementById("bigScreen").srcObject;
     const trackList = stream.getTracks();
 
     if (trackList.length === 0) {
@@ -330,21 +399,23 @@ function handleRemoveTrackEvent(event) {
 
 // HANGING up
 function hangUpCall() {
-    console.log("WebRTC.hangUpCall()");
-    closeVideoCall();
+    console.debug("WebRTC.hangUpCall() \ntargetUsername:", targetUsername);
+
     sendMessageToServer({
         name: myUsername,
         target: targetUsername,
         type: "hang-up",
     });
+
+    closeVideoCall();
 }
 
 
 // ENDING the call
 function closeVideoCall() {
-    console.log("WebRTC.closeVideoCall()");
-    const remoteVideo = document.getElementById("receivedVideo");
-    const localVideo = document.getElementById("localVideo");
+    console.debug("WebRTC.closeVideoCall()");
+    const remoteVideo = document.getElementById("bigScreen");
+    const localVideo = document.getElementById("smallScreen");
 
     if (myPeerConnection) {
         myPeerConnection.ontrack = null;
@@ -371,7 +442,7 @@ function closeVideoCall() {
     remoteVideo.removeAttribute("src");
     remoteVideo.removeAttribute("srcObject");
     localVideo.removeAttribute("src");
-    remoteVideo.removeAttribute("srcObject");
+    localVideo.removeAttribute("srcObject");
 
     // document.getElementById("hangup-button").disabled = true;
     targetUsername = null;
@@ -381,23 +452,43 @@ function closeVideoCall() {
 // ICE CONNECTION STATE CHANGE
 // call terminated from other side, etc
 function handleICEConnectionStateChangeEvent(event) {
-    console.log("WebRTC.handleICEConnectionStateChangeEvent() - event: " + event);
+    console.debug("WebRTC.handleICEConnectionStateChangeEvent()");
     switch (myPeerConnection.iceConnectionState) {
+        case "disconnected":
+            console.warn("myPeerConnection was disconnected...");
+            break;
         case "closed":
         case "failed":
+            console.warn("myPeerConnection closed or failed...");
             closeVideoCall();
+            break;
+        default:
+            console.warn("TODO: handle handleICEConnectionStateChangeEvent case:", event);
             break;
     }
 }
 
 
 // ICE SIGNALING STATE
+// https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/signalingState
 function handleSignalingStateChangeEvent(event) {
-    console.log("WebRTC.handleSignalingStateChangeEvent() - event: " + event);
+    console.debug("WebRTC.handleSignalingStateChangeEvent()");
     switch (myPeerConnection.signalingState) {
         // Deprecated (replaced by closed iceConnectionState) - we watch for it only for backwards compatibility
         case "closed":
             closeVideoCall();
+            break;
+        case "have-local-offer":
+            console.warn("TODO: handling handleSignalingStateChangeEvent for \"have-local-offer\"");
+            break;
+        case "have-remote-offer":
+            console.warn("TODO: handling handleSignalingStateChangeEvent for \"have-remote-offer\"");
+            break;
+        case "stable":
+            console.warn("TODO: handling handleSignalingStateChangeEvent for \"stable\"");
+            break
+        default:
+            console.warn("TODO: handle handleSignalingStateChangeEvent for ", myPeerConnection.signalingState);
             break;
     }
 }
@@ -406,5 +497,5 @@ function handleSignalingStateChangeEvent(event) {
 // ICE GATHERING STATE
 // usefull for debugging or to detect when ice candidate gathering has finished
 function handleICEGatheringStateChangeEvent(event) {
-    console.log("WebRTC.handleICEGatheringStateChangeEvent() - event: " + event);
+    console.debug("WebRTC.handleICEGatheringStateChangeEvent() ", myPeerConnection.iceGatheringState);
 }

@@ -3,6 +3,7 @@ package org.mtr.web.api.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.mtr.logger.ErrorLogger;
 import org.mtr.logger.MessageLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class WebRTCController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    @GetMapping("/test")
+    @GetMapping("/info")
     @ResponseBody
     public String testWebrtc(HttpServletRequest request){
         MessageLogger.log("WebRTCController - testWebrtc(...) - @GetMapping(\"/api/webrtc/test\")");
@@ -30,8 +31,8 @@ public class WebRTCController {
 
     @PostMapping(path="/ice-server/message")
     @ResponseBody
-    public String handleClientMessage(HttpServletRequest request){
-        MessageLogger.log("WebRTCController - handleClientMessage(...) - @PostMapping(\"/api/webrtc/message\")");
+    public void handleClientMessage(HttpServletRequest request){
+        MessageLogger.log("WebRTCController - handleClientMessage(...) - @PostMapping(\"/api/webrtc/ice-server/message\")");
 
         String messageBody = null;
         String targetUser = null;
@@ -55,7 +56,8 @@ public class WebRTCController {
             targetUser = targetUser.substring((targetUser.indexOf("\"")) + 1, targetUser.lastIndexOf("\""));
         }
 
-        if(targetUser.equalsIgnoreCase("null") || targetUser==null) return messageBody;
+//        if(targetUser.equalsIgnoreCase("null") || targetUser==null) return messageBody;
+        if(targetUser.equalsIgnoreCase("null") || targetUser==null) return;
 
         MessageLogger.log("Sending WebRTC request to " + targetUser);
 
@@ -64,6 +66,6 @@ public class WebRTCController {
         assert !targetUser.equals("null");
         simpMessagingTemplate.convertAndSendToUser( targetUser, "/queue/sendICEMessage", messageBody);
 
-        return messageBody;
+        //return null;
     }
 }

@@ -1,6 +1,7 @@
 package org.mtr.web.api.utilities;
 
 import jakarta.servlet.http.HttpSession;
+import org.mtr.logger.MessageLogger;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -16,11 +17,13 @@ public class StompEndpointHandshakeHandler extends DefaultHandshakeHandler {
 
     @Override
     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
+        MessageLogger.log("StompEndpointHandshakeHandler - determineUser(...)");
         String username = request.getPrincipal().getName();
         return new UsernamePasswordAuthenticationToken(username, null);
     }
 
     public boolean beforeHandshake( ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map attributes) throws Exception {
+        MessageLogger.log("StompEndpointHandshakeHandler - beforeHandshake(...)");
 
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;

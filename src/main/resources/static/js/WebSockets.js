@@ -23,7 +23,7 @@ const textMessagesToUrl = "http://localhost:8080/messages-with"     // TODO: 'lo
 const generalChatUrl = "http://localhost:8080/general-chat"         // TODO: same as above
 
 function main(){
-    console.log("Page loaded, starting WebSockets and STOMP...");
+    console.log("WebSockets.main()\nStarting WebSockets and STOMP...");
 
     sessionStorage.setItem("stompClientMessageDestination", "/app/generalChat");
     sessionStorage.setItem("stompClientUsernameDestination", "");
@@ -84,7 +84,7 @@ function main(){
     //      subscription001.unsubscribe();
 
     stompConnectError = function(error){
-        console.log("STOMP  protocol error: " + error);
+        console.log("WebSocket.js - STOMP  protocol error: " + error);
 
         document.getElementById("sendTextForm").disabled = true;
         document.getElementById("writeText").disabled = true;
