@@ -215,7 +215,7 @@ div#videoBox{
     position: absolute;
 }
 
-video#receivedVideo{
+video#bigScreen{
     background-color: #333333;
     width: 98%;
     height: 98%;
@@ -223,7 +223,7 @@ video#receivedVideo{
     margin: 1% 1%;
 }
 
-video#localVideo{
+video#smallScreen{
     border: 1px solid red;
     background-color: #444444;
     width: 20%;

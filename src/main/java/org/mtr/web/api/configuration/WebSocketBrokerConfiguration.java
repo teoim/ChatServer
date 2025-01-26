@@ -20,6 +20,9 @@ public class WebSocketBrokerConfiguration implements WebSocketMessageBrokerConfi
         registry.addEndpoint("/sendPrivateText")
                 .setHandshakeHandler(new StompEndpointHandshakeHandler())
                 .withSockJS();
+        registry.addEndpoint("/sendICEMessage")
+                .setHandshakeHandler(new StompEndpointHandshakeHandler())
+                .withSockJS();
     }
 
     @Override

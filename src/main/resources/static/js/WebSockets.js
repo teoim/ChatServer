@@ -1,25 +1,29 @@
 
+// window.onload = main;
 window.addEventListener("load", main);
-// window.addEventListener("DOMContentLoaded", main);   // triggeres after dom elements are loaded
+// window.addEventListener("DOMContentLoaded", main);   // triggers after dom elements are loaded
 
 var ws;
 var stompClient;
 var subscription001;
 var subscription002;
+var stompClientMessageDestination = "/app/generalChat"
+var stompClientUsernameDestination = "";
 
 var sendButton;
 var messageInputBox;
 
 var currentUser;
 var lastMessageFetchedTimestamp = new Map();    // lastMessageFetchedTimestamp(username : lastTimestamp)
+var iAmChattingWith = "generalChat";
 
 // TODO define these and other constants in a properties/configuration file
 const cachedTextMessagesWithUser = new Map();
-const textMessagesToUrl = "http://localhost:8080/messages-with"
-const generalChatUrl = "http://localhost:8080/general-chat"
+const textMessagesToUrl = "http://localhost:8080/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
+const generalChatUrl = "http://localhost:8080/general-chat"         // TODO: same as above
 
 function main(){
-    console.log("Page loaded, starting WebSockets and STOMP...");
+    console.log("WebSockets.main()\nStarting WebSockets and STOMP...");
 
     sessionStorage.setItem("stompClientMessageDestination", "/app/generalChat");
     sessionStorage.setItem("stompClientUsernameDestination", "");
@@ -50,7 +54,8 @@ function main(){
 
             let msg = JSON.parse(message.body);
 
-            if(sessionStorage.getItem("iAmChattingWith") == "generalChat") {
+            if(iAmChattingWith == "generalChat") {
+                // console.log(msg.to);
                 appendMessageToChatScreen(msg, "general");
             } else {
                 cacheReceivedMessage(msg);
@@ -79,7 +84,7 @@ function main(){
     //      subscription001.unsubscribe();
 
     stompConnectError = function(error){
-        console.log("STOMP  protocol error: " + error);
+        console.log("WebSocket.js - STOMP  protocol error: " + error);
 
         document.getElementById("sendTextForm").disabled = true;
         document.getElementById("writeText").disabled = true;
@@ -212,6 +217,7 @@ function setFriendsListEventListener(){
             sessionStorage.setItem("stompClientUsernameDestination", usernameEmail);
             sessionStorage.setItem("iAmChattingWith", usernameEmail);
             loadUserChats(usernameEmail);
+            iAmChattingWith = usernameEmail;
             focusOnMessageInputBox();
         });
     }
