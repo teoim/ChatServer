@@ -11,10 +11,10 @@
     </parent>
 
     <groupId>org.mtr</groupId>
-    <artifactId>ChatServerSpringboot</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <name>ChatServerWithSpringboot</name>
-    <description>Chat server with spring boot</description>
+    <artifactId>chat-app</artifactId>
+    <version>0.1</version>
+    <name>chat-app</name>
+    <description>Chat app with spring boot</description>
 
     <dependencies>
         <dependency>
@@ -144,6 +144,15 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${project.parent.version}</version>
                 <configuration>
+                    <docker>
+                        <!-- Docker bug: https://github.com/spring-projects/spring-boot/issues/41199
+                             to be removed when fixed -->
+                        <host>//./pipe/dockerDesktopLinuxEngine</host>
+                    </docker>
+                    <image>
+                        <name>teoim/${project.artifactId}-${project.version}</name>
+                    </image>
+                    <pullPolicy>IF_NOT_PRESENT</pullPolicy>		<!-- default is ALWAYS -->
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
