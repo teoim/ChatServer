@@ -65,7 +65,8 @@ public class ChatService {
         List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
 
 //        messagesDAO = chatRepositoryJpa.getMessagesByTxtFrom(username);   // Test get messages for "generalChat"
-        messagesDAO = chatRepositoryJpa.getMessagesByTxtTo(toTxt);
+//        messagesDAO = chatRepositoryJpa.getMessagesByTxtTo(toTxt);
+        messagesDAO = chatRepositoryJpa.getMessagesByTxtToOrderByTimestamp(toTxt);
 
         for(TextMessageDAO dao : messagesDAO){
             messagesDTO.add( new TextMessageDTO(
@@ -94,7 +95,8 @@ public class ChatService {
         }
 
 //        messagesDAO = chatRepositoryJpa.getMessagesByTxtTo(toTxt);
-        messagesDAO = chatRepositoryJpa.getMessagesByTxtToAndTimestampGreaterThan(toTxt, afterTimestamp);
+//        messagesDAO = chatRepositoryJpa.getMessagesByTxtToAndTimestampGreaterThan(toTxt, afterTimestamp);
+        messagesDAO = chatRepositoryJpa.getMessagesByTxtToAndTimestampGreaterThanOrderByTimestamp(toTxt, afterTimestamp);
 
         for(TextMessageDAO dao : messagesDAO){
             messagesDTO.add( new TextMessageDTO(
@@ -118,7 +120,8 @@ public class ChatService {
         messagesBetweenUsers.add(fromUserEmail);
         messagesBetweenUsers.add(toUserEmail);
 
-        messagesDAO = chatRepositoryJpa.getMessagesByTxtFromInAndTxtToIn(messagesBetweenUsers, messagesBetweenUsers);
+//        messagesDAO = chatRepositoryJpa.getMessagesByTxtFromInAndTxtToIn(messagesBetweenUsers, messagesBetweenUsers);
+        messagesDAO = chatRepositoryJpa.getMessagesByTxtFromInAndTxtToInOrderByTimestamp(messagesBetweenUsers, messagesBetweenUsers);
 
         for(TextMessageDAO dao : messagesDAO){
             messagesDTO.add( new TextMessageDTO(
