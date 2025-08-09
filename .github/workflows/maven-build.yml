@@ -32,8 +32,8 @@ jobs:
         run: rm /home/teo/deployments/chat-app/*.jar
       - name: Copy new jar to deployments directory
         run: cp /home/teo/repos/ChatServer/target/*.jar /home/teo/deployments/chat-app/
-      - name: Run application
-        run: java -jar /home/teo/deployments/chat-app/chat-app-0.1.jar
+#      - name: Run application
+#        run: java -jar /home/teo/deployments/chat-app/chat-app-0.1.jar
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
       - name: Update dependency graph
