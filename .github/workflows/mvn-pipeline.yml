@@ -42,5 +42,11 @@ jobs:
         run: rm /home/teo/deployments/chat-app/*.jar
       - name: Copy new jar to deployments directory
         run: cp /home/teo/repos/ChatServer/target/*.jar /home/teo/deployments/chat-app/
-      #      - name: Run application
-      #        run: java -jar /home/teo/deployments/chat-app/chat-app-0.1.jar
+
+  run:
+
+    runs-on: self-hosted
+
+    steps:
+      - name: Run application
+        run: java -jar /home/teo/deployments/chat-app/chat-app-0.1.
