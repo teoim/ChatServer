@@ -53,4 +53,4 @@ jobs:
 
     steps:
       - name: Run application
-        run: /home/teo/scripts/runapp.sh
+        run: /home/teo/scripts/runapp.sh &
