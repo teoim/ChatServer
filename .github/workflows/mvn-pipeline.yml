@@ -45,7 +45,7 @@ jobs:
       - name: Copy new jar to deployments directory
         run: cp /home/teo/repos/ChatServer/target/*.jar /home/teo/deployments/chat-app/
       - name: chmod on jar file
-        run: chmod 744 /home/teo/deployments/chat-app/chat-app-*.jar
+        run: chmod 777 /home/teo/deployments/chat-app/chat-app-*.jar
 
   run:
     runs-on: self-hosted
