@@ -53,4 +53,4 @@ jobs:
 
     steps:
       - name: Run application
-        run: java -jar /home/teo/deployments/chat-app/chat-app-0.1. &
+        run: /home/teo/scripts/runapp.sh
