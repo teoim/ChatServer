@@ -17,6 +17,9 @@ jobs:
   build:
     runs-on: self-hosted
 
+    permissions:
+      actions: write
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
