@@ -49,8 +49,14 @@ jobs:
 
   run:
     runs-on: self-hosted
-    needs: [build, deploy]
+    needs: [ build, deploy ]
 
     steps:
+      - uses: actions/checkout@v4
+      - uses: JarvusInnovations/background-action@v1
       - name: Run application
-        run: /home/teo/scripts/runapp.sh &
+        with:
+          run: /home/teo/scripts/runapp.sh
+          wait-on: http://localhost:8080/
+          tail: true
+          wait-for: 3m
