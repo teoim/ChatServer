@@ -47,9 +47,18 @@ jobs:
       - name: chmod on jar file
         run: chmod 744 /home/teo/deployments/chat-app/chat-app-*.jar
 
-  run:
+  stop-old-app:
     runs-on: self-hosted
-    needs: [ build, deploy ]
+    needs: [ deploy ]
+
+    steps:
+    - name: Stop Spring Boot app
+      run: /home/teo/scripts/stopapp.sh
+        
+
+  run-new-app:
+    runs-on: self-hosted
+    needs: [ stop-old-app ]
 
     steps:
       - name: Run application
