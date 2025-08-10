@@ -52,11 +52,15 @@ jobs:
     needs: [ build, deploy ]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: JarvusInnovations/background-action@v1
-      - name: Run application
-        with:
-          run: /home/teo/scripts/runapp.sh
-          wait-on: http://localhost:8080/
-          tail: true
-          wait-for: 3m
+      name: Run application
+      run: /home/teo/scripts/runapp.sh
+
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: JarvusInnovations/background-action@v1
+#      - name: Run application
+#        with:
+#          run: /home/teo/scripts/runapp.sh
+#          wait-on: http://localhost:8080/
+#          tail: true
+#          wait-for: 3m
