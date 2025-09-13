@@ -93,13 +93,13 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
-            <version>3.3.7</version>
+            <version>5.3.3</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.webjars/jquery -->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
-            <version>3.6.4</version>
+            <version>3.7.1</version>
         </dependency>
 
         <!--    https://blog.devgenius.io/spring-boot-security-configuration-practically-explained-part6-a-deep-intro-to-56ce03860ad    -->
@@ -133,6 +133,13 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.5.0</version>
+        </dependency>
+
+        <!-- Eureka naming client -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>4.3.0</version>
         </dependency>
 
     </dependencies>
