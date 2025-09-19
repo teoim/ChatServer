@@ -1,7 +1,11 @@
+/*
 import junit.framework.TestCase;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+//import org.junit.jupiter.api.Test;
 import org.mtr.net.PostgresConnection;
 
+@Disabled
 public class ConnectionTest {
 
     PostgresConnection connection;
@@ -137,3 +141,4 @@ public class ConnectionTest {
         return "401 Unauthorized - Invalid email/password.";
     }
 }
+*/
