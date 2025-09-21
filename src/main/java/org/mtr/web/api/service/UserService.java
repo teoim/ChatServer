@@ -44,6 +44,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        MessageLogger.log( "UserService - loadUserByUsername(String)");
         //return this.userRepository.getUserByEmail(username);
         UserDAO customUser;
         User springUser = null;
@@ -64,7 +65,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public UserDAO registerUser(UserDTO newUserDto) {
+    public UserDTO registerUser(UserDTO newUserDto) {
         MessageLogger.log( "UserService - registerUser(UserDTO)");
 
         // TODO: Criptare password
@@ -77,9 +78,10 @@ public class UserService implements UserDetailsService {
         newUserDao.setId( lastUserSeqRepoJPA.findAll().get(0).getLast_value() + 1);
 
         // Default user role is "CHUBARKA"
+        // TODO: implement logic for other/additional user roles
         String defaultUserRole = "CHUBARKA";
-        List<RoleDAO> newUserRole = roleRepositoryJpa.findByName(defaultUserRole);
-        if (newUserRole.isEmpty()){
+        List<RoleDAO> newUserRoleList = roleRepositoryJpa.findByName(defaultUserRole);
+        if (newUserRoleList.isEmpty()){
             RoleDAO newRole = new RoleDAO();
             newRole.setName(defaultUserRole);
 
@@ -90,16 +92,15 @@ public class UserService implements UserDetailsService {
             }
 
             if( !roleService.createRole(newRole).getName().isEmpty()){
-                newUserRole.add(newRole);
+                newUserRoleList.add(newRole);
             } else{
                 ErrorLogger.log(new RoleNotFoundException(), this.getClass().getSimpleName(), "registerUser(UserDTO)");
             }
         }
 
-        newUserDao.setUserRoles( newUserRole);
+        newUserDao.setUserRoles( newUserRoleList);
 
-//        return this.userRepository.registerUser(newUserDao);
-        return this.userRepositoryJpa.save(newUserDao);
+        return daoToDto( this.userRepositoryJpa.save(newUserDao));
         // TODO: Create user role
     }
 
@@ -149,6 +150,11 @@ public class UserService implements UserDetailsService {
 
         return relationship;
     }
+
+
+    /**
+     * ==================== Utility methods ====================
+     * */
 
     private UserDTO daoToDto(UserDAO userDao) {
         return new UserDTO(

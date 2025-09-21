@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
@@ -56,7 +55,7 @@ public class ChatServiceTest {
     public static final String EMAIL_LAURA = "laura@hotmail.com";
 
     @Mock
-    private ChatRepositoryJpa repository;
+    private ChatRepositoryJpa repositoryJpa;
 
     @InjectMocks
     private ChatService service;
@@ -69,37 +68,13 @@ public class ChatServiceTest {
 
         // Database messages:
         // 1 - Private messages:
-        privateMessagesDAO.add(new TextMessageDAO(
-                TIMESTAMP_MSG1,
-                EMAIL_JEFF,
-                EMAIL_LAURA,
-                MSG1_CONTENT));
-        privateMessagesDAO.add(new TextMessageDAO(
-                TIMESTAMP_MSG2,
-                EMAIL_LAURA,
-                EMAIL_JEFF,
-                MSG2_CONTENT));
-        privateMessagesDAO.add(new TextMessageDAO(
-                TIMESTAMP_MSG3,
-                EMAIL_JEFF,
-                EMAIL_LAURA,
-                MSG3_CONTENT));
+        privateMessagesDAO.add(new TextMessageDAO(TIMESTAMP_MSG1, EMAIL_JEFF, EMAIL_LAURA, MSG1_CONTENT));
+        privateMessagesDAO.add(new TextMessageDAO(TIMESTAMP_MSG2, EMAIL_LAURA, EMAIL_JEFF, MSG2_CONTENT));
+        privateMessagesDAO.add(new TextMessageDAO(TIMESTAMP_MSG3, EMAIL_JEFF, EMAIL_LAURA, MSG3_CONTENT));
         // 2 - General Messages
-        generalMessagesDAO.add(new TextMessageDAO(
-                TIMESTAMP_MSG4,
-                EMAIL_JEFF,
-                GENERAL_CHAT_DESTINATION,
-                MSG4_CONTENT));
-        generalMessagesDAO.add(new TextMessageDAO(
-                TIMESTAMP_MSG5,
-                EMAIL_LAURA,
-                GENERAL_CHAT_DESTINATION,
-                MSG5_CONTENT));
-        generalMessagesDAO.add(new TextMessageDAO(
-                TIMESTAMP_MSG6,
-                EMAIL_LAURA,
-                GENERAL_CHAT_DESTINATION,
-                MSG6_CONTENT));
+        generalMessagesDAO.add(new TextMessageDAO(TIMESTAMP_MSG4, EMAIL_JEFF, GENERAL_CHAT_DESTINATION, MSG4_CONTENT));
+        generalMessagesDAO.add(new TextMessageDAO(TIMESTAMP_MSG5, EMAIL_LAURA, GENERAL_CHAT_DESTINATION, MSG5_CONTENT));
+        generalMessagesDAO.add(new TextMessageDAO(TIMESTAMP_MSG6, EMAIL_LAURA, GENERAL_CHAT_DESTINATION, MSG6_CONTENT));
     }
 
 
@@ -115,7 +90,7 @@ public class ChatServiceTest {
 
     @Test
     public void T03_getGeneralMessages() {
-        when(repository.getMessagesByTxtTo(GENERAL_CHAT_DESTINATION)).thenReturn(generalMessagesDAO);
+        when(repositoryJpa.getMessagesByTxtTo(GENERAL_CHAT_DESTINATION)).thenReturn(generalMessagesDAO);
         List<TextMessageDTO> expectedResult = new ArrayList<>();
         for(TextMessageDAO m : generalMessagesDAO){
             expectedResult.add(new TextMessageDTO(
@@ -132,7 +107,7 @@ public class ChatServiceTest {
 
     @Test
     public void T04_getGeneralMessagesAfterTimestamp() {
-        when(repository.getMessagesByTxtToAndTimestampGreaterThan(anyString(), any(Timestamp.class)))
+        when(repositoryJpa.getMessagesByTxtToAndTimestampGreaterThan(anyString(), any(Timestamp.class)))
                 .thenReturn( generalMessagesDAO.stream()
                         .filter(m -> m.getTimestamp().compareTo(TIMESTAMP_MSG4) > 0)
                         .collect(Collectors.toList()));
@@ -157,7 +132,7 @@ public class ChatServiceTest {
 
     @Test
     public void T05_getMessagesBetweenUsers() {
-        when(repository.getMessagesByTxtFromInAndTxtToIn( anyCollection(), anyCollection() ))
+        when(repositoryJpa.getMessagesByTxtFromInAndTxtToIn( anyCollection(), anyCollection() ))
                 .thenReturn(privateMessagesDAO.stream()
                         .filter(m -> List.of(EMAIL_JEFF, EMAIL_LAURA).contains(m.getTxtFrom()) ||
                                 List.of(EMAIL_JEFF, EMAIL_LAURA).contains(m.getTxtTo()))
@@ -191,7 +166,7 @@ public class ChatServiceTest {
                         m.getContent()))
                 .toList();
 
-        when(repository.getMessagesByTxtFromInAndTxtToInAndTimestampGreaterThan(anyCollection(), anyCollection(), any(Timestamp.class)))
+        when(repositoryJpa.getMessagesByTxtFromInAndTxtToInAndTimestampGreaterThan(anyCollection(), anyCollection(), any(Timestamp.class)))
                 .thenReturn(privateMessagesDAO.stream()
                         .filter(m -> m.getTimestamp().after(TIMESTAMP_MSG1))
                         .collect(Collectors.toList()));
