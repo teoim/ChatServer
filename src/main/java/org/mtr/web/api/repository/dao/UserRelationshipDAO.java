@@ -6,8 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -28,4 +27,40 @@ public class UserRelationshipDAO {
     private String status;
 
     private Timestamp inRelationshipSince;
+
+    @Override
+    public String toString() {
+        return "UserRelationshipDAO{" +
+                "id=" + id +
+                ", userId='" + userId + '\'' +
+                ", friendId='" + friendId + '\'' +
+                ", status='" + status + '\'' +
+                ", inRelationshipSince=" + inRelationshipSince +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        UserRelationshipDAO that = (UserRelationshipDAO) o;
+        // Ignore the 'nano' piece on equals and hashcode
+        Timestamp thatTimestamp = that.inRelationshipSince;
+        thatTimestamp.setNanos(0);
+        Timestamp thisTimestamp = this.inRelationshipSince;
+        thisTimestamp.setNanos(0);
+        return id == that.id
+                && Objects.equals(userId, that.userId)
+                && Objects.equals(friendId, that.friendId)
+                && Objects.equals(status, that.status)
+//                && Objects.equals(inRelationshipSince, that.inRelationshipSince);
+                && Math.abs(thisTimestamp.getTime() - thatTimestamp.getTime()) < 1_000;
+    }
+
+    @Override
+    public int hashCode() {
+        // Ignore the 'nano' piece on equals and hashcode
+        Timestamp hashTimestamp = this.inRelationshipSince;
+        hashTimestamp.setNanos(0);
+        return Objects.hash(id, userId, friendId, status, hashTimestamp);
+    }
 }

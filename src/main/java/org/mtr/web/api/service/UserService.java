@@ -104,12 +104,13 @@ public class UserService implements UserDetailsService {
         // TODO: Create user role
     }
 
-    public ArrayList<UserDTO> searchUserByEmailLikeOrNickLike(String textInput) {
+    public List<UserDTO> searchUserByEmailLikeOrNickLike(String textInput) {
         MessageLogger.log( "UserService - searchUserByEmailLikeOrNickLike(String)");
 
-        ArrayList<UserDAO> dbResult = this.userRepositoryJpa.getUsersByEmailLikeIgnoreCaseOrNickLikeIgnoreCase(textInput, textInput);
+        textInput = "%" + textInput + "%";
+        List<UserDAO> dbResult = this.userRepositoryJpa.getUsersByEmailLikeIgnoreCaseOrNickLikeIgnoreCase(textInput, textInput);
 
-        ArrayList<UserDTO> clientResult = new ArrayList<>();
+        ArrayList<UserDTO> clientResult = new ArrayList<>( dbResult.size());
         for(UserDAO userDao : dbResult){
             userDao.setPassword("");
             userDao.setId(0L);
@@ -124,6 +125,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserRelationshipDAO addUserToFriendsList( String myEmail, String myNewFriendEmail) {
+        MessageLogger.log( "UserService - addUserToFriendsList(String,String)");
 
         UserRelationshipDAO relationship = this.userRelationshipJpa.findByUserIdAndFriendId(myEmail, myNewFriendEmail);
 
@@ -142,9 +144,10 @@ public class UserService implements UserDetailsService {
     }
 
     public UserRelationshipDAO blockUser(String myEmail, String blockedUserEmail) {
+        MessageLogger.log( "UserService - blockUser(String,String)");
 
         UserRelationshipDAO relationship = this.userRelationshipJpa.findByUserIdAndFriendId(myEmail, blockedUserEmail);
-        relationship.setStatus("BLOCKED");
+        relationship.setStatus("FOE");
 
         this.userRelationshipJpa.save(relationship);
 

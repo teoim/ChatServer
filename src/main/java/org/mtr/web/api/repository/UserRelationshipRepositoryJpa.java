@@ -10,6 +10,7 @@ import java.util.List;
 public interface UserRelationshipRepositoryJpa extends JpaRepository<UserRelationshipDAO, Long> {
 
     List<UserRelationshipDAO> findByUserId(String userId);
+
     UserRelationshipDAO findByUserIdAndFriendId(String userId, String friendId);
 
 }

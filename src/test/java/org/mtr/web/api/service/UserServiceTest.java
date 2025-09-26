@@ -7,20 +7,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mtr.utils.StringUtils;
+import org.mtr.utils.TestDataFactory;
 import org.mtr.web.api.controller.dto.UserDTO;
 import org.mtr.web.api.repository.*;
-import org.mtr.web.api.repository.dao.RoleDAO;
-import org.mtr.web.api.repository.dao.RolesIdSeqDAO;
-import org.mtr.web.api.repository.dao.UserDAO;
-import org.mtr.web.api.repository.dao.UsersIdSeqDAO;
+import org.mtr.web.api.repository.dao.*;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,14 +35,16 @@ public class UserServiceTest {
     @Mock private RoleRepositoryJPA roleRepositoryJPA;
     @Mock private RolesIdSeqRepositoryJPA lastRoleSeqRepoJPA;
     @Mock private RoleService roleService;
+    @Mock private UserRelationshipRepositoryJpa userRelationshipJpa;
 
     @InjectMocks
-    UserService service;
+    UserService userService;
 
     UserDTO existingUserDto;
     UserDTO newUserDto;
     UserDAO existingUserDao;
     RoleDAO existingUserRoleDao;
+    List<UserDAO> databaseExistingUsers;
 
     @Before
     public void setUp() throws Exception {
@@ -68,7 +68,7 @@ public class UserServiceTest {
         when(userRepositoryJpa.findByEmail(existingUserEmail)).thenReturn(Optional.ofNullable(existingUserDao));
         UserDetails expectedResult = new User(existingUserDao.getUsername(), existingUserDao.getPassword(), existingUserDao.getAuthorities());
 
-        UserDetails actualResponse = service.loadUserByUsername(existingUserEmail);
+        UserDetails actualResponse = userService.loadUserByUsername(existingUserEmail);
 
         assertNotNull(actualResponse);
         assertEquals(expectedResult, actualResponse);
@@ -84,7 +84,7 @@ public class UserServiceTest {
                 "Doe", Date.valueOf("1980-12-31"), "+393461964567",
                 "john@test.com", "bio test", "pass", "photo.png");
 
-        UserDTO actualResponse = service.getUserByEmail("john@test.com");
+        UserDTO actualResponse = userService.getUserByEmail("john@test.com");
 
         assertEquals(expectedResponse, actualResponse);
         assertEquals(expectedResponse.getId(), actualResponse.getId());
@@ -119,7 +119,7 @@ public class UserServiceTest {
                 newUserDto.getName(), newUserDto.getSurname(), newUserDto.getDob(), newUserDto.getPhonenr(),
                 newUserDto.getEmail(), newUserDto.getBio(), newUserDto.getPassword(), newUserDto.getProfilePhotoLink());
 
-        UserDTO actualResponse = service.registerUser(newUserDto);
+        UserDTO actualResponse = userService.registerUser(newUserDto);
 
         assertEquals(expectedResponse, actualResponse);
         assertEquals(expectedResponse.getId(), actualResponse.getId());
@@ -136,17 +136,75 @@ public class UserServiceTest {
     }
 
     @Test
-    @Ignore("To be implemented.")
     public void T04_searchUserByEmailLikeOrNickLike() {
+        List<UserDTO> expectedResponse = new ArrayList<>();
+        databaseExistingUsers = TestDataFactory.createUsers(40);
+        Map<String, List<UserDAO>> scenarios = TestDataFactory.createUserSearchScenarios(databaseExistingUsers);
+        when(userRepositoryJpa.getUsersByEmailLikeIgnoreCaseOrNickLikeIgnoreCase(anyString(), anyString()))
+                .thenAnswer(invocation -> scenarios.get(
+                        StringUtils.stripPercentMarkers(invocation.getArgument(0))));
+
+
+        scenarios.forEach((searchTerm, expectedUsers) -> {
+                    expectedUsers.stream()
+                            .map(userDao -> expectedResponse.add(
+                                    new UserDTO(String.valueOf(userDao.getId()), userDao.getNick(), userDao.getName(),
+                                            userDao.getSurname(), userDao.getDob(), userDao.getPhonenr(),
+                                            userDao.getEmail(), userDao.getBio(), userDao.getPassword(), userDao.getProfilePhotoLink())));
+                });
+
+        scenarios.forEach((searchTerm, expectedUsers) -> {
+            List<UserDTO> actualResponse = userService.searchUserByEmailLikeOrNickLike(searchTerm);
+
+            List<String> expectedEmails = expectedUsers.stream()
+                    .map(UserDAO::getEmail)
+                    .collect(Collectors.toList());
+
+            List<String> actualEmails = actualResponse.stream()
+                    .map(UserDTO::getEmail)
+                    .collect(Collectors.toList());
+
+            assertEquals("Search term: " + searchTerm, expectedEmails, actualEmails);
+        });
     }
 
     @Test
-    @Ignore("To be implemented.")
     public void T05_addUserToFriendsList() {
+        when(userRelationshipJpa.findByUserIdAndFriendId(anyString(), anyString())).thenReturn(null);
+        when(userRelationshipJpa.save(any(UserRelationshipDAO.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserRelationshipDAO newRelationshipExpected = new UserRelationshipDAO();
+        newRelationshipExpected.setUserId("user-email@test.com");
+        newRelationshipExpected.setFriendId("friend-email@test.com");
+        newRelationshipExpected.setStatus("FRIEND");
+        final Timestamp inRelationshipSince = new Timestamp(System.currentTimeMillis());
+        newRelationshipExpected.setInRelationshipSince(inRelationshipSince);
+
+        UserRelationshipDAO newRelationshipActual =
+                userService.addUserToFriendsList("user-email@test.com", "friend-email@test.com");
+
+        assertEquals(newRelationshipExpected, newRelationshipActual);
     }
 
     @Test
-    @Ignore("To be implemented.")
     public void T06_blockUser() {
+        UserRelationshipDAO existingFriendRelationship = new UserRelationshipDAO();
+        existingFriendRelationship.setUserId("user-email@test.com");
+        existingFriendRelationship.setFriendId("friend-email@test.com");
+        existingFriendRelationship.setStatus("FRIEND");
+        existingFriendRelationship.setInRelationshipSince( new Timestamp(System.currentTimeMillis()));
+
+        when(userRelationshipJpa.findByUserIdAndFriendId(anyString(), anyString())).thenReturn(existingFriendRelationship);
+        when(userRelationshipJpa.save(any(UserRelationshipDAO.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+
+        assertEquals( "Before blocking, should be friends.", "FRIEND", existingFriendRelationship.getStatus());
+        UserRelationshipDAO relationshipStatusFoe =
+                userService.blockUser("user-email@test.com", "friend-email@test.com");
+
+        assertEquals("After blocking, should be foes.","FOE", existingFriendRelationship.getStatus());
+        assertEquals(existingFriendRelationship, relationshipStatusFoe);
     }
 }

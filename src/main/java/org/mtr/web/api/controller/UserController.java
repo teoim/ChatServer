@@ -47,8 +47,6 @@ public class UserController {
         MessageLogger.log("UserController - searchUserByEmailOrNick(...) - @RequestMapping(\"searchUserByEmailOrNick/{textInput}\")");
         ArrayList<UserDTO> searchMatches = null;
 
-        textInput = "%" + textInput + "%";
-
         searchMatches = (ArrayList<UserDTO>) userService.searchUserByEmailLikeOrNickLike(textInput);
 
         return searchMatches;
