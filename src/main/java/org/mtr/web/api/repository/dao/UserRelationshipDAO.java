@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
+import org.mtr.web.api.controller.dto.UserRelationshipDTO;
 
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -61,5 +62,9 @@ public class UserRelationshipDAO {
         Timestamp hashTimestamp = this.inRelationshipSince;
         hashTimestamp.setNanos(0);
         return Objects.hash(id, userId, friendId, status, hashTimestamp);
+    }
+
+    public UserRelationshipDTO toDto(){
+        return new UserRelationshipDTO(this.userId, this.friendId, this.status, this.inRelationshipSince);
     }
 }
