@@ -9,6 +9,7 @@ import org.mtr.web.api.repository.dao.UserDAO;
 import org.mtr.web.api.repository.dao.UserRelationshipDAO;
 import org.mtr.web.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,7 +41,7 @@ public class UserController {
     @RequestMapping(
             value = "/searchUserByEmailOrNick/{textInput}",       // TODO: Secure endpoint (any logged user can see messages by any other user)
             method = RequestMethod.GET,
-            produces = "application/json"
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
     public List<UserDTO> searchUserByEmailOrNick(@PathVariable(name="textInput") String textInput){
@@ -56,7 +57,7 @@ public class UserController {
     @RequestMapping(
             value = "/addUserToFriendsList",       // TODO: Secure endpoint ?
             method = RequestMethod.PUT,
-            produces = "application/json"
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
 //    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.PUT})
@@ -82,7 +83,7 @@ public class UserController {
     @RequestMapping(
             value = "/blockUser",       // TODO: Secure endpoint ?
             method = RequestMethod.PUT,
-            produces = "application/json"
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
 //    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.PUT})

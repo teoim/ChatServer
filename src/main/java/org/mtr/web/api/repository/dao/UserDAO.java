@@ -19,9 +19,8 @@ import java.util.*;
 @Table(name = "users")
 public class UserDAO implements UserDetails, CredentialsContainer {
     @Id
-    @Column(columnDefinition = "bigserial", nullable = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
 //    @GeneratedValue(strategy = GenerationType.UUID)
 //    private UUID uuid;

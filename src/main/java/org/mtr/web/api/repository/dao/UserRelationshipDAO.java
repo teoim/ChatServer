@@ -15,9 +15,8 @@ import java.util.Objects;
 public class UserRelationshipDAO {
 
     @Id
-    @Column(columnDefinition = "bigserial", nullable = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotEmpty(message = "UserRelationshipDAO.userId cannot be empty.")
     private String userId;
