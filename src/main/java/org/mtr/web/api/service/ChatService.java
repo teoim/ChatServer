@@ -3,6 +3,7 @@ package org.mtr.web.api.service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.mtr.logger.ErrorLogger;
+import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.controller.dto.TextMessageDTO;
 import org.mtr.web.api.repository.ChatRepositoryJpa;
 import org.mtr.web.api.repository.dao.TextMessageDAO;
@@ -28,6 +29,7 @@ public class ChatService {
      * */
 
     public void processPrivateMessage(TextMessageDTO messageDTO) {
+        MessageLogger.log( "ChatService - processPrivateMessage(TextMessageDTO)");
         try {
             TextMessageDAO messageDAO = dtoToDao(messageDTO);
             TextMessageDAO savedMessage = chatRepositoryJpa.save(messageDAO);
@@ -43,6 +45,7 @@ public class ChatService {
     }
 
     public void processGeneralMessage(TextMessageDTO messageDTO) {
+        MessageLogger.log( "ChatService - processGeneralMessage(TextMessageDTO)");
         try {
             TextMessageDAO messageDAO = dtoToDao(messageDTO);
             TextMessageDAO savedMessage = chatRepositoryJpa.save(messageDAO);
@@ -61,6 +64,7 @@ public class ChatService {
      * */
 
     public List<TextMessageDTO> getGeneralMessages(String toTxt) {
+        MessageLogger.log( "ChatService - getGeneralMessages(String)");
         List<TextMessageDAO> messagesDAO;
         List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
 
@@ -79,6 +83,7 @@ public class ChatService {
     }
 
     public List<TextMessageDTO> getGeneralMessagesAfterTimestamp(String toTxt, String javascriptUTCTimestamp) {
+        MessageLogger.log( "ChatService - getGeneralMessagesAfterTimestamp(String,StringUtcTimestamp)");
         List<TextMessageDAO> messagesDAO;
         List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
 
@@ -108,6 +113,7 @@ public class ChatService {
     }
 
     public List<TextMessageDTO> getMessagesBetweenUsers(String fromUserEmail, String toUserEmail, HttpServletRequest request) {
+        MessageLogger.log( "ChatService - getMessagesBetweenUsers(String,String,HttpServletRequest)");
         List<TextMessageDAO> messagesDAO;
         List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
 
@@ -132,6 +138,7 @@ public class ChatService {
     }
 
     public List<TextMessageDTO> getMessagesBetweenUsersAfterTimestamp(String fromUserEmail, String toUserEmail, String javascriptUTCTimestamp, HttpServletRequest request) {
+        MessageLogger.log( "ChatService - getMessagesBetweenUsersAfterTimestamp(String,String,String,HttpServletRequest)");
         List<TextMessageDAO> messagesDAO;
         List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
 
