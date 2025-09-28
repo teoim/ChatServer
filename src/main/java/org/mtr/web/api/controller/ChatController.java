@@ -6,6 +6,7 @@ import org.mtr.web.api.component.UserSession;
 import org.mtr.web.api.controller.dto.TextMessageDTO;
 import org.mtr.web.api.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -69,7 +70,7 @@ public class ChatController {
     @RequestMapping(
             value = "/general-chat/{txtTo}",       // TODO: Secure endpoint (any logged user can see messages by any other user)
             method = RequestMethod.GET,
-            produces = "application/json"
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
     public List<TextMessageDTO> getMessagesFrom(@PathVariable(name="txtTo") String generalChat){
@@ -84,7 +85,7 @@ public class ChatController {
     @RequestMapping(
             value = "/general-chat/{txtTo}/{timestamp}",       // TODO: Secure endpoint (any logged user can see messages by any other user)
             method = RequestMethod.GET,
-            produces = "application/json"
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
     public List<TextMessageDTO> getMessagesFrom(@PathVariable(name="txtTo") String generalChat, @PathVariable(name="timestamp") String javascriptUTCTimestamp){
@@ -100,7 +101,7 @@ public class ChatController {
     @RequestMapping(
             value = "/messages-with/{email}",
             method = RequestMethod.GET,
-            produces = "application/json"
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
     public List<TextMessageDTO> getMessagesFromCurrentUserToUser(@PathVariable(name="email") String toUserEmail, Principal principal, HttpServletRequest request){
@@ -115,7 +116,7 @@ public class ChatController {
     @RequestMapping(
             value = "/messages-with/{email}/{timestamp}",
             method = RequestMethod.GET,
-            produces = "application/json"
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
     public List<TextMessageDTO> getMessagesFromCurrentUserToUserAfterTimestamp(@PathVariable(name="email") String toUserEmail, @PathVariable(name="timestamp") String javascriptUTCTimestamp, Principal principal, HttpServletRequest request){

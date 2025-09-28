@@ -124,37 +124,6 @@ public class UserService implements UserDetailsService {
         return clientResult;
     }
 
-    public UserRelationshipDAO addUserToFriendsList( String myEmail, String myNewFriendEmail) {
-        MessageLogger.log( "UserService - addUserToFriendsList(String,String)");
-
-        UserRelationshipDAO relationship = this.userRelationshipJpa.findByUserIdAndFriendId(myEmail, myNewFriendEmail);
-
-        if(relationship==null){
-            relationship = new UserRelationshipDAO();
-            relationship.setUserId(myEmail);
-            relationship.setFriendId(myNewFriendEmail);
-            relationship.setStatus("FRIEND");
-            relationship.setInRelationshipSince( new Timestamp( System.currentTimeMillis()));
-            relationship = this.userRelationshipJpa.save(relationship);
-        } else {
-            MessageLogger.log("User " + myNewFriendEmail + " is already a friend of " + myEmail);
-        }
-
-        return relationship;
-    }
-
-    public UserRelationshipDAO blockUser(String myEmail, String blockedUserEmail) {
-        MessageLogger.log( "UserService - blockUser(String,String)");
-
-        UserRelationshipDAO relationship = this.userRelationshipJpa.findByUserIdAndFriendId(myEmail, blockedUserEmail);
-        relationship.setStatus("FOE");
-
-        this.userRelationshipJpa.save(relationship);
-
-        return relationship;
-    }
-
-
     /**
      * ==================== Utility methods ====================
      * */

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
+import org.mtr.web.api.controller.dto.UserRelationshipDTO;
 
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -15,9 +16,8 @@ import java.util.Objects;
 public class UserRelationshipDAO {
 
     @Id
-    @Column(columnDefinition = "bigserial", nullable = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotEmpty(message = "UserRelationshipDAO.userId cannot be empty.")
     private String userId;
@@ -62,5 +62,9 @@ public class UserRelationshipDAO {
         Timestamp hashTimestamp = this.inRelationshipSince;
         hashTimestamp.setNanos(0);
         return Objects.hash(id, userId, friendId, status, hashTimestamp);
+    }
+
+    public UserRelationshipDTO toDto(){
+        return new UserRelationshipDTO(this.userId, this.friendId, this.status, this.inRelationshipSince);
     }
 }
