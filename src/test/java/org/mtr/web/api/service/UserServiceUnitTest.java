@@ -1,11 +1,9 @@
 package org.mtr.web.api.service;
 
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mtr.utils.StringUtils;
 import org.mtr.utils.TestDataFactory;
@@ -20,14 +18,15 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class UserServiceTest {
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public class UserServiceUnitTest {
 
     @Mock private UserRepositoryJpa userRepositoryJpa;
     @Mock private UserRepository userRepository;
@@ -40,15 +39,14 @@ public class UserServiceTest {
     @InjectMocks
     UserService userService;
 
-    UserDTO existingUserDto;
+//    private static UserDTO existingUserDto;
     UserDTO newUserDto;
-    UserDAO existingUserDao;
-    RoleDAO existingUserRoleDao;
+    private static UserDAO existingUserDao;
+    private static RoleDAO existingUserRoleDao;
     List<UserDAO> databaseExistingUsers;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
+    @BeforeAll
+    public static void setUp() throws Exception {
 
         existingUserDao = new UserDAO(3L, "nick", "John", "Doe", Date.valueOf("1980-12-31"),
                 "+393461964567", "john@test.com", "bio test", "pass", "photo.png");
@@ -57,9 +55,9 @@ public class UserServiceTest {
         existingUserRoleDao.setName("USER");
         existingUserDao.setUserRoles(List.of(existingUserRoleDao));
 
-        existingUserDto = new UserDTO(null, existingUserDao.getNick(), existingUserDao.getName(),
+/*        existingUserDto = new UserDTO(null, existingUserDao.getNick(), existingUserDao.getName(),
                 existingUserDao.getSurname(), existingUserDao.getDob(), existingUserDao.getPhonenr(), existingUserDao.getEmail(),
-                existingUserDao.getBio(), existingUserDao.getPassword(), existingUserDao.getProfilePhotoLink());
+                existingUserDao.getBio(), existingUserDao.getPassword(), existingUserDao.getProfilePhotoLink());*/
     }
 
     @Test
@@ -164,7 +162,7 @@ public class UserServiceTest {
                     .map(UserDTO::getEmail)
                     .collect(Collectors.toList());
 
-            assertEquals("Search term: " + searchTerm, expectedEmails, actualEmails);
+            assertEquals(expectedEmails, actualEmails, "Search term: " + searchTerm);
         });
     }
 
@@ -200,11 +198,11 @@ public class UserServiceTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
 
-        assertEquals( "Before blocking, should be friends.", "FRIEND", existingFriendRelationship.getStatus());
+        assertEquals( "FRIEND", existingFriendRelationship.getStatus(), "Before blocking, should be friends.");
         UserRelationshipDAO relationshipStatusFoe =
                 userService.blockUser("user-email@test.com", "friend-email@test.com");
 
-        assertEquals("After blocking, should be foes.","FOE", existingFriendRelationship.getStatus());
+        assertEquals("FOE", existingFriendRelationship.getStatus(), "After blocking, should be foes.");
         assertEquals(existingFriendRelationship, relationshipStatusFoe);
     }
 }

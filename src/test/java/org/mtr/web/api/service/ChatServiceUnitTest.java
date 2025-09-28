@@ -1,14 +1,9 @@
 package org.mtr.web.api.service;
 
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mtr.web.api.controller.dto.TextMessageDTO;
 import org.mtr.web.api.repository.ChatRepositoryJpa;
@@ -20,17 +15,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ChatServiceTest {
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public class ChatServiceUnitTest {
 
-    private final List<TextMessageDAO> generalMessagesDAO = new ArrayList<>();
-    private final List<TextMessageDAO> privateMessagesDAO = new ArrayList<>();
+    private static final List<TextMessageDAO> generalMessagesDAO = new ArrayList<>();
+    private static final List<TextMessageDAO> privateMessagesDAO = new ArrayList<>();
 
     public static final Timestamp TIMESTAMP_MSG1 = Timestamp.valueOf("2024-11-17 06:08:35.345");
     public static final Timestamp TIMESTAMP_MSG2 = Timestamp.valueOf("2024-11-17 07:08:35.567");
@@ -61,10 +55,8 @@ public class ChatServiceTest {
     private ChatService service;
 
 
-    @Before
-    public void setUp() {
-
-        MockitoAnnotations.openMocks(this);
+    @BeforeAll
+    public static void setUp() {
 
         // Database messages:
         // 1 - Private messages:
@@ -79,12 +71,12 @@ public class ChatServiceTest {
 
 
     @Test
-    @Ignore("To be implemented.")
+    @Disabled("To be implemented.")
     public void T01_processPrivateMessage() {
     }
 
     @Test
-    @Ignore("To be implemented.")
+    @Disabled("To be implemented.")
     public void T02_processGeneralMessage() {
     }
 
