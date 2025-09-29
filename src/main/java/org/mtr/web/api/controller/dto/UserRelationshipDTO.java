@@ -12,4 +12,5 @@ public class UserRelationshipDTO {
     private String thatUser;
     private String relationship;
     private Timestamp inRelationshipSince;
+    private Timestamp lastUpdated;
 }

@@ -20,5 +20,5 @@ INSERT INTO user_roles(user_email, role_name) VALUES ('teo@gogo.com', 'USER');
  INSERT INTO user_relationship(user_id, friend_id, status, in_relationship_since) VALUES ('jr@gogo.com', 'hook@gogo.com', 'FRIEND', '2020-06-26 19:33:09.111');
  INSERT INTO user_relationship(user_id, friend_id, status, in_relationship_since) VALUES ('jr@gogo.com', 'teo@gogo.com', 'FRIEND', '2021-06-26 19:33:09.222');
  INSERT INTO user_relationship(user_id, friend_id, status, in_relationship_since) VALUES ('teo@gogo.com', 'jr@gogo.com', 'FRIEND', '2022-06-26 19:33:09.333');
- INSERT INTO user_relationship(user_id, friend_id, status, in_relationship_since) VALUES ('teo@gogo.com', 'hook@gogo.com', 'FRIEND', '2023-06-26 19:33:09.444');
+-- INSERT INTO user_relationship(user_id, friend_id, status, in_relationship_since) VALUES ('teo@gogo.com', 'hook@gogo.com', 'FRIEND', '2023-06-26 19:33:09.444');
  INSERT INTO user_relationship(user_id, friend_id, status, in_relationship_since) VALUES ('hook@gogo.com', 'teo@gogo.com', 'FRIEND', '2024-06-26 19:33:09.555');

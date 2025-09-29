@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 @Import(PreAuthenticatedTestConfig.class)
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public abstract class BaseAbstractIntegrationTest {
+public abstract class BaseAbstractIT {
 
     @LocalServerPort protected int port;
     @Autowired protected TestRestTemplate restTemplate;

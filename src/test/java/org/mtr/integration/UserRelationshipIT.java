@@ -7,8 +7,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * Based on src/test/resources/import.sql
  */
 @Log4j2
-public class UserRelationshipIntegrationTest extends BaseAbstractIntegrationTest {
+public class UserRelationshipIT extends BaseAbstractIT {
 
     @Test
-    public void T01_testBlockUser(){
+    public void T201_blockUser(){
         String userEmailPrincipal = "teo@gogo.com"; // based on test config
         String userEmailToBlock = "jr@gogo.com";
         String urlGetCurrent = getBaseUrl() + "/relationships/" + userEmailToBlock;
@@ -60,7 +58,7 @@ public class UserRelationshipIntegrationTest extends BaseAbstractIntegrationTest
 
 
     @Test
-    public void T02_testBlockUser(){
+    public void T202_blockUser(){
         String userEmailToBlock = "hook@gogo.com";
         String url = getBaseUrl() + "/blockUser";
         HttpEntity<String> request = new HttpEntity<>(userEmailToBlock);
@@ -76,5 +74,62 @@ public class UserRelationshipIntegrationTest extends BaseAbstractIntegrationTest
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("Blocked relationship:  hook@gogo.com is FOE", response.getBody());
+    }
+
+    @Test
+    public void T203_addUserToFriendsList(){
+        String newFriendEmail = "hook@gogo.com";
+        String url = getBaseUrl() + "/addUserToFriendsList";
+        HttpEntity<String> request = new HttpEntity<>(newFriendEmail);
+        ResponseEntity<String> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.PUT,
+                        request,
+                        String.class
+                );
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("New relationship:  " + newFriendEmail + " is FRIEND" , response.getBody());
+    }
+
+    @Test
+    public void T401_addUserToFriendsList_emptyUserEmail(){
+        String newFriendEmail = "";
+        String url = getBaseUrl() + "/addUserToFriendsList";
+        HttpEntity<String> request = new HttpEntity<>(newFriendEmail);
+        ResponseEntity<String> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.PUT,
+                        request,
+                        String.class
+                );
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("UserController - addUserToFriendsList - newFriendEmail is null" , response.getBody());
+    }
+
+    @Test
+    public void T402_addUserToFriendsList_inexistentUserEmail(){
+        String newFriendEmail = "inexistent@test.org";
+        String url = getBaseUrl() + "/addUserToFriendsList";
+        HttpEntity<String> request = new HttpEntity<>(newFriendEmail);
+        ResponseEntity<String> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.PUT,
+                        request,
+                        String.class
+                );
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(String.format("[User email is inexistent: %s]",newFriendEmail) , response.getBody());
     }
 }

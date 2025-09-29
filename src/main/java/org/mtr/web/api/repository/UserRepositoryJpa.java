@@ -14,4 +14,6 @@ public interface UserRepositoryJpa extends JpaRepository<UserDAO, Integer> {
     List<UserDAO> getUsersByEmailLikeIgnoreCaseOrNickLikeIgnoreCase(String emailLike, String nickLike);
 
     UserDAO getUserByEmail(String myEmail);
+
+    boolean existsByEmail(String email);
 }

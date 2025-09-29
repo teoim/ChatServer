@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * Based on src/test/resources/import.sql
  */
 @Log4j2
-public class UserIntegrationTest extends BaseAbstractIntegrationTest {
+public class UserIT extends BaseAbstractIT {
 
     private final UserController userController;
 
 
     @Autowired
-    public UserIntegrationTest(UserController userController) {
+    public UserIT(UserController userController) {
         this.userController = userController;
     }
 
