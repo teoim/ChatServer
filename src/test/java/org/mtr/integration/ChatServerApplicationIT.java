@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ChatServerApplicationTest extends BaseAbstractIntegrationTest {
+public class ChatServerApplicationIT extends BaseAbstractIT {
 
     @Autowired
     private AuthenticationController authenticationController;

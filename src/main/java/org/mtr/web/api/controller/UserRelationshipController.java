@@ -7,11 +7,13 @@ import org.mtr.web.api.controller.dto.UserRelationshipDTO;
 import org.mtr.web.api.repository.dao.UserRelationshipDAO;
 import org.mtr.web.api.service.UserRelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.security.Principal;
 import java.util.stream.Collectors;
 
@@ -22,9 +24,10 @@ public class UserRelationshipController {
     UserRelationshipService userRelationshipService;
 
     @GetMapping("/relationships/{thatEmail}")
-    public UserRelationshipDTO getRelationshipBetweenUsers(@PathVariable String thatEmail, Principal principal){
+    public HttpEntity<UserRelationshipDTO> getRelationshipBetweenUsers(@PathVariable String thatEmail, Principal principal){
         MessageLogger.log("UserRelationshipController - getRelationshipBetweenUsers(Principal, String)");
-        return userRelationshipService.getRelationshipBetween(principal.getName(), thatEmail);
+        return ResponseEntity.ok()
+                .body(userRelationshipService.getRelationshipBetween(principal.getName(), thatEmail));
     }
 
     @RequestMapping(
@@ -34,23 +37,27 @@ public class UserRelationshipController {
     )
     @ResponseBody
 //    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.PUT})
-    public String addUserToFriendsList(HttpServletRequest request, Principal principal){
-        MessageLogger.log("UserController - addUserToFriendsList(...) - @RequestMapping(\"addUserToFriendsList\")");
+    public HttpEntity<String> addUserToFriendsList(HttpServletRequest request, Principal principal){
+        MessageLogger.log("UserRelationshipController - addUserToFriendsList(...) - @RequestMapping(\"addUserToFriendsList\")");
 
         String newFriendEmail = null;
         try {
             newFriendEmail = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-            if(newFriendEmail.isBlank() || newFriendEmail==null){
-                throw new IOException("UserController - addUserToFriendsList - newFriendEmail is null");
+            if(newFriendEmail.isBlank()){
+                return ResponseEntity.badRequest().body("UserController - addUserToFriendsList - newFriendEmail is null");
             }
         } catch (IOException e) {
-            //throw new RuntimeException(e);
             ErrorLogger.log(e, this.getClass().getSimpleName(), "addUserToFriendsList(HttpServletRequest)");
         }
 
-        UserRelationshipDAO newRelationship = this.userRelationshipService.addUserToFriendsList( principal.getName(), newFriendEmail);
+        UserRelationshipDAO newRelationship = null;
+        try {
+            newRelationship = this.userRelationshipService.addUserToFriendsList(principal.getName(), newFriendEmail);
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
-        return "New relationship:  " + newRelationship.getFriendId() + " is " + newRelationship.getStatus();
+        return ResponseEntity.ok("New relationship:  " + newRelationship.getFriendId() + " is " + newRelationship.getStatus());
     }
 
     @RequestMapping(
@@ -60,19 +67,20 @@ public class UserRelationshipController {
     )
     @ResponseBody
 //    @CrossOrigin(origins = "http://localhost:8080", methods = {RequestMethod.PUT})
-    public String blockUser(HttpServletRequest request, Principal principal){
-        MessageLogger.log("UserController - blockUser(...) - @RequestMapping(\"blockUser\")");
+    public ResponseEntity<String> blockUser(HttpServletRequest request, Principal principal){
+        MessageLogger.log("UserRelationshipController - blockUser(...) - @RequestMapping(\"blockUser\")");
 
         String blockedUserEmail = null;
         try {
             blockedUserEmail = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (IOException e) {
-            //throw new RuntimeException(e);
             ErrorLogger.log(e, this.getClass().getSimpleName(), "addUserToFriendsList(HttpServletRequest)");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
         UserRelationshipDAO newRelationship = this.userRelationshipService.blockUser( principal.getName(), blockedUserEmail);
 
-        return "Blocked relationship:  " + newRelationship.getFriendId() + " is " + newRelationship.getStatus();
+        return ResponseEntity.ok(
+                "Blocked relationship:  " + newRelationship.getFriendId() + " is " + newRelationship.getStatus());
     }
 }
