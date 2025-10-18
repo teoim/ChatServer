@@ -12,9 +12,7 @@ import org.mtr.web.api.repository.UserRelationshipRepositoryJpa;
 import org.mtr.web.api.repository.dao.UserDAO;
 import org.mtr.web.api.repository.dao.UserRelationshipDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -22,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -52,7 +49,6 @@ public class AuthenticationService {
     public UserDAO login(AuthenticationDTO authenticationDto, HttpServletRequest request) {
         MessageLogger.log( "AuthenticationService - login(AuthenticationDTO)");
         UserDAO user =  this.authRepository.findByEmailAndPassword( authenticationDto.getUsername(), authenticationDto.getPassword());
-        //return this.authRepositoryImpl.findUserByEmailAndPassword(authenticationDto.getUsername(), authenticationDto.getPassword());
 
         List<UserRelationshipDAO> userRelationshipDAOList;
 
@@ -74,7 +70,8 @@ public class AuthenticationService {
             // request.getSession().getId()
 
 
-            userRelationshipDAOList = this.userRelationshipRepositoryJpa.findByUserId(user.getEmail());
+            userRelationshipDAOList = this.userRelationshipRepositoryJpa.findByUserId(
+                    user.getEmail()!=null ? user.getEmail() : authenticationDto.getUsername());
 
             List<String> friendsList = new ArrayList<>();
             for( UserRelationshipDAO friend : userRelationshipDAOList){
@@ -92,7 +89,7 @@ public class AuthenticationService {
 
             SecurityContextHolder.setContext(context);
 
-            userSession.setEmail(user.getEmail() + " - " + user.getNick());      // TODO: inlocuirea email-ului in sesiune cu un token jwt
+            userSession.setEmail(user.getEmail() + " - " + user.getNick());      // TODO: replace by session token
             userSession.setUsername(user.getNick());
             userSession.setBio(user.getBio());
         }
