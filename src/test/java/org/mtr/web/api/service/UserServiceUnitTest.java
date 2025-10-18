@@ -12,14 +12,14 @@ import org.mtr.web.api.repository.*;
 import org.mtr.web.api.repository.dao.*;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -60,7 +60,7 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void T01_loadUserByUsername() {
+    public void T201_loadUserByUsername_ok() {
         final String existingUserEmail = "john@test.com";
         when(userRepositoryJpa.findByEmail(existingUserEmail)).thenReturn(Optional.ofNullable(existingUserDao));
         UserDetails expectedResult = new User(existingUserDao.getUsername(), existingUserDao.getPassword(), existingUserDao.getAuthorities());
@@ -75,7 +75,7 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void T02_getUserByEmail() {
+    public void T202_getUserByEmail_ok() {
         when(userRepository.getUserByEmail("john@test.com")).thenReturn(existingUserDao);
         UserDTO expectedResponse = new UserDTO(String.valueOf(3L), "nick", "John",
                 "Doe", Date.valueOf("1980-12-31"), "+393461964567",
@@ -97,7 +97,7 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void T03_registerUser() {
+    public void T203_registerUser_ok() {
         newUserDto = new UserDTO(null, "new-nick", "John", "Doe",
                 Date.valueOf("1980-12-31"), "+393461964567", "john@test.com",
                 "bio test", "pass", "new-photo.png");
@@ -133,7 +133,7 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void T04_searchUserByEmailLikeOrNickLike() {
+    public void T204_searchUserByEmailLikeOrNickLike_ok() {
         List<UserDTO> expectedResponse = new ArrayList<>();
         databaseExistingUsers = TestDataFactory.createUsers(40);
         Map<String, List<UserDAO>> scenarios = TestDataFactory.createUserSearchScenarios(databaseExistingUsers);
@@ -163,5 +163,23 @@ public class UserServiceUnitTest {
 
             assertEquals(expectedEmails, actualEmails, "Search term: " + searchTerm);
         });
+    }
+
+    @Test
+    public void T401_loadUserByUsername_ko() {
+        final String existingUserEmail = "inexistent@test.com";
+        when(userRepositoryJpa.findByEmail(existingUserEmail)).thenReturn(Optional.empty());
+        UserDetails expectedResult = new User(existingUserDao.getUsername(), existingUserDao.getPassword(), existingUserDao.getAuthorities());
+
+        try {
+            UserDetails actualResponse = userService.loadUserByUsername(existingUserEmail);
+        } catch (Exception e){
+            assertEquals(UsernameNotFoundException.class, e.getClass());
+            assertEquals("Auth failed.", e.getMessage());
+            return;
+        }
+
+        fail(String.format("Exception expected but not thrown: %s", UsernameNotFoundException.class));
+
     }
 }

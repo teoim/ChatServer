@@ -28,34 +28,31 @@ public class ChatService {
      * ==================== Messages sent processing methods ====================
      * */
 
-    public void processPrivateMessage(TextMessageDTO messageDTO) {
+    public TextMessageDTO processPrivateMessage(TextMessageDTO messageDTO) {
         MessageLogger.log( "ChatService - processPrivateMessage(TextMessageDTO)");
+        TextMessageDTO savedMessage = null;
         try {
             TextMessageDAO messageDAO = dtoToDao(messageDTO);
-            TextMessageDAO savedMessage = chatRepositoryJpa.save(messageDAO);
+            savedMessage = daoToDto(chatRepositoryJpa.save(messageDAO));
         }
-        catch(IllegalArgumentException e ){
+        catch(IllegalArgumentException | OptimisticLockingFailureException | NullPointerException e ){
 //            ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
             ErrorLogger.log(e, Thread.currentThread().getStackTrace()[1]);
         }
-        catch(OptimisticLockingFailureException e ){
-//            ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
-            ErrorLogger.log(e, Thread.currentThread().getStackTrace()[1]);
-        }
+        return savedMessage;
     }
 
-    public void processGeneralMessage(TextMessageDTO messageDTO) {
+    public TextMessageDTO processGeneralMessage(TextMessageDTO messageDTO) {
         MessageLogger.log( "ChatService - processGeneralMessage(TextMessageDTO)");
+        TextMessageDTO savedMessage = null;
         try {
             TextMessageDAO messageDAO = dtoToDao(messageDTO);
-            TextMessageDAO savedMessage = chatRepositoryJpa.save(messageDAO);
+            savedMessage = daoToDto(chatRepositoryJpa.save(messageDAO));
         }
-        catch(IllegalArgumentException e ){
+        catch(IllegalArgumentException | OptimisticLockingFailureException | NullPointerException e ){
             ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
         }
-        catch(OptimisticLockingFailureException e ){
-            ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
-        }
+        return savedMessage;
     }
 
 

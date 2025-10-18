@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mtr.web.api.controller.dto.TextMessageDTO;
 import org.mtr.web.api.repository.ChatRepositoryJpa;
 import org.mtr.web.api.repository.dao.TextMessageDAO;
+import org.mtr.web.api.utilities.Utilities;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -71,17 +72,27 @@ public class ChatServiceUnitTest {
 
 
     @Test
-    @Disabled("To be implemented.")
-    public void T01_processPrivateMessage() {
+    public void T201_processPrivateMessage_ok() {
+        when(repositoryJpa.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        TextMessageDTO newMessageDto = new TextMessageDTO(TIMESTAMP_MSG1, EMAIL_JEFF, EMAIL_LAURA, MSG1_CONTENT);
+
+        TextMessageDTO actualAnswer = service.processPrivateMessage(newMessageDto);
+
+        assertEquals(actualAnswer, newMessageDto);
     }
 
     @Test
-    @Disabled("To be implemented.")
-    public void T02_processGeneralMessage() {
+    public void T202_processGeneralMessage_ok() {
+        when(repositoryJpa.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        TextMessageDTO newMessageDtoExpected = new TextMessageDTO(TIMESTAMP_MSG2, EMAIL_JEFF, EMAIL_LAURA, MSG2_CONTENT);
+
+        TextMessageDTO actualAnswer = service.processGeneralMessage(newMessageDtoExpected);
+
+        assertEquals(newMessageDtoExpected, actualAnswer);
     }
 
     @Test
-    public void T03_getGeneralMessages() {
+    public void T203_getGeneralMessages_ok() {
         when(repositoryJpa.getMessagesByTxtTo(GENERAL_CHAT_DESTINATION)).thenReturn(generalMessagesDAO);
         List<TextMessageDTO> expectedResult = new ArrayList<>();
         for(TextMessageDAO m : generalMessagesDAO){
@@ -98,7 +109,7 @@ public class ChatServiceUnitTest {
     }
 
     @Test
-    public void T04_getGeneralMessagesAfterTimestamp() {
+    public void T204_getGeneralMessagesAfterTimestamp_ok() {
         when(repositoryJpa.getMessagesByTxtToAndTimestampGreaterThan(anyString(), any(Timestamp.class)))
                 .thenReturn( generalMessagesDAO.stream()
                         .filter(m -> m.getTimestamp().compareTo(TIMESTAMP_MSG4) > 0)
@@ -123,7 +134,7 @@ public class ChatServiceUnitTest {
     }
 
     @Test
-    public void T05_getMessagesBetweenUsers() {
+    public void T205_getMessagesBetweenUsers_ok() {
         when(repositoryJpa.getMessagesByTxtFromInAndTxtToIn( anyCollection(), anyCollection() ))
                 .thenReturn(privateMessagesDAO.stream()
                         .filter(m -> List.of(EMAIL_JEFF, EMAIL_LAURA).contains(m.getTxtFrom()) ||
@@ -148,7 +159,7 @@ public class ChatServiceUnitTest {
     }
 
     @Test
-    public void T06_getMessagesBetweenUsersAfterTimestamp() {
+    public void T206_getMessagesBetweenUsersAfterTimestamp_ok() {
         List<TextMessageDTO> expectedResult = privateMessagesDAO.stream()
                 .filter(m -> m.getTimestamp().after(TIMESTAMP_MSG1))
                 .map(m -> new TextMessageDTO(
@@ -166,5 +177,19 @@ public class ChatServiceUnitTest {
         List<TextMessageDTO> actualResult = service.getMessagesBetweenUsersAfterTimestamp(EMAIL_JEFF, EMAIL_LAURA, TIMESTAMP_MSG1_JAVASCRIPT_ISO, null);
 
         assertEquals( expectedResult.size(), actualResult.size());
+    }
+
+    @Test
+    public void T401_processPrivateMessage_ko() {
+        TextMessageDTO actualAnswer = service.processPrivateMessage(null);
+
+        assertEquals(null, actualAnswer);
+    }
+
+    @Test
+    public void T402_processGeneralMessage_ko() {
+        TextMessageDTO actualAnswer = service.processGeneralMessage(null);
+
+        assertEquals(null, actualAnswer);
     }
 }
