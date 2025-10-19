@@ -32,6 +32,8 @@ function main(){
     currentUser = document.getElementById("emailSpan").textContent;
 
     document.getElementById('logoutForm').onsubmit = logout;
+    document.getElementById("chattingWithDiv").onclick = toggleFriendListDisplayProperty;
+    document.getElementById("chatBox").onclick = hideFriendList;
 
     //ws = new WebSocket("ws://localhost:8080/generalChat");
     ws = new SockJS("/generalChat");   // unlike WebSocket(), SockJS() provides fall-back protocols, if WebSockets are not supported in the browser
@@ -55,7 +57,6 @@ function main(){
             let msg = JSON.parse(message.body);
 
             if(iAmChattingWith == "generalChat") {
-                // console.log(msg.to);
                 appendMessageToChatScreen(msg, "general");
             } else {
                 cacheReceivedMessage(msg);
@@ -117,6 +118,10 @@ function main(){
             sendForm(inputText);
         }
     });
+
+    messageInputBox.addEventListener("focus", function (e) {
+            hideFriendList();
+        });
 
     sendForm = function(inputText){
         // stompClient.send("/app/generalChat", {}, document.getElementById("writeText").value);  // "/app" will farward messages to the @Controller with a "/generalChat" endpoint
@@ -216,6 +221,7 @@ function setFriendsListEventListener(){
             sessionStorage.setItem("stompClientMessageDestination", "/app/sendPrivateText");
             sessionStorage.setItem("stompClientUsernameDestination", usernameEmail);
             sessionStorage.setItem("iAmChattingWith", usernameEmail);
+            document.getElementById("chattingWithH3").innerText = usernameEmail;
             loadUserChats(usernameEmail);
             iAmChattingWith = usernameEmail;
             focusOnMessageInputBox();
@@ -227,6 +233,8 @@ function setFriendsListEventListener(){
         sessionStorage.setItem("stompClientMessageDestination", "/app/generalChat");
         sessionStorage.setItem("stompClientUsernameDestination", "");
         sessionStorage.setItem("iAmChattingWith", "generalChat");
+        document.getElementById("chattingWithH3").innerText = "General chat";
+        iAmChattingWith = "generalChat";
         loadGeneralChats();
         focusOnMessageInputBox()
     });
@@ -326,13 +334,37 @@ function loadGeneralChats(){
                     appendMessageToChatScreen(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
                 } else {
                     // Message received by the current user
-                    appendMessageToChatScreen(value, "");
+                    appendMessageToChatScreen(value, "general");
                 }
             });
             console.log("Chats local map complete.\nLast message: " + lastMessageFetchedTimestamp.get(iAmChattingWith));
             //sessionStorage.setItem("iAmChattingWith", "");  // TODO: what whas this for?
         }
     });
+}
+
+function toggleFriendListDisplayProperty(){
+//    console.log(screen.availWidth + " x " + screen.availHeight);
+//    if(window.innerWidth > 1200) {
+    if(screen.availWidth > 1200) { return; }
+
+    var friendsList = document.getElementById("friendList");
+
+//    if (window.getComputedStyle(friendList).getPropertyValue("visibility")==="collapse"){
+    if (window.getComputedStyle(friendList).getPropertyValue("display")==="none"){
+        friendList.style.setProperty("display", "block");
+//        friendList.style.setProperty("visibility", "visible ");
+//        friendList.style.setProperty("float", "left");
+//        friendList.style.setProperty("z-index", 5);
+    } else {
+//        friendList.style.setProperty("visibility", "collapse");
+        friendList.style.setProperty("display", "none");
+    }
+}
+
+function hideFriendList(){
+    if(screen.availWidth > 1200) { return; }
+    document.getElementById("friendList").style.setProperty("display", "none");
 }
 
 function focusOnMessageInputBox(){

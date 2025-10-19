@@ -20,7 +20,13 @@ public interface ChatRepositoryJpa extends JpaRepository<TextMessageDAO, Timesta
 
     List<TextMessageDAO> getMessagesByTxtToAndTimestampGreaterThan(String username, Timestamp afterTimestamp);
 
-    List<TextMessageDAO> getMessagesByTxtFromInAndTxtToIn(Collection<String> fromUserEmails, Collection<String>  toUsersEmails);
+    List<TextMessageDAO> getMessagesByTxtFromInAndTxtToIn(Collection<String> fromUserEmails, Collection<String> toUsersEmails);
 
     List<TextMessageDAO> getMessagesByTxtFromInAndTxtToInAndTimestampGreaterThan(Collection<String> fromUserEmails, Collection<String> toUsersEmails, Timestamp afterTimestamp);
+
+    List<TextMessageDAO> getMessagesByTxtFromInAndTxtToInOrderByTimestamp(Collection<String> fromUserEmails, Collection<String> toUsersEmails);
+
+    List<TextMessageDAO> getMessagesByTxtToOrderByTimestamp(String username);
+
+    List<TextMessageDAO> getMessagesByTxtToAndTimestampGreaterThanOrderByTimestamp(String username, Timestamp afterTimestamp);
 }
