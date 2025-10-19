@@ -63,11 +63,13 @@ public class ChatService {
     public List<TextMessageDTO> getGeneralMessages(String toTxt) {
         MessageLogger.log( "ChatService - getGeneralMessages(String)");
         List<TextMessageDAO> messagesDAO;
-        List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
+        List<TextMessageDTO> messagesDTO;
 
 //        messagesDAO = chatRepositoryJpa.getMessagesByTxtFrom(username);   // Test get messages for "generalChat"
-        messagesDAO = chatRepositoryJpa.getMessagesByTxtTo(toTxt);
+//        messagesDAO = chatRepositoryJpa.getMessagesByTxtTo(toTxt);
+        messagesDAO = chatRepositoryJpa.getMessagesByTxtToOrderByTimestamp(toTxt);
 
+        messagesDTO = new ArrayList<>(messagesDAO.size());
         for(TextMessageDAO dao : messagesDAO){
             messagesDTO.add( new TextMessageDTO(
                     dao.getTimestamp(),
@@ -82,7 +84,7 @@ public class ChatService {
     public List<TextMessageDTO> getGeneralMessagesAfterTimestamp(String toTxt, String javascriptUTCTimestamp) {
         MessageLogger.log( "ChatService - getGeneralMessagesAfterTimestamp(String,StringUtcTimestamp)");
         List<TextMessageDAO> messagesDAO;
-        List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
+        List<TextMessageDTO> messagesDTO;
 
         // Convert javascriptUTCTimestamp from UTC to local format
         Timestamp afterTimestamp = null;
@@ -96,8 +98,10 @@ public class ChatService {
         }
 
 //        messagesDAO = chatRepositoryJpa.getMessagesByTxtTo(toTxt);
-        messagesDAO = chatRepositoryJpa.getMessagesByTxtToAndTimestampGreaterThan(toTxt, afterTimestamp);
+//        messagesDAO = chatRepositoryJpa.getMessagesByTxtToAndTimestampGreaterThan(toTxt, afterTimestamp);
+        messagesDAO = chatRepositoryJpa.getMessagesByTxtToAndTimestampGreaterThanOrderByTimestamp(toTxt, afterTimestamp);
 
+        messagesDTO = new ArrayList<>(messagesDAO.size());
         for(TextMessageDAO dao : messagesDAO){
             messagesDTO.add( new TextMessageDTO(
                     dao.getTimestamp(),
@@ -112,7 +116,7 @@ public class ChatService {
     public List<TextMessageDTO> getMessagesBetweenUsers(String fromUserEmail, String toUserEmail, HttpServletRequest request) {
         MessageLogger.log( "ChatService - getMessagesBetweenUsers(String,String,HttpServletRequest)");
         List<TextMessageDAO> messagesDAO;
-        List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
+        List<TextMessageDTO> messagesDTO;
 
 //        HttpSession session = request.getSession(true);
 //        session.setAttribute("iAmChattingWith", toUserEmail);
@@ -121,8 +125,10 @@ public class ChatService {
         messagesBetweenUsers.add(fromUserEmail);
         messagesBetweenUsers.add(toUserEmail);
 
-        messagesDAO = chatRepositoryJpa.getMessagesByTxtFromInAndTxtToIn(messagesBetweenUsers, messagesBetweenUsers);
+//        messagesDAO = chatRepositoryJpa.getMessagesByTxtFromInAndTxtToIn(messagesBetweenUsers, messagesBetweenUsers);
+        messagesDAO = chatRepositoryJpa.getMessagesByTxtFromInAndTxtToInOrderByTimestamp(messagesBetweenUsers, messagesBetweenUsers);
 
+        messagesDTO = new ArrayList<>(messagesDAO.size());
         for(TextMessageDAO dao : messagesDAO){
             messagesDTO.add( new TextMessageDTO(
                     dao.getTimestamp(),
@@ -137,7 +143,7 @@ public class ChatService {
     public List<TextMessageDTO> getMessagesBetweenUsersAfterTimestamp(String fromUserEmail, String toUserEmail, String javascriptUTCTimestamp, HttpServletRequest request) {
         MessageLogger.log( "ChatService - getMessagesBetweenUsersAfterTimestamp(String,String,String,HttpServletRequest)");
         List<TextMessageDAO> messagesDAO;
-        List<TextMessageDTO> messagesDTO = new ArrayList<TextMessageDTO>();
+        List<TextMessageDTO> messagesDTO;
 
 //        HttpSession session = request.getSession(true);
 //        session.setAttribute("iAmChattingWith", toUserEmail);
@@ -159,6 +165,7 @@ public class ChatService {
 
         messagesDAO = chatRepositoryJpa.getMessagesByTxtFromInAndTxtToInAndTimestampGreaterThan(messagesBetweenUsers, messagesBetweenUsers, afterTimestamp);
 
+        messagesDTO = new ArrayList<>(messagesDAO.size());
         for(TextMessageDAO dao : messagesDAO){
             messagesDTO.add( new TextMessageDTO(
                     dao.getTimestamp(),

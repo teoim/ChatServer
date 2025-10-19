@@ -47,3 +47,24 @@ header#pageHeader{
 span#emailSpan {
 	color: darkred;
 }
+
+
+/********** Responsiveness **********/
+
+
+/*@media screen and (max-width: 1200px) and (orientation: portrait){*/
+@media screen and (max-width: 1200px){
+    header#pageHeader{
+        /*display: none;*/
+        position: static;
+        padding: 1%;
+        width: 98%;
+        height: auto;
+    }
+
+    form#logoutForm {
+        position: absolute;
+        top: 2.3%;
+        right: 3%;
+    }
+}

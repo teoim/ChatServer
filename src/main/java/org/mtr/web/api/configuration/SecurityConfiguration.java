@@ -15,6 +15,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 @Configuration
@@ -36,7 +43,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
             http.csrf().disable();
-            http.cors().disable();
+//            http.cors().disable();
 
             //https://blog.devgenius.io/spring-boot-security-configuration-practically-explained-part6-a-deep-intro-to-56ce03860ad
             /*http
@@ -88,5 +95,23 @@ public class SecurityConfiguration {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource(){
+        // https://docs.spring.io/spring-security/reference/reactive/integrations/cors.html
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins( List.of("chunkchat.ddns.net:8080"));
+//        configuration.setAllowedOriginPatterns( List.of(CorsConfiguration.ALL));
+//        configuration.setAllowCredentials(true);
+        configuration.applyPermitDefaultValues();
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders( List.of(CorsConfiguration.ALL));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("chunkchat.ddns.net:8080/**", configuration);
+//        source.registerCorsConfiguration("chunkchat.ddns.net/**", configuration);   // ?
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
