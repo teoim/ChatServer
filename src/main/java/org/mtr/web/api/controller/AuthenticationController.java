@@ -88,8 +88,8 @@ public class AuthenticationController {
         //int x = this.userService.registerUser(newUser);
         //userSession.setEmail( "SQL insert code: " + x + " - " + newUser.getEmail());
         //MessageLogger.log( "User registration\nSQL insert code: " + x + " - " + newUser.getEmail());
-        UserDAO newUserDao = this.userService.registerUser(newUser);
-        MessageLogger.log( "User registration\nNew user: \n\t" + newUserDao.toString() + "\n\t - " + newUser.getEmail());
+        UserDTO newUserDto = this.userService.registerUser(newUser);
+        MessageLogger.log( "User registration\nNew user: \n\t" + newUserDto.toString() + "\n\t - " + newUser.getEmail());
         return new ModelAndView("redirect:/dashboard");
     }
 

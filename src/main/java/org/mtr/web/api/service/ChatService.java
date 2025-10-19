@@ -3,6 +3,7 @@ package org.mtr.web.api.service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.mtr.logger.ErrorLogger;
+import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.controller.dto.TextMessageDTO;
 import org.mtr.web.api.repository.ChatRepositoryJpa;
 import org.mtr.web.api.repository.dao.TextMessageDAO;
@@ -27,32 +28,31 @@ public class ChatService {
      * ==================== Messages sent processing methods ====================
      * */
 
-    public void processPrivateMessage(TextMessageDTO messageDTO) {
+    public TextMessageDTO processPrivateMessage(TextMessageDTO messageDTO) {
+        MessageLogger.log( "ChatService - processPrivateMessage(TextMessageDTO)");
+        TextMessageDTO savedMessage = null;
         try {
             TextMessageDAO messageDAO = dtoToDao(messageDTO);
-            TextMessageDAO savedMessage = chatRepositoryJpa.save(messageDAO);
+            savedMessage = daoToDto(chatRepositoryJpa.save(messageDAO));
         }
-        catch(IllegalArgumentException e ){
+        catch(IllegalArgumentException | OptimisticLockingFailureException | NullPointerException e ){
 //            ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
             ErrorLogger.log(e, Thread.currentThread().getStackTrace()[1]);
         }
-        catch(OptimisticLockingFailureException e ){
-//            ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
-            ErrorLogger.log(e, Thread.currentThread().getStackTrace()[1]);
-        }
+        return savedMessage;
     }
 
-    public void processGeneralMessage(TextMessageDTO messageDTO) {
+    public TextMessageDTO processGeneralMessage(TextMessageDTO messageDTO) {
+        MessageLogger.log( "ChatService - processGeneralMessage(TextMessageDTO)");
+        TextMessageDTO savedMessage = null;
         try {
             TextMessageDAO messageDAO = dtoToDao(messageDTO);
-            TextMessageDAO savedMessage = chatRepositoryJpa.save(messageDAO);
+            savedMessage = daoToDto(chatRepositoryJpa.save(messageDAO));
         }
-        catch(IllegalArgumentException e ){
+        catch(IllegalArgumentException | OptimisticLockingFailureException | NullPointerException e ){
             ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
         }
-        catch(OptimisticLockingFailureException e ){
-            ErrorLogger.log(e, this.getClass().getSimpleName(), "processPrivateMessage(TextMessageDAO)");
-        }
+        return savedMessage;
     }
 
 
@@ -61,6 +61,7 @@ public class ChatService {
      * */
 
     public List<TextMessageDTO> getGeneralMessages(String toTxt) {
+        MessageLogger.log( "ChatService - getGeneralMessages(String)");
         List<TextMessageDAO> messagesDAO;
         List<TextMessageDTO> messagesDTO;
 
@@ -81,6 +82,7 @@ public class ChatService {
     }
 
     public List<TextMessageDTO> getGeneralMessagesAfterTimestamp(String toTxt, String javascriptUTCTimestamp) {
+        MessageLogger.log( "ChatService - getGeneralMessagesAfterTimestamp(String,StringUtcTimestamp)");
         List<TextMessageDAO> messagesDAO;
         List<TextMessageDTO> messagesDTO;
 
@@ -112,6 +114,7 @@ public class ChatService {
     }
 
     public List<TextMessageDTO> getMessagesBetweenUsers(String fromUserEmail, String toUserEmail, HttpServletRequest request) {
+        MessageLogger.log( "ChatService - getMessagesBetweenUsers(String,String,HttpServletRequest)");
         List<TextMessageDAO> messagesDAO;
         List<TextMessageDTO> messagesDTO;
 
@@ -138,6 +141,7 @@ public class ChatService {
     }
 
     public List<TextMessageDTO> getMessagesBetweenUsersAfterTimestamp(String fromUserEmail, String toUserEmail, String javascriptUTCTimestamp, HttpServletRequest request) {
+        MessageLogger.log( "ChatService - getMessagesBetweenUsersAfterTimestamp(String,String,String,HttpServletRequest)");
         List<TextMessageDAO> messagesDAO;
         List<TextMessageDTO> messagesDTO;
 

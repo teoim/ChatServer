@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.management.relation.RoleNotFoundException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +43,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        MessageLogger.log( "UserService - loadUserByUsername(String)");
         //return this.userRepository.getUserByEmail(username);
         UserDAO customUser;
         User springUser = null;
@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public UserDAO registerUser(UserDTO newUserDto) {
+    public UserDTO registerUser(UserDTO newUserDto) {
         MessageLogger.log( "UserService - registerUser(UserDTO)");
 
         // TODO: Criptare password
@@ -77,9 +77,10 @@ public class UserService implements UserDetailsService {
         newUserDao.setId( lastUserSeqRepoJPA.findAll().get(0).getLast_value() + 1);
 
         // Default user role is "CHUBARKA"
+        // TODO: implement logic for other/additional user roles
         String defaultUserRole = "CHUBARKA";
-        List<RoleDAO> newUserRole = roleRepositoryJpa.findByName(defaultUserRole);
-        if (newUserRole.isEmpty()){
+        List<RoleDAO> newUserRoleList = roleRepositoryJpa.findByName(defaultUserRole);
+        if (newUserRoleList.isEmpty()){
             RoleDAO newRole = new RoleDAO();
             newRole.setName(defaultUserRole);
 
@@ -90,25 +91,25 @@ public class UserService implements UserDetailsService {
             }
 
             if( !roleService.createRole(newRole).getName().isEmpty()){
-                newUserRole.add(newRole);
+                newUserRoleList.add(newRole);
             } else{
                 ErrorLogger.log(new RoleNotFoundException(), this.getClass().getSimpleName(), "registerUser(UserDTO)");
             }
         }
 
-        newUserDao.setUserRoles( newUserRole);
+        newUserDao.setUserRoles( newUserRoleList);
 
-//        return this.userRepository.registerUser(newUserDao);
-        return this.userRepositoryJpa.save(newUserDao);
+        return daoToDto( this.userRepositoryJpa.save(newUserDao));
         // TODO: Create user role
     }
 
-    public ArrayList<UserDTO> searchUserByEmailLikeOrNickLike(String textInput) {
+    public List<UserDTO> searchUserByEmailLikeOrNickLike(String textInput) {
         MessageLogger.log( "UserService - searchUserByEmailLikeOrNickLike(String)");
 
-        ArrayList<UserDAO> dbResult = this.userRepositoryJpa.getUsersByEmailLikeIgnoreCaseOrNickLikeIgnoreCase(textInput, textInput);
+        textInput = "%" + textInput + "%";
+        List<UserDAO> dbResult = this.userRepositoryJpa.getUsersByEmailLikeIgnoreCaseOrNickLikeIgnoreCase(textInput, textInput);
 
-        ArrayList<UserDTO> clientResult = new ArrayList<>();
+        ArrayList<UserDTO> clientResult = new ArrayList<>( dbResult.size());
         for(UserDAO userDao : dbResult){
             userDao.setPassword("");
             userDao.setId(0L);
@@ -122,33 +123,9 @@ public class UserService implements UserDetailsService {
         return clientResult;
     }
 
-    public UserRelationshipDAO addUserToFriendsList( String myEmail, String myNewFriendEmail) {
-
-        UserRelationshipDAO relationship = this.userRelationshipJpa.findByUserIdAndFriendId(myEmail, myNewFriendEmail);
-
-        if(relationship==null){
-            relationship = new UserRelationshipDAO();
-            relationship.setUserId(myEmail);
-            relationship.setFriendId(myNewFriendEmail);
-            relationship.setStatus("FRIEND");
-            relationship.setInRelationshipSince( new Timestamp( System.currentTimeMillis()));
-            relationship = this.userRelationshipJpa.save(relationship);
-        } else {
-            MessageLogger.log("User " + myNewFriendEmail + " is already a friend of " + myEmail);
-        }
-
-        return relationship;
-    }
-
-    public UserRelationshipDAO blockUser(String myEmail, String blockedUserEmail) {
-
-        UserRelationshipDAO relationship = this.userRelationshipJpa.findByUserIdAndFriendId(myEmail, blockedUserEmail);
-        relationship.setStatus("BLOCKED");
-
-        this.userRelationshipJpa.save(relationship);
-
-        return relationship;
-    }
+    /**
+     * ==================== Utility methods ====================
+     * */
 
     private UserDTO daoToDto(UserDAO userDao) {
         return new UserDTO(
