@@ -135,11 +135,12 @@
         </dependency>
 
         <!-- Eureka naming client -->
-        <dependency>
+<!--        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-            <version>4.3.0</version>
-        </dependency>
+            &lt;!&ndash; v4.0.4 is the maximum still compatible with boot 3.0.1 &ndash;&gt;
+            <version>4.0.4</version>
+        </dependency>-->
 
     </dependencies>
 
