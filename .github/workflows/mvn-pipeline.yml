@@ -44,7 +44,7 @@ jobs:
         run: rm -f /home/teo/deployments/chat-app/*.jar
       - name: Copy new jar to deployments directory
         #run: cp /home/teo/repos/ChatServer/target/*.jar /home/teo/deployments/chat-app/
-        run: cp $GIT_ACTIONS_RUNNER_HOME_DIR/_work/ChatServer/ChatServer/target/target/*.jar /home/teo/deployments/chat-app/
+        run: cp $GIT_ACTIONS_RUNNER_HOME_DIR/_work/ChatServer/ChatServer/target/*.jar /home/teo/deployments/chat-app/
       - name: chmod on jar file
         run: chmod 744 /home/teo/deployments/chat-app/chat-app-*.jar
 
