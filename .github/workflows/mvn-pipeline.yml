@@ -43,7 +43,6 @@ jobs:
       - name: Clear deployments directory
         run: rm -f /home/teo/deployments/chat-app/*.jar
       - name: Copy new jar to deployments directory
-        #run: cp /home/teo/repos/ChatServer/target/*.jar /home/teo/deployments/chat-app/
         run: cp $GIT_ACTIONS_RUNNER_HOME_DIR/_work/ChatServer/ChatServer/target/*.jar /home/teo/deployments/chat-app/
       - name: chmod on jar file
         run: chmod 744 /home/teo/deployments/chat-app/chat-app-*.jar
@@ -54,7 +53,7 @@ jobs:
 
     steps:
     - name: Stop Spring Boot app
-      run: /home/teo/scripts/stopapp.sh
+      run: $SCRIPTS_HOME_DIR/stopapp.sh
         
 
   run-new-app:
@@ -63,4 +62,4 @@ jobs:
 
     steps:
       - name: Run application
-        run: /home/teo/scripts/runapp.sh
+        run: $SCRIPTS_HOME_DIR/runapp.sh
