@@ -28,10 +28,11 @@ jobs:
       #    java-version: '17'
       #    distribution: 'temurin'
       #    cache: maven
-      - name: debug
-        run: |
-          pwd
-          whoami
+      #
+      # - name: debug
+      #   run: |
+      #     pwd
+      #     whoami
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
@@ -47,7 +48,8 @@ jobs:
       - name: Clear deployments directory
         run: rm -f /home/teo/deployments/chat-app/*.jar
       - name: Copy new jar to deployments directory
-        run: cp $GIT_ACTIONS_RUNNER_HOME_DIR/_work/ChatServer/ChatServer/target/*.jar /home/teo/deployments/chat-app/
+        # run: cp $GIT_ACTIONS_RUNNER_HOME_DIR/_work/ChatServer/ChatServer/target/*.jar /home/teo/deployments/chat-app/
+        run: cp target/chat-app-*.jar /home/teo/deployments/chat-app/
       - name: chmod on jar file
         run: chmod 744 /home/teo/deployments/chat-app/chat-app-*.jar
 
