@@ -4,13 +4,14 @@ window.addEventListener("load", main);  // triggered after dom elements AND imag
 
 var searchInputObj
 var searchResultsDiv
-var getSearchUserUrl = "http://localhost:8080/searchUserByEmailOrNick"
-var addUserToFriendListUrl = "http://localhost:8080/addUserToFriendsList"
-var blockUserUrl = "http://localhost:8080/blockUser"
+//var getSearchUserUrl = "http://localhost:8080/searchUserByEmailOrNick"
+//var addUserToFriendListUrl = "http://localhost:8080/addUserToFriendsList"
+//var blockUserUrl = "http://localhost:8080/blockUser"
 
-//var getSearchUserUrl = "http://chunkchat.ddns.net:8080/searchUserByEmailOrNick"
-//var addUserToFriendListUrl = "http://chunkchat.ddns.net:8080/addUserToFriendsList"
-//var blockUserUrl = "http://chunkchat.ddns.net:8080/blockUser"
+const domain = "cchat.go.ro";
+var getSearchUserUrl = "http://" + domain + "/searchUserByEmailOrNick"
+var addUserToFriendListUrl = "http://" + domain + "/addUserToFriendsList"
+var blockUserUrl = "http://" + domain + "/blockUser"
 
 var addFriendIcon
 var blockUserIcon
