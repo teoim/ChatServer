@@ -232,6 +232,7 @@ function addArticleToContactsListAndStartChatting(event){
 
     loadUserChats(userEmail);
 
+    setFriendsListEventListener();
 }
 
 function loadUserChats(username){

@@ -30,6 +30,7 @@ public class StompEndpointHandshakeHandler extends DefaultHandshakeHandler {
             HttpSession session = servletRequest.getServletRequest().getSession();
             attributes.put("sessionId", session.getId());
         }
+
         return true;
     }
 

@@ -7,7 +7,8 @@ var callIcon, videoCallIcon, inCallIcon, inVideoCallIcon;
 var targetUsername, myUsername;
 
 // RTCPeerConnection
-var myPeerConnection
+var myPeerConnection;
+var myLocalStream, myRemoteStream;
 
 // WebSocket & STOMP
 var wskt;
@@ -103,16 +104,34 @@ function startCall(event){
     invite(event);
 }
 
-function startVideoCall(event){
+function startVideoCall(event,answer){
     console.debug("WebRTC.startVideoCall()");
     document.getElementById("videoBox").style.display = "flow";
     document.getElementById("iconsDiv").style.display = "none";
     document.getElementById("inCallIcon").style.display = "none";
     document.getElementById("inVideoCallIcon").style.display = "block";
 
-    mediaConstraints.audio = false;
+    mediaConstraints.audio = true;
     mediaConstraints.video = true;
-    invite(event);
+
+    // Only invite() when startVideoCall was triggered by a click.
+    if( (event != null) || (answer != true) ) {
+        invite(event);
+    } else {
+        console.warn( "---- event null and answer true ----" );
+    }
+}
+
+function initAnswerToVideoCall(){
+    console.debug("WebRTC.startVideoCall()");
+    document.getElementById("videoBox").style.display = "flow";
+    document.getElementById("iconsDiv").style.display = "none";
+    document.getElementById("inCallIcon").style.display = "none";
+    document.getElementById("inVideoCallIcon").style.display = "block";
+
+    mediaConstraints.audio = true;
+    mediaConstraints.video = true;
+
 }
 
 function endCall(){
@@ -143,11 +162,13 @@ async function sendMessageToServer(message){
         var token_name = document.getElementsByName("_csrf")[0].name;
         //console.log( "CSRF token name: " + token_name + " value: " + token_value);
     } else {
-        console.log("Csrf may be disabled - check system configuration - csrf token not found.");
+//        console.log("Csrf may be disabled - check system configuration - csrf token not found.");
+//        console.warn("Csrf token not found.");
     }
 
     try {
-        const response = await fetch("http://localhost:8080/api/webrtc/ice-server/message", {
+        //const response = await fetch("http://localhost:8080/api/webrtc/ice-server/message", {
+        const response = await fetch("http://cchat.go.ro/api/webrtc/ice-server/message", {
             method: "POST",
             headers: {
                 credentials: "include",
@@ -190,43 +211,25 @@ function invite(event) {
         navigator.mediaDevices
             .getUserMedia(mediaConstraints)
             .then((localStream) => {
+                myLocalStream = localStream;
                 document.getElementById("smallScreen").srcObject = localStream;
                 localStream
                     .getTracks()
-                    .forEach((track) => myPeerConnection.addTrack(track, localStream));
+                    .forEach((track) => myPeerConnection.addTrack(track, localStream)); // triggers negotiation needed event - handleNegotiationNeededEvent()
             })
             .catch(handleGetUserMediaError);
     }
 }
 
 
-function handleGetUserMediaError(e) {
-    console.debug("WebRTC.handleGetUserMediaError()");
-    switch (e.name) {
-        case "NotFoundError":
-            console.error(
-                "Unable to open your call because no camera and/or microphone" +
-                "were found.",
-            );
-            break;
-        case "SecurityError":
-        case "PermissionDeniedError":
-            // Do nothing; this is the same as the user canceling the call.
-            break;
-        default:
-            console.error(`Error opening your camera and/or microphone: ${e.message}`);
-            break;
-    }
-
-    closeVideoCall();
-}
-
-
+/**
+* Initialize myPeerConnection with basic configuration
+*/
 function createPeerConnection() {
     console.debug("WebRTC.createPeerConnection()");
 
     if (myPeerConnection) {
-        console.info("A call is already in progress!");
+        console.warn("A call is already in progress!");
         return;
     }
     console.info("Creating new peer connection.");
@@ -245,19 +248,19 @@ function createPeerConnection() {
 
     // The first 3 event handlers are required:
     myPeerConnection.onicecandidate = handleICECandidateEvent;
-    myPeerConnection.ontrack = handleTrackEvent;
+    myPeerConnection.ontrack = ({ track, streams }) => handleTrackEvent(track, streams);
     myPeerConnection.onnegotiationneeded = handleNegotiationNeededEvent;
 
     // These other event handlers are not required but are useful:
     // (plus there's other event handlers we can set)
-    myPeerConnection.onremovetrack = handleRemoveTrackEvent;
-    myPeerConnection.oniceconnectionstatechange = handleICEConnectionStateChangeEvent;
-    myPeerConnection.onicegatheringstatechange = handleICEGatheringStateChangeEvent;
-    myPeerConnection.onsignalingstatechange = handleSignalingStateChangeEvent;
+    //myPeerConnection.onremovetrack = handleRemoveTrackEvent;
+    //myPeerConnection.oniceconnectionstatechange = handleICEConnectionStateChangeEvent;
+    //myPeerConnection.onicegatheringstatechange = handleICEGatheringStateChangeEvent;
+    //myPeerConnection.onsignalingstatechange = handleSignalingStateChangeEvent;
 }
 
 
-function handleNegotiationNeededEvent() {
+function handleNegotiationNeededEvent(event) {
     console.debug("WebRTC.handleNegotiationNeededEvent()");
     myPeerConnection
         .createOffer()
@@ -274,27 +277,27 @@ function handleNegotiationNeededEvent() {
 }
 
 
-// We receive a video call from someone
+// We receive a video call from someone [seemsOK]
 function handleVideoOfferMsg(msg) {
     console.debug("WebRTC.handleVideoOfferMsg() - msg: ", msg);
-    startVideoCall();
-    let localStream = null;
+    //startVideoCall(null,true);   //TODO bug? - sends a video-offer message at the end.. we just need the UI elements behavior
+    initAnswerToVideoCall();    // only UI elements and mediaConstraints
 
     targetUsername = msg.name;
-    createPeerConnection(); // Create and configure a new RTCPeerConnection
+    createPeerConnection(); // Create and configure a new RTCPeerConnection, if non existent.
 
     const desc = new RTCSessionDescription(msg.sdp);    // The caller's session description
 
     myPeerConnection
         .setRemoteDescription(desc)
         .then(() => navigator.mediaDevices.getUserMedia(mediaConstraints))
-        .then((stream) => {
-            localStream = stream;
-            document.getElementById("smallScreen").srcObject = localStream;
+        .then((localStream) => {
+            myLocalStream = localStream;
+            document.getElementById("smallScreen").srcObject = myLocalStream;
 
-            localStream
+            myLocalStream
                 .getTracks()
-                .forEach((track) => myPeerConnection.addTrack(track, localStream));
+                .forEach((track) => myPeerConnection.addTrack(track, myLocalStream));   // addTrack() triggers negotiationNeededEvent
         })
         .then(() => myPeerConnection.createAnswer())
         .then((answer) => myPeerConnection.setLocalDescription(answer))
@@ -316,28 +319,34 @@ function handleVideoAnswerMsg(msg) {
     console.debug("WebRTC.handleVideoAnswerMsg()");
     const desc = new RTCSessionDescription(msg.sdp);
     myPeerConnection.setRemoteDescription(desc)
+/*
         .then(() => navigator.mediaDevices.getUserMedia(mediaConstraints))
             .then((stream) => {
                 localStream = stream;
-                document.getElementById("bigScreen").srcObject = localStream;
+                console.warn("localStream: ", localStream);
+                console.warn("msg: ", msg);
+                document.getElementById("smallScreen").srcObject = localStream;
 
                 localStream
                     .getTracks()
                     .forEach((track) => myPeerConnection.addTrack(track, localStream));
             })
-//            .then(() => myPeerConnection.createAnswer())
-//            .then((answer) => myPeerConnection.setLocalDescription(answer))
-//            .then(() => {
-//                const msg = {
-//                    name: myUsername,
-//                    target: targetUsername,
-//                    type: "video-answer",
-//                    sdp: myPeerConnection.localDescription
-//                };
-//
-//                sendMessageToServer(msg);
-//            })
+
+            .then(() => myPeerConnection.createAnswer())
+            .then((answer) => myPeerConnection.setLocalDescription(answer))
+            .then(() => {
+                const msg = {
+                    name: myUsername,
+                    target: targetUsername,
+                    type: "video-answer",
+                    sdp: myPeerConnection.localDescription
+                };
+
+                sendMessageToServer(msg);
+            })
+
             .catch(handleGetUserMediaError);
+*/
     //.catch(window.reportError);
 }
 
@@ -362,7 +371,7 @@ function handleICECandidateEvent(event) {
 function handleNewICECandidateMsg(msg) {
     console.debug("WebRTC.handleNewICECandidateMsg()");
 
-    var msgCandidate = msg.candidate;
+    let msgCandidate = msg.candidate;
 
     // Build ice candidate object
     const candidate = new RTCIceCandidate(msgCandidate);
@@ -375,15 +384,40 @@ function handleNewICECandidateMsg(msg) {
 
 
 // RECEIVING new streams
-function handleTrackEvent(event) {
-    console.debug("WebRTC.handleTrackEvent()");
+/*function handleTrackEvent(event) {
+    console.debug("WebRTC.handleTrackEvent(event)");
+
     // TODO: check track type (audio/video/etc)
+    // console.debug(">>>>>>>>event: ", event.track.kind); // video, audio ..
+    if(event.track.kind === "video" || event.track.kind === "audio"){
+        console.debug("Adding ", event.track.kind, " track to peer connection.");
+        if(event.streams.length > 0) {
+            console.debug("event.streams[0].getTracks(): ", event.streams[0].getTracks());
+            // 54:36 https://www.youtube.com/watch?v=QsH8FL0952k
+            try{
+                event.streams[0].getTracks().forEach((track) => {
+                    //console.debug("Adding track: ", track);
+                    myPeerConnection.addTrack(track);
+                });
+                } catch(e){ reportError(e) };
+        }
+        //myPeerConnection.addTrack(event.track);
+    } else { console.warn("Track not video: ", event.track.kind); }
 
     // Add video track to html element
-    document.getElementById("bigScreen").srcObject = event.streams[0];
+//    document.getElementById("bigScreen").srcObject = event.streams[0];
     //document.getElementById("hangup-button").disabled = false;
-}
+}*/
 
+function handleTrackEvent(track, streams) {
+    console.debug("WebRTC.handleTrackEvent(track, streams[0]) : ", track, streams[0]);
+      track.onunmute = () => {
+        if (document.getElementById("bigScreen").srcObject) {
+          return;
+        }
+        document.getElementById("bigScreen").srcObject = streams[0];
+      };
+}
 
 // REMOVE streams
 function handleRemoveTrackEvent(event) {
@@ -437,6 +471,8 @@ function closeVideoCall() {
 
         myPeerConnection.close();
         myPeerConnection = null;
+        mediaConstraints.video = false;
+        mediaConstraints.audio = false;
     }
 
     remoteVideo.removeAttribute("src");
@@ -463,7 +499,7 @@ function handleICEConnectionStateChangeEvent(event) {
             closeVideoCall();
             break;
         default:
-            console.warn("TODO: handle handleICEConnectionStateChangeEvent case:", event);
+            console.warn("TODO: handle handleICEConnectionStateChangeEvent: ", event);
             break;
     }
 }
@@ -479,16 +515,18 @@ function handleSignalingStateChangeEvent(event) {
             closeVideoCall();
             break;
         case "have-local-offer":
-            console.warn("TODO: handling handleSignalingStateChangeEvent for \"have-local-offer\"");
+//            console.warn("TODO: handling handleSignalingStateChangeEvent for \"have-local-offer\"");
+//            console.log("SDP Offer applied successfully by setLocalDescription()");
             break;
         case "have-remote-offer":
-            console.warn("TODO: handling handleSignalingStateChangeEvent for \"have-remote-offer\"");
+//            console.warn("TODO: handling handleSignalingStateChangeEvent for \"have-remote-offer\"");
+//            console.log("SDP Offer applied successfully by setRemoteDescription()");
             break;
         case "stable":
-            console.warn("TODO: handling handleSignalingStateChangeEvent for \"stable\"");
+//            console.warn("TODO: handling handleSignalingStateChangeEvent for \"stable\"");
             break
         default:
-            console.warn("TODO: handle handleSignalingStateChangeEvent for ", myPeerConnection.signalingState);
+//            console.warn("TODO: handle handleSignalingStateChangeEvent for ", myPeerConnection.signalingState);
             break;
     }
 }
@@ -498,4 +536,31 @@ function handleSignalingStateChangeEvent(event) {
 // usefull for debugging or to detect when ice candidate gathering has finished
 function handleICEGatheringStateChangeEvent(event) {
     console.debug("WebRTC.handleICEGatheringStateChangeEvent() ", myPeerConnection.iceGatheringState);
+}
+
+
+function handleGetUserMediaError(e) {
+    console.debug("WebRTC.handleGetUserMediaError()");
+    switch (e.name) {
+        case "NotFoundError":
+            console.error(
+                "Unable to open your call because no camera and/or microphone" +
+                "were found.",
+            );
+            break;
+        case "SecurityError":
+        case "PermissionDeniedError":
+            // Do nothing; this is the same as the user canceling the call.
+            break;
+        default:
+            console.error(`Error opening your camera and/or microphone: ${e.message}`);
+            break;
+    }
+
+    closeVideoCall();
+}
+
+function reportError(e) {
+    console.debug("WebRTC.reportError()");
+    console.error(e.message);
 }

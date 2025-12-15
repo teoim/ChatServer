@@ -19,8 +19,12 @@ var iAmChattingWith = "generalChat";
 
 // TODO define these and other constants in a properties/configuration file
 const cachedTextMessagesWithUser = new Map();
-const textMessagesToUrl = "http://localhost:8080/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
-const generalChatUrl = "http://localhost:8080/general-chat"         // TODO: same as above
+//const textMessagesToUrl = "http://localhost:8080/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
+//const generalChatUrl = "http://localhost:8080/general-chat"         // TODO: same as above
+// Test domain
+const domain = "cchat.go.ro";
+const textMessagesToUrl = "http://" + domain + "/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
+const generalChatUrl = "http://" + domain + "/general-chat"         // TODO: same as above
 
 function main(){
     console.log("WebSockets.main()\nStarting WebSockets and STOMP...");
@@ -238,7 +242,6 @@ function setFriendsListEventListener(){
         loadGeneralChats();
         focusOnMessageInputBox()
     });
-
 }
 
 function loadUserChats(username){
