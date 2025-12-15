@@ -101,16 +101,25 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource(){
         // https://docs.spring.io/spring-security/reference/reactive/integrations/cors.html
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins( List.of("chunkchat.ddns.net:8080"));
-//        configuration.setAllowedOriginPatterns( List.of(CorsConfiguration.ALL));
-//        configuration.setAllowCredentials(true);
         configuration.applyPermitDefaultValues();
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders( List.of(CorsConfiguration.ALL));
+
+        configuration.setAllowCredentials(true);
+
+        configuration.setAllowedOrigins(
+                List.of(
+                        "http://cchat.ddns.net"
+                        , "http://cchat.go.ro:8080"));
+
+        configuration.setAllowedMethods(
+                Arrays.asList(
+                        "GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        configuration.setAllowedHeaders(
+                List.of(
+                        "Authorization", "Content-Type", "X-Requested-With"
+                ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("chunkchat.ddns.net:8080/**", configuration);
-//        source.registerCorsConfiguration("chunkchat.ddns.net/**", configuration);   // ?
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
