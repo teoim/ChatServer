@@ -1,5 +1,4 @@
 
-
 window.addEventListener("load", main);  // triggered after dom elements AND images, stylesheets, fonts etc are loaded
 
 var searchInputObj
@@ -8,7 +7,7 @@ var searchResultsDiv
 //var addUserToFriendListUrl = "http://localhost:8080/addUserToFriendsList"
 //var blockUserUrl = "http://localhost:8080/blockUser"
 
-const domain = "cchat.go.ro";
+//const domain = "cchat.go.ro";
 var getSearchUserUrl = "http://" + domain + "/searchUserByEmailOrNick"
 var addUserToFriendListUrl = "http://" + domain + "/addUserToFriendsList"
 var blockUserUrl = "http://" + domain + "/blockUser"

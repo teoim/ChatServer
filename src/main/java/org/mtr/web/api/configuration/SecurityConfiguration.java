@@ -108,7 +108,7 @@ public class SecurityConfiguration {
         configuration.setAllowedOrigins(
                 List.of(
                         "http://cchat.ddns.net"
-                        , "http://cchat.go.ro:8080"));
+                        , "http://cchat.go.ro"));
 
         configuration.setAllowedMethods(
                 Arrays.asList(
@@ -116,7 +116,7 @@ public class SecurityConfiguration {
 
         configuration.setAllowedHeaders(
                 List.of(
-                        "Authorization", "Content-Type", "X-Requested-With"
+                        "Authorization", "Content-Type", "Access-Control-Allow-Origin"
                 ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
