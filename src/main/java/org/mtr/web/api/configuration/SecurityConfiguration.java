@@ -3,6 +3,8 @@ package org.mtr.web.api.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -78,18 +80,20 @@ public class SecurityConfiguration {
 
         configuration.setAllowedMethods(
                 Arrays.asList(
-                        "GET"
-                        , "POST"
-                        , "PUT"
-                        , "DELETE"
-                        , "OPTIONS"
+                        HttpMethod.GET.name()
+                        , HttpMethod.POST.name()
+                        , HttpMethod.PUT.name()
+                        , HttpMethod.DELETE.name()
+                        , HttpMethod.OPTIONS.name()
                 ));
 
         configuration.setAllowedHeaders(
                 Arrays.asList(
-                        "Authorization"
-                        , "Content-Type"
-                        , "Access-Control-Allow-Origin"
+                        HttpHeaders.CONTENT_TYPE
+                        , HttpHeaders.AUTHORIZATION
+                        , HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN
+                        , HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD
+                        , HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS
                 ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
