@@ -312,37 +312,50 @@ function loadGeneralChats(){
     }
 
     // Fetch messages from database through API call:
-    $.get( toUserTextMessagesFinalURL, function(data, status){
-        if(status=="success"){
-            console.log("Chats successfully fetched from DB. " + data.length + " messages fetched.");
-            /** timestampedMapOfMessages( timestamp : message[from,to,content,timestamp] )    */
-            let timestampedMapOfMessages = new Map();
-            if(cachedTextMessagesWithUser.has(iAmChattingWith)){
-                timestampedMapOfMessages = cachedTextMessagesWithUser.get(iAmChattingWith);
-            }
-
-            for( let i = 0; i < data.length; i++){
-                console.log(data[i]);
-                let msg = data[i];
-                if(timestampedMapOfMessages.has( msg.timestamp)) break;
-                timestampedMapOfMessages.set( msg.timestamp, msg);
-                // appendSentMessage( msg, "general");
-                lastMessageFetchedTimestamp.set(iAmChattingWith, msg.timestamp);
-            }
-            cachedTextMessagesWithUser.set( iAmChattingWith, timestampedMapOfMessages);
-            timestampedMapOfMessages.forEach( function(value, key, map){
-                // appendSentMessage(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
-                if(value.from == currentUser) {
-                    // Message sent by the current user
-                    appendMessageToChatScreen(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
-                } else {
-                    // Message received by the current user
-                    appendMessageToChatScreen(value, "general");
-                }
-            });
-            console.log("Chats local map complete.\nLast message: " + lastMessageFetchedTimestamp.get(iAmChattingWith));
-            //sessionStorage.setItem("iAmChattingWith", "");  // TODO: what whas this for?
+    $.get({
+        url: toUserTextMessagesFinalURL
+        , headers: {
+            "Content-Type": "application/json"
         }
+        , xhrFields: {
+            withCredentials: true
+        }
+        , dataType: "json"
+        , success: function(data, status){
+            if(status=="success"){
+                console.log("Chats successfully fetched from DB. " + data.length + " messages fetched.");
+                /** timestampedMapOfMessages( timestamp : message[from,to,content,timestamp] )    */
+                let timestampedMapOfMessages = new Map();
+                if(cachedTextMessagesWithUser.has(iAmChattingWith)){
+                    timestampedMapOfMessages = cachedTextMessagesWithUser.get(iAmChattingWith);
+                }
+
+                for( let i = 0; i < data.length; i++){
+                    console.log(data[i]);
+                    let msg = data[i];
+                    if(timestampedMapOfMessages.has( msg.timestamp)) break;
+                    timestampedMapOfMessages.set( msg.timestamp, msg);
+                    // appendSentMessage( msg, "general");
+                    lastMessageFetchedTimestamp.set(iAmChattingWith, msg.timestamp);
+                }
+                cachedTextMessagesWithUser.set( iAmChattingWith, timestampedMapOfMessages);
+                timestampedMapOfMessages.forEach( function(value, key, map){
+                    // appendSentMessage(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
+                    if(value.from == currentUser) {
+                        // Message sent by the current user
+                        appendMessageToChatScreen(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
+                    } else {
+                        // Message received by the current user
+                        appendMessageToChatScreen(value, "general");
+                    }
+                });
+                console.log("Chats local map complete.\nLast message: " + lastMessageFetchedTimestamp.get(iAmChattingWith));
+                //sessionStorage.setItem("iAmChattingWith", "");  // TODO: what whas this for?
+            }
+        }
+         , error: function(jqXHR, textStatus, errorThrown) {
+             console.error('CORS Error:', errorThrown, jqXHR, textStatus);
+         }
     });
 }
 

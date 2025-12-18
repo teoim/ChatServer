@@ -7,6 +7,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.Arrays;
+
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -14,13 +16,31 @@ public class WebSocketBrokerConfiguration implements WebSocketMessageBrokerConfi
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+
         registry.addEndpoint("/generalChat")
+                .setAllowedOrigins(
+                        "http://cchat.ddns.net"
+                        , "http://cchat.go.ro"
+                        , "http://localhost:8080"
+                )
                 .setHandshakeHandler(new StompEndpointHandshakeHandler())
                 .withSockJS();
+
         registry.addEndpoint("/sendPrivateText")
+                .setAllowedOrigins(
+                        "http://cchat.ddns.net"
+                        , "http://cchat.go.ro"
+                        , "http://localhost:8080"
+                )
                 .setHandshakeHandler(new StompEndpointHandshakeHandler())
                 .withSockJS();
+
         registry.addEndpoint("/sendICEMessage")
+                .setAllowedOrigins(
+                        "http://cchat.ddns.net"
+                        , "http://cchat.go.ro"
+                        , "http://localhost:8080"
+                )
                 .setHandshakeHandler(new StompEndpointHandshakeHandler())
                 .withSockJS();
     }
