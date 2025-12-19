@@ -32,8 +32,6 @@ public class GlobalCorsConfiguration {
         configuration.setAllowedOrigins(
                 Arrays.asList(
                         "http://cchat.ddns.net"
-                        , "http://cchat.go.ro"
-                        , "http://localhost:8080"
                 ));
 
         configuration.setAllowedMethods(
