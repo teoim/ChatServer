@@ -1,5 +1,6 @@
 package org.mtr.web.api.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -21,21 +22,18 @@ import java.util.Arrays;
 @Profile("!test")
 public class SecurityConfiguration {
 
-/*    // https://blog.devgenius.io/spring-boot-security-configuration-practically-explained-part6-a-deep-intro-to-56ce03860ad
-    @Autowired
-    private AuthenticationConfiguration authConfig;
+    CorsConfigurationSource corsConfigurationSource;
 
-    // https://blog.devgenius.io/spring-boot-security-configuration-practically-explained-part6-a-deep-intro-to-56ce03860ad
-    @Bean
-    public CustomRequestHeaderTokenFilter customFilter() throws Exception {
-        return new CustomRequestHeaderTokenFilter(authConfig.getAuthenticationManager());
-    }*/
+    @Autowired
+    public SecurityConfiguration(CorsConfigurationSource corsConfigurationSource) {
+        this.corsConfigurationSource = corsConfigurationSource;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
             http.csrf().disable();
-            http.cors().configurationSource(corsConfigurationSource());
+            http.cors().configurationSource(corsConfigurationSource);
 //            http.cors(Customizer.withDefaults());   // by default, it will search for a bean with name corsConfigurationSource
 
             http
@@ -63,41 +61,5 @@ public class SecurityConfiguration {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowCredentials(true);
-
-        configuration.setAllowedOrigins(
-                Arrays.asList(
-                    "http://cchat.ddns.net"
-                    , "http://cchat.go.ro"
-                    , "http://localhost:8080"
-                ));
-
-        configuration.setAllowedMethods(
-                Arrays.asList(
-                        HttpMethod.GET.name()
-                        , HttpMethod.POST.name()
-                        , HttpMethod.PUT.name()
-                        , HttpMethod.DELETE.name()
-                        , HttpMethod.OPTIONS.name()
-                ));
-
-        configuration.setAllowedHeaders(
-                Arrays.asList(
-                        HttpHeaders.CONTENT_TYPE
-                        , HttpHeaders.AUTHORIZATION
-                        , HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN
-                        , HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD
-                        , HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS
-                ));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 }

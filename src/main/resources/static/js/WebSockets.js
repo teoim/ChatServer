@@ -22,7 +22,7 @@ const cachedTextMessagesWithUser = new Map();
 //const textMessagesToUrl = "http://localhost:8080/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
 //const generalChatUrl = "http://localhost:8080/general-chat"         // TODO: same as above
 // Test domain
-const domain = "cchat.go.ro";
+const domain = "cchat.ddns.net";
 const textMessagesToUrl = "http://" + domain + "/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
 const generalChatUrl = "http://" + domain + "/general-chat"         // TODO: same as above
 
@@ -314,12 +314,12 @@ function loadGeneralChats(){
     // Fetch messages from database through API call:
     $.get({
         url: toUserTextMessagesFinalURL
-        , headers: {
-            "Content-Type": "application/json"
-        }
-        , xhrFields: {
-            withCredentials: true
-        }
+        // , headers: {
+        //     "Content-Type": "application/json"
+        // }
+        // , xhrFields: {
+        //     withCredentials: true
+        // }
         , dataType: "json"
         , success: function(data, status){
             if(status=="success"){
