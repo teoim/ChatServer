@@ -3,7 +3,7 @@
 window.addEventListener("load", main);
 // window.addEventListener("DOMContentLoaded", main);   // triggers after dom elements are loaded
 
-var ws;
+var wss;
 var stompClient;
 var subscription001;
 var subscription002;
@@ -23,8 +23,8 @@ const cachedTextMessagesWithUser = new Map();
 //const generalChatUrl = "http://localhost:8080/general-chat"         // TODO: same as above
 // Test domain
 const domain = "cchat.ddns.net";
-const textMessagesToUrl = "http://" + domain + "/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
-const generalChatUrl = "http://" + domain + "/general-chat"         // TODO: same as above
+const textMessagesToUrl = "https://" + domain + "/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
+const generalChatUrl = "https://" + domain + "/general-chat"         // TODO: same as above
 
 function main(){
     console.log("WebSockets.main()\nStarting WebSockets and STOMP...");
@@ -40,9 +40,9 @@ function main(){
     document.getElementById("chatBox").onclick = hideFriendList;
 
     //ws = new WebSocket("ws://localhost:8080/generalChat");
-    ws = new SockJS("/generalChat");   // unlike WebSocket(), SockJS() provides fall-back protocols, if WebSockets are not supported in the browser
+    wss = new SockJS("/generalChat");   // unlike WebSocket(), SockJS() provides fall-back protocols, if WebSockets are not supported in the browser
 
-    stompClient = Stomp.over(ws);
+    stompClient = Stomp.over(wss);
 
     sendButton = document.getElementById("submitBtn");
     messageInputBox = document.getElementById("writeText");

@@ -31,7 +31,7 @@ public class GlobalCorsConfiguration {
 
         configuration.setAllowedOrigins(
                 Arrays.asList(
-                        "http://cchat.ddns.net"
+                        "https://cchat.ddns.net"
                 ));
 
         configuration.setAllowedMethods(

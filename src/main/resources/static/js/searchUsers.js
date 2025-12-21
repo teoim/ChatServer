@@ -8,9 +8,9 @@ var searchResultsDiv
 //var blockUserUrl = "http://localhost:8080/blockUser"
 
 //const domain = "cchat.go.ro";
-var getSearchUserUrl = "http://" + domain + "/searchUserByEmailOrNick"
-var addUserToFriendListUrl = "http://" + domain + "/addUserToFriendsList"
-var blockUserUrl = "http://" + domain + "/blockUser"
+var getSearchUserUrl = "https://" + domain + "/searchUserByEmailOrNick"
+var addUserToFriendListUrl = "https://" + domain + "/addUserToFriendsList"
+var blockUserUrl = "https://" + domain + "/blockUser"
 
 var addFriendIcon
 var blockUserIcon
