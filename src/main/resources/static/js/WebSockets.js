@@ -3,7 +3,7 @@
 window.addEventListener("load", main);
 // window.addEventListener("DOMContentLoaded", main);   // triggers after dom elements are loaded
 
-var ws;
+var wss;
 var stompClient;
 var subscription001;
 var subscription002;
@@ -19,8 +19,12 @@ var iAmChattingWith = "generalChat";
 
 // TODO define these and other constants in a properties/configuration file
 const cachedTextMessagesWithUser = new Map();
-const textMessagesToUrl = "http://localhost:8080/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
-const generalChatUrl = "http://localhost:8080/general-chat"         // TODO: same as above
+//const textMessagesToUrl = "http://localhost:8080/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
+//const generalChatUrl = "http://localhost:8080/general-chat"         // TODO: same as above
+// Test domain
+const domain = "cchat.ddns.net";
+const textMessagesToUrl = "https://" + domain + "/messages-with"     // TODO: 'localhost' will not work in a docker container because the container's IP is different
+const generalChatUrl = "https://" + domain + "/general-chat"         // TODO: same as above
 
 function main(){
     console.log("WebSockets.main()\nStarting WebSockets and STOMP...");
@@ -36,9 +40,9 @@ function main(){
     document.getElementById("chatBox").onclick = hideFriendList;
 
     //ws = new WebSocket("ws://localhost:8080/generalChat");
-    ws = new SockJS("/generalChat");   // unlike WebSocket(), SockJS() provides fall-back protocols, if WebSockets are not supported in the browser
+    wss = new SockJS("/generalChat");   // unlike WebSocket(), SockJS() provides fall-back protocols, if WebSockets are not supported in the browser
 
-    stompClient = Stomp.over(ws);
+    stompClient = Stomp.over(wss);
 
     sendButton = document.getElementById("submitBtn");
     messageInputBox = document.getElementById("writeText");
@@ -238,7 +242,6 @@ function setFriendsListEventListener(){
         loadGeneralChats();
         focusOnMessageInputBox()
     });
-
 }
 
 function loadUserChats(username){
@@ -309,37 +312,50 @@ function loadGeneralChats(){
     }
 
     // Fetch messages from database through API call:
-    $.get( toUserTextMessagesFinalURL, function(data, status){
-        if(status=="success"){
-            console.log("Chats successfully fetched from DB. " + data.length + " messages fetched.");
-            /** timestampedMapOfMessages( timestamp : message[from,to,content,timestamp] )    */
-            let timestampedMapOfMessages = new Map();
-            if(cachedTextMessagesWithUser.has(iAmChattingWith)){
-                timestampedMapOfMessages = cachedTextMessagesWithUser.get(iAmChattingWith);
-            }
-
-            for( let i = 0; i < data.length; i++){
-                console.log(data[i]);
-                let msg = data[i];
-                if(timestampedMapOfMessages.has( msg.timestamp)) break;
-                timestampedMapOfMessages.set( msg.timestamp, msg);
-                // appendSentMessage( msg, "general");
-                lastMessageFetchedTimestamp.set(iAmChattingWith, msg.timestamp);
-            }
-            cachedTextMessagesWithUser.set( iAmChattingWith, timestampedMapOfMessages);
-            timestampedMapOfMessages.forEach( function(value, key, map){
-                // appendSentMessage(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
-                if(value.from == currentUser) {
-                    // Message sent by the current user
-                    appendMessageToChatScreen(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
-                } else {
-                    // Message received by the current user
-                    appendMessageToChatScreen(value, "general");
+    $.get({
+        url: toUserTextMessagesFinalURL
+        // , headers: {
+        //     "Content-Type": "application/json"
+        // }
+        // , xhrFields: {
+        //     withCredentials: true
+        // }
+        , dataType: "json"
+        , success: function(data, status){
+            if(status=="success"){
+                console.log("Chats successfully fetched from DB. " + data.length + " messages fetched.");
+                /** timestampedMapOfMessages( timestamp : message[from,to,content,timestamp] )    */
+                let timestampedMapOfMessages = new Map();
+                if(cachedTextMessagesWithUser.has(iAmChattingWith)){
+                    timestampedMapOfMessages = cachedTextMessagesWithUser.get(iAmChattingWith);
                 }
-            });
-            console.log("Chats local map complete.\nLast message: " + lastMessageFetchedTimestamp.get(iAmChattingWith));
-            //sessionStorage.setItem("iAmChattingWith", "");  // TODO: what whas this for?
+
+                for( let i = 0; i < data.length; i++){
+                    console.log(data[i]);
+                    let msg = data[i];
+                    if(timestampedMapOfMessages.has( msg.timestamp)) break;
+                    timestampedMapOfMessages.set( msg.timestamp, msg);
+                    // appendSentMessage( msg, "general");
+                    lastMessageFetchedTimestamp.set(iAmChattingWith, msg.timestamp);
+                }
+                cachedTextMessagesWithUser.set( iAmChattingWith, timestampedMapOfMessages);
+                timestampedMapOfMessages.forEach( function(value, key, map){
+                    // appendSentMessage(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
+                    if(value.from == currentUser) {
+                        // Message sent by the current user
+                        appendMessageToChatScreen(value, "sent");  // [TODO:improvement?] for now append it as a general message, for the css styling
+                    } else {
+                        // Message received by the current user
+                        appendMessageToChatScreen(value, "general");
+                    }
+                });
+                console.log("Chats local map complete.\nLast message: " + lastMessageFetchedTimestamp.get(iAmChattingWith));
+                //sessionStorage.setItem("iAmChattingWith", "");  // TODO: what whas this for?
+            }
         }
+         , error: function(jqXHR, textStatus, errorThrown) {
+             console.error('CORS Error:', errorThrown, jqXHR, textStatus);
+         }
     });
 }
 

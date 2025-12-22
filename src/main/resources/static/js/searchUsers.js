@@ -1,16 +1,16 @@
 
-
 window.addEventListener("load", main);  // triggered after dom elements AND images, stylesheets, fonts etc are loaded
 
 var searchInputObj
 var searchResultsDiv
-var getSearchUserUrl = "http://localhost:8080/searchUserByEmailOrNick"
-var addUserToFriendListUrl = "http://localhost:8080/addUserToFriendsList"
-var blockUserUrl = "http://localhost:8080/blockUser"
+//var getSearchUserUrl = "http://localhost:8080/searchUserByEmailOrNick"
+//var addUserToFriendListUrl = "http://localhost:8080/addUserToFriendsList"
+//var blockUserUrl = "http://localhost:8080/blockUser"
 
-//var getSearchUserUrl = "http://chunkchat.ddns.net:8080/searchUserByEmailOrNick"
-//var addUserToFriendListUrl = "http://chunkchat.ddns.net:8080/addUserToFriendsList"
-//var blockUserUrl = "http://chunkchat.ddns.net:8080/blockUser"
+//const domain = "cchat.go.ro";
+var getSearchUserUrl = "https://" + domain + "/searchUserByEmailOrNick"
+var addUserToFriendListUrl = "https://" + domain + "/addUserToFriendsList"
+var blockUserUrl = "https://" + domain + "/blockUser"
 
 var addFriendIcon
 var blockUserIcon
@@ -232,6 +232,7 @@ function addArticleToContactsListAndStartChatting(event){
 
     loadUserChats(userEmail);
 
+    setFriendsListEventListener();
 }
 
 function loadUserChats(username){

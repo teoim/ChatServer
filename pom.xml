@@ -6,7 +6,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.1</version>
+<!--        <version>3.0.1</version>-->
+        <version>3.5.9</version>
         <relativePath/> <!-- lookup parent from repository-->
     </parent>
 
@@ -69,6 +70,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.42</version>
             <optional>true</optional>
         </dependency>
 
@@ -141,6 +143,12 @@
             &lt;!&ndash; v4.0.4 is the maximum still compatible with boot 3.0.1 &ndash;&gt;
             <version>4.0.4</version>
         </dependency>-->
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-client</artifactId>
+            <version>4.3.1</version>
+        </dependency>
 
     </dependencies>
 

@@ -14,13 +14,23 @@ public class WebSocketBrokerConfiguration implements WebSocketMessageBrokerConfi
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+
+        String[] allowedOrigins = GlobalCorsConfiguration.getCorsConfiguration()
+                .getAllowedOrigins()
+                .toArray(new String[0]);
+
         registry.addEndpoint("/generalChat")
+                .setAllowedOrigins(allowedOrigins)
                 .setHandshakeHandler(new StompEndpointHandshakeHandler())
                 .withSockJS();
+
         registry.addEndpoint("/sendPrivateText")
+                .setAllowedOrigins(allowedOrigins)
                 .setHandshakeHandler(new StompEndpointHandshakeHandler())
                 .withSockJS();
+
         registry.addEndpoint("/sendICEMessage")
+                .setAllowedOrigins(allowedOrigins)
                 .setHandshakeHandler(new StompEndpointHandshakeHandler())
                 .withSockJS();
     }

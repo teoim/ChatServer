@@ -1,27 +1,14 @@
 package org.mtr.web.api.configuration;
 
-import jakarta.servlet.http.HttpServletResponse;
-//import org.mtr.web.api.filters.CustomRequestHeaderTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.List;
 
 
 @Configuration
@@ -29,43 +16,19 @@ import java.util.List;
 @Profile("!test")
 public class SecurityConfiguration {
 
-/*    // https://blog.devgenius.io/spring-boot-security-configuration-practically-explained-part6-a-deep-intro-to-56ce03860ad
-    @Autowired
-    private AuthenticationConfiguration authConfig;
+    CorsConfigurationSource corsConfigurationSource;
 
-    // https://blog.devgenius.io/spring-boot-security-configuration-practically-explained-part6-a-deep-intro-to-56ce03860ad
-    @Bean
-    public CustomRequestHeaderTokenFilter customFilter() throws Exception {
-        return new CustomRequestHeaderTokenFilter(authConfig.getAuthenticationManager());
-    }*/
+    @Autowired
+    public SecurityConfiguration(CorsConfigurationSource corsConfigurationSource) {
+        this.corsConfigurationSource = corsConfigurationSource;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
             http.csrf().disable();
-//            http.cors().disable();
-
-            //https://blog.devgenius.io/spring-boot-security-configuration-practically-explained-part6-a-deep-intro-to-56ce03860ad
-            /*http
-                    .exceptionHandling()
-                    .authenticationEntryPoint((request, response, authEx) -> {
-                        response.setHeader("WWW-Authenticate", "Basic realm=\"Access to /signin authentication endpoint\"");
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        response.getWriter().write("{ \"Error\": \"" + authEx.getMessage() + " - You are not authenticated.\" }");
-                    })
-                    .and()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
-        //            .addFilterBefore( new CustomRequestHeaderTokenFilter(authConfig.getAuthenticationManager()), UsernamePasswordAuthenticationFilter.class)
-
-                    .authorizeHttpRequests(authorize -> authorize.requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/auth/signin").authenticated())
-
-                    .authorizeHttpRequests(authorize -> authorize.requestMatchers("/users").hasRole("ADMIN")
-                            .requestMatchers("/items").hasAnyRole("ADMIN", "USER")
-                    );*/
-            //END https://blog.devgenius.io/spring-boot-security-configuration-practically-explained-part6-a-deep-intro-to-56ce03860ad
+            http.cors().configurationSource(corsConfigurationSource);
+//            http.cors(Customizer.withDefaults());   // by default, it will search for a bean with name corsConfigurationSource
 
             http
                     .authorizeHttpRequests((requests) -> requests
@@ -86,32 +49,11 @@ public class SecurityConfiguration {
                             .logoutSuccessUrl("/api/auth/logout")
                             .invalidateHttpSession(true)
                             .deleteCookies("JSESSIONID"));
-                    // More on logout: https://www.baeldung.com/spring-security-logout#3-invalidatehttpsessionand-deletecookies
-                    // https://docs.spring.io/spring-security/reference/servlet/authentication/logout.html
-
-
 
             return http.build();
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource(){
-        // https://docs.spring.io/spring-security/reference/reactive/integrations/cors.html
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins( List.of("chunkchat.ddns.net:8080"));
-//        configuration.setAllowedOriginPatterns( List.of(CorsConfiguration.ALL));
-//        configuration.setAllowCredentials(true);
-        configuration.applyPermitDefaultValues();
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders( List.of(CorsConfiguration.ALL));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("chunkchat.ddns.net:8080/**", configuration);
-//        source.registerCorsConfiguration("chunkchat.ddns.net/**", configuration);   // ?
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 }

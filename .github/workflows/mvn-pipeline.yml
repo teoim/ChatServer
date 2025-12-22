@@ -4,12 +4,12 @@
 # It will then copy the jar file to the deployment folder and run the app.
 #
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-#
-name: Java CI/CD test with Maven
+##
+name: Build and deploy on mx5
 
 on:
   push:
-    branches: [ "fb-web-app-web-rtc-cors" ]
+    branches: [ "fb-web-app-deploy01" ]
     # pull_request:
     # branches: [ "fb-web-app" ]
 
@@ -28,6 +28,11 @@ jobs:
       #    java-version: '17'
       #    distribution: 'temurin'
       #    cache: maven
+      #
+      # - name: debug
+      #   run: |
+      #     pwd
+      #     whoami
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
@@ -41,9 +46,10 @@ jobs:
 
     steps:
       - name: Clear deployments directory
-        run: rm /home/teo/deployments/chat-app/*.jar
+        run: rm -f /home/teo/deployments/chat-app/*.jar
       - name: Copy new jar to deployments directory
-        run: cp /home/teo/repos/ChatServer/target/*.jar /home/teo/deployments/chat-app/
+        run: cp $GIT_ACTIONS_RUNNER_HOME_DIR/_work/ChatServer/ChatServer/target/*.jar /home/teo/deployments/chat-app/
+        # run: cp target/chat-app-*.jar /home/teo/deployments/chat-app/
       - name: chmod on jar file
         run: chmod 744 /home/teo/deployments/chat-app/chat-app-*.jar
 
@@ -52,9 +58,9 @@ jobs:
     needs: [ deploy ]
 
     steps:
-    - name: Stop Spring Boot app
-      run: /home/teo/scripts/stopapp.sh
-        
+      - name: Stop Spring Boot app
+        run: $SCRIPTS_HOME_DIR/stopapp.sh
+
 
   run-new-app:
     runs-on: self-hosted
@@ -62,4 +68,4 @@ jobs:
 
     steps:
       - name: Run application
-        run: /home/teo/scripts/runapp.sh
+        run: $SCRIPTS_HOME_DIR/runapp.sh

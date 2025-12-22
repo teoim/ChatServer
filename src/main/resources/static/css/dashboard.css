@@ -99,6 +99,7 @@ article.chatArticle{
     padding: 1%;
     margin: 1em;
     float: left;
+    box-shadow: 0px 0px 5px white;
 }
 
 article.sent{
