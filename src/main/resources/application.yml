@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: chat-app
+  cloud:
+    config:
+      profile: dev
+#
+# Configuration server
+  config:
+    import: optional:configserver:http://localhost:8888
+#
+# DB connection settings
+  datasource:
+    url:
+    username:
+    password:
+#
+# JPA
+#spring.jpa.hibernate.ddl-auto=create-drop
+#spring.jpa.hibernate.ddl-auto=create
+  jpa:
+    show-sql:
+    database:
+    database-platform:
+    properties:
+      hibernate:
+        format_sql:
+        # Custom sql files
+        hbm2ddl:
+          import_files: import.sql, messages-1.sql, messages-2.sql, messages-3.sql, messages-4.sql, messages-5.sql
+
+# API Documentation     [ https://springdoc.org/properties.html ]
+springdoc:
+  swagger-ui:
+    path:
+#springdoc.packages-to-scan=
+  show-actuator:
+  model-and-view-allowed:
+  writer-with-default-pretty-printer:
+
+# EUREKA
+#eureka.client.serviceUrl.defaultZone=
+#eureka.instance.preferIpAddress=true
+
+#spring.banner.location=classpath:
