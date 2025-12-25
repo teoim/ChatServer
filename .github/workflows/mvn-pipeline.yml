@@ -9,7 +9,7 @@ name: Build and deploy on mx5
 
 on:
   push:
-    branches: [ "fb-web-app-deploy01" ]
+    branches: [ "fb-web-app" ]
     # pull_request:
     # branches: [ "fb-web-app" ]
 
