@@ -3,7 +3,8 @@
 window.addEventListener("load", main);  // triggered after dom elements AND images, stylesheets, fonts etc are loaded
 
 // UI Elements
-var callIcon, videoCallIcon, inCallIcon, inVideoCallIcon;
+var callIcon, videoCallIcon, innerCallIcon, innerVideoCallIcon;
+var innerCameraOnIcon, innerCameraOffIcon, innerMicOnIcon, innerMicOffIcon;
 var targetUsername, myUsername;
 
 // RTCPeerConnection
@@ -30,13 +31,21 @@ function main(){
 
     callIcon = document.getElementById("callIcon");
     videoCallIcon = document.getElementById("videoCallIcon");
-    inCallIcon = document.getElementById("inCallIcon");
-    inVideoCallIcon = document.getElementById("inVideoCallIcon");
+    innerCallIcon = document.getElementById("innerCallIcon");
+    innerVideoCallIcon = document.getElementById("innerVideoCallIcon");
+    innerCameraOnIcon = document.getElementById("innerCameraOnIcon");
+    innerCameraOffIcon = document.getElementById("innerCameraOffIcon");
+    innerMicOnIcon = document.getElementById("innerMicOnIcon");
+    innerMicOffIcon = document.getElementById("innerMicOffIcon");
 
     callIcon.addEventListener("click", startCall);
     videoCallIcon.addEventListener("click", startVideoCall);
-    inCallIcon.addEventListener("click", endCall);
-    inVideoCallIcon.addEventListener("click", endVideoCall);
+    innerCallIcon.addEventListener("click", endCall);
+    innerVideoCallIcon.addEventListener("click", endVideoCall);
+    innerCameraOnIcon.addEventListener("click", turnCameraOff);
+    innerCameraOffIcon.addEventListener("click", turnCameraOn);
+    innerMicOnIcon.addEventListener("click", turnMicrophoneOff);
+    innerMicOffIcon.addEventListener("click", turnMicrophoneOn);
 
     // Connect and listen to the ICE server
 
@@ -96,8 +105,16 @@ function startCall(event){
     console.debug("WebRTC.startCall()");
     document.getElementById("videoBox").style.display = "flow";
     document.getElementById("iconsDiv").style.display = "none";
-    document.getElementById("inCallIcon").style.display = "block";
-    document.getElementById("inVideoCallIcon").style.display = "none";
+    document.getElementById("innerCallIcon").style.display = "";
+
+    document.getElementById("innerVideoCallIcon").style.display = "none";
+    document.getElementById("innerVideoCallDiv").style.display = "none";
+
+    document.getElementById("innerCameraOnIcon").style.display = "none";
+    document.getElementById("innerCameraOnDiv").style.display = "none";
+
+    document.getElementById("innerMicOffIcon").style.display = "none";
+    document.getElementById("innerMicOffDiv").style.display = "none";
 
     mediaConstraints.audio = true;
     mediaConstraints.video = false;
@@ -108,8 +125,15 @@ function startVideoCall(event,answer){
     console.debug("WebRTC.startVideoCall()");
     document.getElementById("videoBox").style.display = "flow";
     document.getElementById("iconsDiv").style.display = "none";
-    document.getElementById("inCallIcon").style.display = "none";
-    document.getElementById("inVideoCallIcon").style.display = "block";
+    document.getElementById("innerCallIcon").style.display = "none";
+    document.getElementById("innerCallDiv").style.display = "none";
+    document.getElementById("innerVideoCallIcon").style.display = "";
+
+    document.getElementById("innerCameraOffIcon").style.display = "none";
+    document.getElementById("innerCameraOffDiv").style.display = "none";
+
+    document.getElementById("innerMicOffIcon").style.display = "none";
+    document.getElementById("innerMicOffDiv").style.display = "none";
 
     mediaConstraints.audio = true;
     mediaConstraints.video = true;
@@ -123,11 +147,12 @@ function startVideoCall(event,answer){
 }
 
 function initAnswerToVideoCall(){
-    console.debug("WebRTC.startVideoCall()");
+    console.debug("WebRTC.initAnswerToVideoCall()");
     document.getElementById("videoBox").style.display = "flow";
     document.getElementById("iconsDiv").style.display = "none";
-    document.getElementById("inCallIcon").style.display = "none";
-    document.getElementById("inVideoCallIcon").style.display = "block";
+    document.getElementById("innerCallIcon").style.display = "none";
+    document.getElementById("innerCallDiv").style.display = "none";
+    document.getElementById("innerVideoCallIcon").style.display = "block";
 
     mediaConstraints.audio = true;
     mediaConstraints.video = true;
@@ -138,6 +163,7 @@ function endCall(){
     console.debug("WebRTC.endCall()");
     document.getElementById("videoBox").style.display = "none";
     document.getElementById("iconsDiv").style.display = "flow";
+    resetInCallIconsAndDivs();
     hangUpCall();
 }
 
@@ -145,7 +171,82 @@ function endVideoCall(){
     console.debug("WebRTC.endVideoCall()");
     document.getElementById("videoBox").style.display = "none";
     document.getElementById("iconsDiv").style.display = "flow";
+    resetInCallIconsAndDivs();
     hangUpCall();
+}
+
+function resetInCallIconsAndDivs(){
+    document.getElementById("innerCallIcon").style.display = "";
+    document.getElementById("innerCallDiv").style.display = "";
+
+    document.getElementById("innerVideoCallIcon").style.display = "";
+    document.getElementById("innerVideoCallDiv").style.display = "";
+
+    document.getElementById("innerCameraOnIcon").style.display = "";
+    document.getElementById("innerCameraOnDiv").style.display = "";
+    document.getElementById("innerCameraOffIcon").style.display = "";
+    document.getElementById("innerCameraOffDiv").style.display = "";
+
+    document.getElementById("innerMicOnIcon").style.display = "";
+    document.getElementById("innerMicOnDiv").style.display = "";
+    document.getElementById("innerMicOffIcon").style.display = "";
+    document.getElementById("innerMicOffDiv").style.display = "";
+}
+
+function turnCameraOff(){
+    document.getElementById("innerCameraOnDiv").style.display = "none";
+    document.getElementById("innerCameraOffDiv").style.display = "";
+    innerCameraOnIcon.style.display = "none";
+    innerCameraOffIcon.style.display = "";
+    myLocalStream.getTracks()
+        .forEach((track) => {
+            if(track.kind === "video"){
+                console.log("Camera enabled - turning off.");
+                track.enabled = false;
+            }
+        });
+}
+
+function turnCameraOn(){
+    document.getElementById("innerCameraOnDiv").style.display = "";
+    document.getElementById("innerCameraOffDiv").style.display = "none";
+    innerCameraOnIcon.style.display = "";
+    innerCameraOffIcon.style.display = "none";
+    myLocalStream.getTracks()
+        .forEach((track) => {
+            if(track.kind === "video"){
+                console.log("Camera disabled - turning on.");
+                track.enabled = true;
+            }
+        });
+}
+
+function turnMicrophoneOff(){
+    document.getElementById("innerMicOnDiv").style.display = "none";
+    document.getElementById("innerMicOffDiv").style.display = "";
+    innerMicOnIcon.style.display = "none";
+    innerMicOffIcon.style.display = "";
+    myLocalStream.getTracks()
+        .forEach((track) => {
+            if(track.kind === "audio"){
+                console.log("Microphone enabled - turning off.");
+                track.enabled = false;
+            }
+        });
+}
+
+function turnMicrophoneOn(){
+    document.getElementById("innerMicOnDiv").style.display = "";
+    document.getElementById("innerMicOffDiv").style.display = "none";
+    innerMicOnIcon.style.display = "";
+    innerMicOffIcon.style.display = "none";
+    myLocalStream.getTracks()
+        .forEach((track) => {
+            if(track.kind === "audio"){
+                console.log("Microphone disabled - turning on.");
+                track.enabled = true;
+            }
+        });
 }
 
 

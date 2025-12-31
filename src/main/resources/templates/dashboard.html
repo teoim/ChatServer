@@ -88,8 +88,30 @@
 <!--                <a hidden><h6 id="videoAndCallTargetId" th:text="${session.iAmChattingWith}"></h6></a>-->
 
                 <div id="inCallIconsDiv">
-                    <img id="inCallIcon" class="callIcons inCallIcons" src="/images/icons/call.png" alt="End voice call.">
-                    <img id="inVideoCallIcon" class="callIcons inCallIcons" src="/images/icons/videocall.png" alt="End video call.">
+                    <div id="innerCallDiv" class="inCallInnerDivClass">
+                        <img id="innerCallIcon" class="callIcons inCallIcons" src="/images/icons/call.png" alt="End voice call.">
+                    </div>
+
+                    <div id="innerVideoCallDiv" class="inCallInnerDivClass">
+                        <img id="innerVideoCallIcon" class="callIcons inCallIcons" src="/images/icons/videocall.png" alt="End video call.">
+                    </div>
+
+                    <div id="innerCameraOnDiv" class="inCallInnerDivClass">
+                        <img id="innerCameraOnIcon" class="callIcons inCallIcons inCallIconsOn" src="/images/icons/camera-on.png" alt="Turn camera off.">
+                    </div>
+
+                    <div id="innerCameraOffDiv" class="inCallInnerDivClass">
+                        <img id="innerCameraOffIcon" class="callIcons inCallIcons inCallIconsOff" src="/images/icons/camera-off.png" alt="Turn camera on.">
+                    </div>
+
+                    <div id="innerMicOnDiv" class="inCallInnerDivClass">
+                        <img id="innerMicOnIcon" class="callIcons inCallIcons inCallIconsOn" src="/images/icons/mic-on.png" alt="Turn microphone off.">
+                    </div>
+
+                    <div id="innerMicOffDiv" class="inCallInnerDivClass">
+                        <img id="innerMicOffIcon" class="callIcons inCallIcons inCallIconsOff" src="/images/icons/mic-off.png" alt="Turn microphone on.">
+                    </div>
+
                 </div>
             </div>
 

@@ -198,33 +198,29 @@ div#iconsDiv, div#inCallIconsDiv{
     right: 5%;
 }
 
-div.innerDivsCallAndVideo{
+div.innerDivsCallAndVideo, div.inCallInnerDivClass{
     display: inline-block;
     height: 35px;
     width: 35px;
 }
 
-/*div#iconsDiv{*/
-/*    background-color: hsla(203, 20%, 55%, 0.3);*/
-/*}*/
 
-div#inCallIconsDiv{
+div.inCallInnerDivClass{
     background-color: hsla(0, 100%, 50%, 0.3);
     border: 1px solid #6c0000;
     border-radius: 50px;
 }
 
-/*div#callIconDiv:hover, div#videoCallIconDiv:hover{*/
-div.innerDivsCallAndVideo:hover{
+div.innerDivsCallAndVideo:hover, img.inCallIconsOff {
     background-color: hsla(138, 100%, 32%, 0.7);
     border-radius: 50px;
 }
 
-div#inCallIconsDiv:hover, img#blockUserIcon:hover{
+div.inCallInnerDivClass:hover, img#blockUserIcon:hover{
     background-color: hsla(0, 100%, 50%, 0.70);
 }
 
-img.callIcons, img.userIcons{
+img.callIcons, img.userIcons, div.inCallInnerDivClass:hover{
     width: 35px;
     border: 1px solid green;
     border-radius: 50px;
@@ -335,7 +331,7 @@ input#logoutBtn{
         cursor: pointer;
     }
 
-    div#iconsDiv {
+    div#iconsDiv{
         top: auto;
         right: auto;
         bottom: 1%;
