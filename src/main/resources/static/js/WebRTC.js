@@ -152,7 +152,13 @@ function initAnswerToVideoCall(){
     document.getElementById("iconsDiv").style.display = "none";
     document.getElementById("innerCallIcon").style.display = "none";
     document.getElementById("innerCallDiv").style.display = "none";
-    document.getElementById("innerVideoCallIcon").style.display = "block";
+    document.getElementById("innerVideoCallIcon").style.display = "";
+
+    document.getElementById("innerCameraOffIcon").style.display = "none";
+    document.getElementById("innerCameraOffDiv").style.display = "none";
+
+    document.getElementById("innerMicOffIcon").style.display = "none";
+    document.getElementById("innerMicOffDiv").style.display = "none";
 
     mediaConstraints.audio = true;
     mediaConstraints.video = true;
