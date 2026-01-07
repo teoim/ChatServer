@@ -2,77 +2,33 @@
 window.addEventListener("load", main);
 
 var wss;
-var stompMempoolClient;
-var subscription001;
-
 
 function main(){
     console.log("wss-mempool.main()\nStarting connection to mempool...");
 
     wss = new WebSocket("wss://mempool.space/api/v1/ws");
 
-    stompMempoolClient = Stomp.over(wss);
+    //stompMempoolClient = Stomp.over(wss);
 
-    // Custom subscription ID, passed to stompClient.subscribe ( if it's not passed, stomp automatically creates an ID )
-    var mysubid001 = 'mempool-sub-001';
+    wss.addEventListener("open", () => {
+        console.info("CONNECTED to mempool.");
 
-    // Prepare Stomp.connect() parameters - stompCallbackFunction and stompConnectError:
-    let stompCallbackFunction = function(frame){
-        subscription001 = stompMempoolClient.subscribe(
-            JSON.stringify({ "action": "want", "data": ["mempool-blocks", "stats"] })
-            , function(message){
-                console.log("mempool message received: " + message.body);
+        console.log(`wss-mempool.main() - Requesting mempool-blocks and stats.`);
+        // wss.send(JSON.stringify({ "action": "want", "data": ["mempool-blocks", "stats"] }))
+        wss.send(JSON.stringify({ "action": "want", "data": ["stats"] }))
+    });
 
-                let msg = JSON.parse(message.body);
+    wss.addEventListener("message", (e) => {
+        const message = JSON.parse(e.data);
+        const timestamp = JSON.parse(e.timeStamp)
+        console.info("RECEIVED message timestamp:", timestamp);
+        console.info("RECEIVED message:", message);
+        console.info("RECEIVED message.da:", message.da);
+    });
 
-                console.info("mempool parsed response: ", msg);
-            }
-            , {id : mysubid001});
-
-    }
-
-    // stompClient.subscribe() returns a subscription object containing the ide and a method:
-    //      Object { id: "my-subscription-id-001", unsubscribe: unsubscribe() }
-    // Use this method to unsubscribe:
-    //      subscription001.unsubscribe();
-
-    let stompConnectError = function(error){
-        console.log("wss-mempool.js - STOMP protocol error: " + error);
-
-        document.getElementById("sendTextForm").disabled = true;
-        document.getElementById("writeText").disabled = true;
-        document.getElementById("writeText").value = "STOMP  protocol error: " + error;
-        document.getElementById("writeText").color = "red";
-
-    }
-
-    stompMempoolClient.connect( {}, stompCallbackFunction, stompConnectError);
-
-    // Automatic reconnect attempts will be made every 5000 ms ( default is 0 - disabled )
-    stompMempoolClient.reconnect_delay = 5000;
-    // Send a heartbeat every 30 seconds
-    stompMempoolClient.heartbeat.outgoing = 30000;
-    // Do not receive heartbeats from the server
-    //stompClient.heartbeat.incoming = 0;
-
-
-    // let sendForm = function (inputText) {
-    //
-    //     let message = {
-    //         from: currentUser,
-    //         to: sessionStorage.getItem("stompClientUsernameDestination"),
-    //         content: inputText,
-    //         timestamp: new Date(Date.now()).toISOString()
-    //     };
-    //
-    //     stompClient.send(sessionStorage.getItem("stompClientMessageDestination"), {}, JSON.stringify(message));  // "/app" will forward messages to the @Controller with a "/generalChat" endpoint
-    //
-    //     // When i send a private message, append that message to my window also
-    //     if (sessionStorage.getItem("stompClientUsernameDestination") != "") {
-    //         // appendSentMessage(message, "sent");
-    //         appendMessageToChatScreen(message, "sent");     // TODO do better
-    //     }
-    // }
+    wss.addEventListener("close", () => {
+        console.ingo("DISCONNECTED from mempool");
+    });
 }
 
 // function appendMessageToChatScreen(message, sentOrReceived){
