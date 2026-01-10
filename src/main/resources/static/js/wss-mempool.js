@@ -3,12 +3,13 @@ window.addEventListener("load", main);
 
 var wss;
 
+// mempool data
+var latestConversions;
+
 function main(){
     console.log("wss-mempool.main()\nStarting connection to mempool...");
 
     wss = new WebSocket("wss://mempool.space/api/v1/ws");
-
-    //stompMempoolClient = Stomp.over(wss);
 
     wss.addEventListener("open", () => {
         console.info("CONNECTED to mempool.");
@@ -20,57 +21,55 @@ function main(){
 
     wss.addEventListener("message", (e) => {
         const message = JSON.parse(e.data);
-        const timestamp = JSON.parse(e.timeStamp)
-        console.info("RECEIVED message timestamp:", timestamp);
         console.info("RECEIVED message:", message);
-        console.info("RECEIVED message.da:", message.da);
+        if(message.conversions) {
+            updateConversions(message.conversions);
+            return; // when we get the conversions, there are no fees data
+        }
+        updateFeesInPage(message.fees);
     });
 
     wss.addEventListener("close", () => {
-        console.ingo("DISCONNECTED from mempool");
+        console.info("DISCONNECTED from mempool");
     });
 }
 
-// function appendMessageToChatScreen(message, sentOrReceived){
-//     let articleElement = document.createElement("article");
-//     let headerElement = document.createElement("header");
-//     let footerElement = document.createElement("footer");
-//     let timeElement = document.createElement("time");
-//     let dateElement = document.createElement("date");
-//     let h1ContentElement = document.createElement("h1");
-//     let h3TimeElement = document.createElement("h3");
-//     let h3DateElement = document.createElement("h3");
-//     let pElement = document.createElement("p");
-//
-//     articleElement.classList.add("chatArticle");
-//     if(sentOrReceived != "") {
-//         // sentOrReceived will only have "sent" or "" values - we only add the non-null value to the classlist
-//         articleElement.classList.add(sentOrReceived);
-//     }
-//
-//     headerElement.classList.add("messageTimeHeader");
-//     footerElement.classList.add("messageDateFooter");
-//
-//     pElement.classList.add("chatP");
-//
-//     let msgDate = new Date(message.timestamp);
-//     let dateString = msgDate.toDateString();
-//     let timeString = msgDate.getHours() + ":" + msgDate.getMinutes() + ":" + msgDate.getSeconds();  // TODO: make sure this is the local time
-//
-//     h3TimeElement.append("From: " + message.from + ", " + timeString);
-//     timeElement.append(h3TimeElement);
-//     headerElement.append(timeElement);
-//
-//     h3DateElement.append(dateString);
-//     dateElement.append(h3DateElement);
-//     footerElement.append(dateElement);
-//
-//     h1ContentElement.append(message.content);
-//     pElement.append(h1ContentElement);
-//
-//     articleElement.append(headerElement);
-//     articleElement.append(pElement);
-//     articleElement.append(footerElement);
-//
-//     document.getElementById('chatBox').prepend(articleElement);
-// }
+function updateFeesInPage(fees){
+    console.log("updateFeesInPage()");
+
+    document.getElementById("p1").replaceChildren(fees.fastestFee);
+    document.getElementById("p2").replaceChildren(fees.halfHourFee);
+    document.getElementById("p3").replaceChildren(fees.hourFee);
+    document.getElementById("p4").replaceChildren(fees.economyFee);
+    document.getElementById("p5").replaceChildren(fees.minimumFee);
+
+}
+
+function updateConversions(conversions){
+    console.log("updateConversions()");
+    latestConversions = conversions;
+
+    let conversionsSelect = document.getElementById("conversionsEntries");
+    conversionsSelect.replaceChildren();
+    conversionsSelect.addEventListener("change", function(event) {
+        document.getElementById("btcPrice").replaceChildren(": " + event.target.value);
+    });
+    for(let entry in conversions){
+        if (entry === "time") {
+            let timeElement = document.getElementById("btcPriceTime");
+            timeElement.replaceChildren();
+            timeElement.style.setProperty("display", "inline-block");
+            timeElement.append( " @ " + new Date(conversions.time * 1000).toISOString().slice(11, 19));
+            document.getElementById("conversionsArticle").appendChild(timeElement);
+        }
+        else {
+            let optionElement = document.createElement("option");
+            optionElement.value = conversions[entry];
+            optionElement.innerHTML = entry;
+            conversionsSelect.appendChild(optionElement);
+        }
+    }
+    document.getElementById("btcPrice").replaceChildren(": " + conversionsSelect.value);    // set first price value
+    document.getElementById("btcPrice").style.setProperty("display", "inline-block");
+    document.getElementById("conversionsArticle").style.setProperty("display", "inline-block");
+}

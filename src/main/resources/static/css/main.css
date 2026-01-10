@@ -27,6 +27,9 @@ body > h1#h1PleaseLogIn {
 	color: #ffffff;
 }
 
+a:link, a:visited, a:hover, a:active {
+	text-decoration: none;
+}
 
 header#pageHeader{
 	position: fixed;
@@ -48,6 +51,61 @@ span#emailSpan {
 	color: darkred;
 }
 
+
+	/** FOOTER - mempool fees **/
+footer#pageFooter {
+	width: 100%;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	background-color: hsla(130, 90%, 100%, 0.8);
+	padding: 2px;
+}
+
+p#footerTitleP{
+	display: inline-block;
+	min-width: 8%;
+}
+
+article.feesArticles{
+	display: inline-block;
+	width: 6%;
+	min-width: 10ch;
+}
+
+article#conversionsArticle {
+	display: none;
+	min-width: 10%;
+	background-color: #F7931A;
+	padding: 0 1em 0 1em;
+}
+
+select#conversionsEntries{
+	background-color: #F7931A;
+}
+
+article.feesArticles > p, article.feesArticles > h4 {
+	display: inline-block;
+	color: #6800a8;
+	width: 50%;
+	text-align: center;
+}
+
+article#fastestFee{
+	background-image: linear-gradient(to right, #179900FF, #179900FF, #00D103FF);
+}
+article#halfHourFee{
+	background-image: linear-gradient(to right, #00D103FF, #00D103FF, #00FF04FF);
+}
+article#hourFee{
+	background-image: linear-gradient(to right, #00FF04FF, #00FF04FF, #D8FF29FF);
+}
+article#economyFee{
+	background-image: linear-gradient(to right, #D8FF29FF, #D8FF29FF, #FF7575FF);
+}
+article#minimumFee{
+	background-image: linear-gradient(to right, #FF7575FF, #FF7575FF, #ff3f3f);
+}
 
 /********** Responsiveness **********/
 
