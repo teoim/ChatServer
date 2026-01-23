@@ -292,7 +292,9 @@ async function sendMessageToServer(message){
         console.info("POST ", result.status, result.url);
 
     } catch (error) {
-        console.error("Error while sending message to server:", error);
+        error.message = "Error while sending message to server:" + error.message;
+//        console.error("Error while sending message to server:", error);
+        reportError(error);
     }
 
 }
@@ -335,7 +337,7 @@ function createPeerConnection() {
     console.debug("WebRTC.createPeerConnection()");
 
     if (myPeerConnection) {
-        console.warn("A call is already in progress!");
+        console.info("A call is already in progress!");
         return;
     }
     console.info("Creating new peer connection.");

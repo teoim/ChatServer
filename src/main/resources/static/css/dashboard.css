@@ -60,6 +60,10 @@ div#chatBox{
     flex-direction: column-reverse;
 }
 
+div#chatBox.dragOver {
+    background-color: hsla(197, 10%, 54%, 0.6);
+}
+
 div#chattingWithDiv{
     background-color: hsla(225, 100%, 17%, 0.9);
     border-radius: 5px;
@@ -146,6 +150,14 @@ footer.messageDateFooter{
 
 
 
+/** Send file input **/
+input#fileInput {
+    opacity: 0;
+    position: fixed;
+}
+
+
+
     /** Message form **/
 
 form#sendTextForm{
@@ -157,33 +169,88 @@ form#sendTextForm{
 }
 
 input#writeText{
-    color: #111111;
+    color: white;
+    font-size: 1.8em;
+	font-weight: bold;
     background-color: hsla(170, 18%, 50%, 1);
-    width: 90%;
+    width: 80%;
     height: 90%;
     border: 0;
     border-radius: 6px;
 }
 
-input#submitBtn {
-	width: 9%;
+input#submitBtn, label#fileInputLabel, input#sendFilesBtn {
+    display: inline-block;
+	width: 8.5%;
 	background-color: #456;
 	height: 90%;
 	color: white;
+    font-size: 1.8em;
 	font-weight: bold;
-	border: 0;
+	border: 1px solid #456;
 	border-radius: 6px;
+    text-align: center;
+}
+
+img#attachFilesIcon{
+    position: relative;
+    top: 10%;
+    height: 80%;
+    max-width: 90%;
+    background-color: #fdfdfd;
+    border-radius: 5px 11px 1px 11px
+}
+
+    /* Preview div */
+div#filePreviewDiv{
+    background-color: hsla(0, 0%, 45%, 1);
+    width: 95%;
+    height: 85%;
+    position: fixed;
+    top: 10%;
+    left: 3%;
+    z-index: 999;
+}
+
+div#imgDivElement {
+    background-color: #3E3E3E;
+    width: 90%;
+    height: 90%;
+    margin: 2.5% 5% 0.1% 5%;
+    overflow-y: auto;
+    text-align: center;
+}
+
+img.imgPreviewClass{
+    display: inline-block;
+    max-width: 80%;
+    min-width: 30%;
+    margin: 1% 1%;
+}
+
+input#sendFilesBtn {
+    width: 85%;
+    height: 5%;
+    background-color: white;
+    color: #456;
+    position: relative;
+    top: 0;
+    left: 7.5%;
 }
 
     /** Message form and Logout form **/
 
-input#submitBtn:hover, input#logoutBtn:hover{
+input#submitBtn:hover, input#logoutBtn:hover, label#fileInputLabel:hover, input#sendFilesBtn:hover{
 	cursor: pointer;
 	background-color: #567;
+    color: white;   /* For sendFilesBtn */
+    border: 1px solid white;
 }
 
-input#submitBtn:active, input#logoutBtn:active{
+input#submitBtn:active, input#logoutBtn:active, label#fileInputLabel:active, input#sendFilesBtn:active{
 	background-color: #345;
+    color: white;   /* For sendFilesBtn */
+    border: 1px solid white;
 }
 
 
@@ -333,9 +400,9 @@ input#logoutBtn{
 
     div#iconsDiv{
         top: auto;
-        right: auto;
+        right: 15%;
         bottom: 1%;
-        left: 5%;
+        left: auto;
     }
 
     div#inCallIconsDiv{

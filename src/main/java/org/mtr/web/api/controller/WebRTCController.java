@@ -34,6 +34,7 @@ public class WebRTCController {
     public void handleClientMessage(HttpServletRequest request){
         MessageLogger.log("WebRTCController - handleClientMessage(...) - @PostMapping(\"/api/webrtc/ice-server/message\")");
 
+        String destination = "/queue/sendICEMessage";
         String messageBody = null;
         String targetUser = null;
 
@@ -42,7 +43,7 @@ public class WebRTCController {
             messageBody = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
             MessageLogger.log(messageBody);
         } catch (IOException e) {
-            ErrorLogger.log(e, this.getClass().getSimpleName(), "handleClientMessage(...) - @PostMapping(\\\"/api/webrtc/message\\\")\"");
+            ErrorLogger.log(e, this.getClass().getSimpleName(), "handleClientMessage(...) - @PostMapping(\\\"/api/webrtc/ice-server/message\\\")\"");
         }
 
         try {
@@ -64,8 +65,49 @@ public class WebRTCController {
         assert messageBody != null;
         assert !targetUser.isEmpty();
         assert !targetUser.equals("null");
-        simpMessagingTemplate.convertAndSendToUser( targetUser, "/queue/sendICEMessage", messageBody);
+        simpMessagingTemplate.convertAndSendToUser( targetUser, destination, messageBody);
 
         //return null;
+    }
+
+    @PostMapping(path="/ice-server/data-message")
+    @ResponseBody
+    public void handleClientDataMessage(HttpServletRequest request){
+        MessageLogger.log("WebRTCController - handleClientDataMessage(...) - @PostMapping(\"/api/webrtc/ice-server/data-message\")");
+
+        String destination = "/queue/sendICEMessageForData";
+        String messageBody = null;
+        String targetUser = null;
+        // String msgType;
+
+        try {
+            // !!! Once we do this, we cannot read the request body again as getReader has already been called
+            messageBody = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            MessageLogger.log(messageBody);
+        } catch (IOException e) {
+            ErrorLogger.log(e, this.getClass().getSimpleName(), "handleClientMessage(...) - @PostMapping(\\\"/api/webrtc/ice-server/data-message\\\")\"");
+        }
+
+        try {
+            targetUser = String.valueOf((new ObjectMapper()).reader().readTree(messageBody).get("target"));
+            // msgType = String.valueOf((new ObjectMapper()).reader().readTree(messageBody).get("type"));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Remove heading and trailing " characters
+        if(( targetUser.charAt(0) == '"' ) && (targetUser.charAt( targetUser.length()-1) == '"')) {
+            targetUser = targetUser.substring((targetUser.indexOf("\"")) + 1, targetUser.lastIndexOf("\""));
+        }
+
+//        if(targetUser.equalsIgnoreCase("null") || targetUser==null) return messageBody;
+        if(targetUser.equalsIgnoreCase("null") || targetUser==null) return;
+
+        MessageLogger.log("Sending WebRTC data request to " + targetUser);
+
+        assert messageBody != null;
+        assert !targetUser.isEmpty();
+        assert !targetUser.equals("null");
+        simpMessagingTemplate.convertAndSendToUser( targetUser, destination, messageBody);
     }
 }
