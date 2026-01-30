@@ -388,7 +388,6 @@ function handleNegotiationNeededEvent(event) {
 // We receive a video call from someone [seemsOK]
 function handleVideoOfferMsg(msg) {
     console.debug("WebRTC.handleVideoOfferMsg() - msg: ", msg);
-    //startVideoCall(null,true);   //TODO bug? - sends a video-offer message at the end.. we just need the UI elements behavior
     initAnswerToVideoCall();    // only UI elements and mediaConstraints
 
     targetUsername = msg.name;

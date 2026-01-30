@@ -20,12 +20,7 @@ var lastDataChannelId = 0;
  var wsktForData;
  var webRtcStompClientForData;
  var webRtcSubscription001ForData;
-//
-// // RTCPeerConnection media constraints
-// const mediaConstraints = {
-//     audio: false, // Audio track on / off
-//     video: false, // Video track on / off
-// };
+
 
 
 function main(){
@@ -101,13 +96,20 @@ function main(){
          let parsedMsgBody = JSON.parse(message.body);
 
          switch (parsedMsgBody.type) {
-             case "file-transfer-req":
              case "new-ice-candidate":
                  console.info("Received ice candidate...");
                  handleNewICECandidateMessageForData(parsedMsgBody);
                  break;
+             case "file-transfer-req":
+                console.info("Received transfer request...");
+                handleFileTransferReqMessage(parsedMsgBody);
+                break;
+             case "file-transfer-resp":
+                console.info("Received transfer response...");
+                handleFileTransferRespMessage(parsedMsgBody);
+                break;
              default:
-                 console.warn("parsedMsgBody.type not treated: ", parsedMsgBody.type);
+                 console.warn("message type not treated: ", parsedMsgBody.type);
                  break;
             }
         }
@@ -150,7 +152,7 @@ function dropHandler(e){
 async function sendDataMessageToServer(message){
     // console.debug("WebRTCDataChannels.sendDataMessageToServer() - message: ", message);
     let msg = JSON.stringify(message);
-    console.debug("WebRTCDataChannels.sendDataMessageToServer() - message: ", msg);
+    console.debug("WebRTCDataChannels.sendDataMessageToServer()");
 
     var token_value = "";
     var token_name = "";
@@ -337,9 +339,7 @@ function initRtcPeerConnection() {
 
     myPeerConnectionForData = new RTCPeerConnection({
         iceServers: [
-            {
-                urls: "stun:stun.stunprotocol.org"
-            }
+            { urls: "stun:stun.stunprotocol.org" }
             ,{ urls: "stun:stun4.l.google.com:19302" }
             ,{ urls: "stun:stun4.l.google.com:5349" }
         ],
@@ -354,19 +354,24 @@ function initRtcPeerConnection() {
 function initDataChannel(){
     console.debug("WebRTCDataChannels.initDataChannel()");
 
+    lastDataChannelId++;
     let newDataChannel = myPeerConnectionForData.createDataChannel(
         targetUsername
         , {
-            maxRetransmits: 15
+            maxRetransmits: 150
 //            , negotiated: true
-//            , id: ++lastDataChannelId
+//            , id: lastDataChannelId
         });
     rtcDataChannels.set(lastDataChannelId, newDataChannel);
 
     newDataChannel.addEventListener("open", (e) => {
         console.log("New data channel OPEN: ", newDataChannel);
+        newDataChannel.send("Hey there!");
     });
 
+    newDataChannel.addEventListener("message", (e) => {
+            console.log("New data channel message: ", e);
+    });
 }
 
 
@@ -375,7 +380,7 @@ function initDataChannel(){
     /*********************************/
 
 function handleICECandidateEventForData(e) {
-    console.log("NOOP - handleICECandidateEventForData(e)", e);
+    console.log("handleICECandidateEventForData(e)");
 
     if (e.candidate) {
             sendDataMessageToServer({
@@ -391,7 +396,7 @@ function handleTrackEventForData(track, streams) {
 }
 
 function handleNegotiationNeededEventForData(e) {
-    console.log("handleNegotiationNeededEventForData(e)", e);
+    console.log("handleNegotiationNeededEventForData(e)");
 
     myPeerConnectionForData
         .createOffer()
@@ -410,19 +415,51 @@ function handleNegotiationNeededEventForData(e) {
 
 // We receive a candidate from a peer
 function handleNewICECandidateMessageForData(msg) {
-    console.log("NOOP - handleNewICECandidateMessageForData(msg)", msg);
-
-//    let msgFrom = msg.name;
-//    let msgTarget = msg.target;
-//    const candidate = msg.candidate;
-//    console.log("msgFrom, msgTarget, candidate", msgFrom, msgTarget, candidate);
-
-    const candidate = new RTCIceCandidate({ candidate: msg.candidate }).catch(reportDataError);
+    console.log("handleNewICECandidateMessageForData(msg)", msg);
 
     initRtcPeerConnection();
 
-    myPeerConnectionForData.addIceCandidate(candidate);
+    myPeerConnectionForData.addIceCandidate(msg.candidate);
+
+    myPeerConnectionForData.ondatachannel = (e) => {
+        lastDataChannelId++;
+        e.channel.onmessage = ({data}) => console.log("Received message: ", data);
+        rtcDataChannels.set(lastDataChannelId, e.channel);
+    }
 }
+
+function handleFileTransferReqMessage(msg){
+    console.log("handleFileTransferReqMessage(msg)", msg);
+
+    targetUsername = msg.name;
+    const desc = new RTCSessionDescription(msg.candidate);
+
+    initRtcPeerConnection();
+
+    myPeerConnectionForData.setRemoteDescription(desc);
+
+    myPeerConnectionForData.createAnswer()
+        .then((answer) => myPeerConnectionForData.setLocalDescription(answer))
+        .then(() => {
+            const msg = {
+                name: myUsername,
+                target: targetUsername,
+                type: "file-transfer-resp",
+                candidate: myPeerConnectionForData.localDescription
+            };
+
+            sendDataMessageToServer(msg);
+        })
+        .catch(reportDataError);
+}
+
+function handleFileTransferRespMessage(msg){
+    console.log("handleFileTransferRespMessage(msg)", msg);
+
+    const desc = new RTCSessionDescription(msg.candidate);
+    myPeerConnectionForData.setRemoteDescription(desc);
+}
+
 
       /*****************/
      /* * * Utils * * */
