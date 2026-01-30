@@ -2,12 +2,20 @@
 window.addEventListener("load", main);
 
 var wss;
+var isPaused = true;
 
 // mempool data
 var latestConversions;
 
 function main(){
     console.log("wss-mempool.main()\nStarting connection to mempool...");
+
+    window.addEventListener('keydown', function(e) {
+        if (e.metaKey == true && e.key.toLowerCase() == "i"){
+            document.getElementById("pageFooter").hidden = !document.getElementById("pageFooter").hidden;
+            isPaused = !isPaused;
+    	  }
+    });
 
     wss = new WebSocket("wss://mempool.space/api/v1/ws");
 
@@ -20,6 +28,7 @@ function main(){
     });
 
     wss.addEventListener("message", (e) => {
+        if(isPaused) return;
         const message = JSON.parse(e.data);
         console.info("RECEIVED message:", message);
         if(message.conversions) {
