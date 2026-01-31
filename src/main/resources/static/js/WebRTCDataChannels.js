@@ -166,8 +166,8 @@ async function sendDataMessageToServer(message){
     }
 
     try {
-//        const response = await fetch("https://cchat.ddns.net/api/webrtc/ice-server/data-message", {
-        const response = await fetch("https://localhost:8443/api/webrtc/ice-server/data-message", {
+        const response = await fetch("https://cchat.ddns.net/api/webrtc/ice-server/data-message", {
+//        const response = await fetch("https://localhost:8443/api/webrtc/ice-server/data-message", {
             method: "POST",
             headers: {
                 credentials: "include",
