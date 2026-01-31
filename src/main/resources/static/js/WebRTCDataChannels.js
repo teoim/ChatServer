@@ -144,7 +144,6 @@ function dropHandler(e){
     const files = [...e.dataTransfer.items]
         .map((item) => item.getAsFile())
         .filter((file) => file);
-    // appendFilesToChatScreen(files, "sent");
     appendFilesToPreviewDiv(files);
 }
 
@@ -190,7 +189,7 @@ async function sendDataMessageToServer(message){
 
 
 function appendFilesToChatScreen(files, sentOrReceived){
-    console.log("Appending files: ", files);
+    //console.log("Appending files: ", files);
 
     toggleFilePreviewDiv();
 
@@ -237,11 +236,13 @@ function appendFilesToChatScreen(files, sentOrReceived){
     // h1ContentElement.append("@insert-message-content@");
     // pElement.append(h1ContentElement);
 
+    //let imgsToFreeUrl = new Set();
     // image list:
     for (const file of files) {
         if (file.type.startsWith("image/")) {
             const img = document.createElement("img");
             img.src = URL.createObjectURL(file);
+            //imgsToFreeUrl.add(img.src);
             img.alt = file.name;
             img.style.setProperty("display", "inline-block");
             img.style.setProperty("margin", "1%");
@@ -258,7 +259,12 @@ function appendFilesToChatScreen(files, sentOrReceived){
 //            });
 
             imgDivElement.appendChild(img);
+
+            // Revoke obj url after sending file ?
+//            URL.revokeObjectURL(img.src);
         }
+        console.log("Sending ", file);
+        rtcDataChannels.get(1).send(file);
     }
 
     articleElement.append(headerElement);
@@ -267,6 +273,11 @@ function appendFilesToChatScreen(files, sentOrReceived){
     articleElement.append(footerElement);
 
     document.getElementById('chatBox').prepend(articleElement);
+
+//    for(imgSrc of imgsToFreeUrl){
+//        console.log("revoking ", imgSrc);
+//        URL.revokeObjectURL(imgSrc);
+//    }
 }
 
 
@@ -297,7 +308,9 @@ function appendFilesToPreviewDiv(files){
     sendFilesButton.setAttribute("type", "button");
     sendFilesButton.setAttribute("id", "sendFilesBtn");
     sendFilesButton.setAttribute("value", `Send to ${targetUsername}`);
-    sendFilesButton.addEventListener("click", (e) => appendFilesToChatScreen(fileList, "sent"));
+    sendFilesButton.addEventListener("click", (e) => {
+        appendFilesToChatScreen(fileList, "sent");
+        });
 
     // image list:
     for (const file of fileList) {
@@ -358,7 +371,7 @@ function initDataChannel(){
     let newDataChannel = myPeerConnectionForData.createDataChannel(
         targetUsername
         , {
-            maxRetransmits: 150
+            maxRetransmits: 15
 //            , negotiated: true
 //            , id: lastDataChannelId
         });
@@ -469,6 +482,9 @@ function toggleFilePreviewDiv() {
     try {
         let filePreviewDivRemove = document.getElementById("filePreviewDiv");
         if (filePreviewDivRemove) {
+            for (const img of filePreviewDivRemove.querySelectorAll("img")) {
+                URL.revokeObjectURL(img.src);
+            }
             fileList = null;
             document.getElementById("imgDivElement").replaceChildren();
             filePreviewDivRemove.remove();
