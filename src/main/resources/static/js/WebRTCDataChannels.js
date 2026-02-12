@@ -166,7 +166,7 @@ async function sendDataMessageToServer(message){
     }
 
     try {
-        const response = await fetch("https://cchat.ddns.net/api/webrtc/ice-server/data-message", {
+       const response = await fetch("https://cchat.ddns.net/api/webrtc/ice-server/data-message", {
 //        const response = await fetch("https://localhost:8443/api/webrtc/ice-server/data-message", {
             method: "POST",
             headers: {
@@ -246,25 +246,28 @@ function appendFilesToChatScreen(files, sentOrReceived){
             img.alt = file.name;
             img.style.setProperty("display", "inline-block");
             img.style.setProperty("margin", "1%");
-            // img.style.setProperty("width", "30%");
             let imgWidth = 80;
             if(files.length > 2) imgWidth = 30;
             else if(files.length === 2) imgWidth = 50;
             img.style.setProperty("width", imgWidth + "%");
 
             // On click, open in a big size preview
-//            img.addEventListener("click", (e) => {
-//                console.log("click - e.target.src:", e.target.src);
-//                appendFilesToPreviewDiv(e.target.src);
-//            });
+            img.addEventListener("click", (e) => {
+                //console.log("click - e.target:", e.target);
+                toggleFullScreen(e.target);
+            });
 
             imgDivElement.appendChild(img);
 
             // Revoke obj url after sending file ?
 //            URL.revokeObjectURL(img.src);
         }
-        console.log("Sending ", file);
-        rtcDataChannels.get(1).send(file);
+
+        if(sentOrReceived === "sent"){
+            console.log("Sending ", file);
+//            rtcDataChannels.get(1).send(file);
+            sendFile(rtcDataChannels.get(1), file);
+        }
     }
 
     articleElement.append(headerElement);
@@ -278,6 +281,18 @@ function appendFilesToChatScreen(files, sentOrReceived){
 //        console.log("revoking ", imgSrc);
 //        URL.revokeObjectURL(imgSrc);
 //    }
+}
+
+
+function toggleFullScreen(element) {
+    if (!document.fullscreenElement) {
+        // If the document is not in full screen mode
+        // make the video full screen
+        element.requestFullscreen();
+    } else {
+        // Otherwise exit the full screen
+        document.exitFullscreen?.();
+    }
 }
 
 
@@ -371,7 +386,7 @@ function initDataChannel(){
     let newDataChannel = myPeerConnectionForData.createDataChannel(
         targetUsername
         , {
-            maxRetransmits: 15
+//            maxRetransmits: 15
 //            , negotiated: true
 //            , id: lastDataChannelId
         });
@@ -379,12 +394,10 @@ function initDataChannel(){
 
     newDataChannel.addEventListener("open", (e) => {
         console.log("New data channel OPEN: ", newDataChannel);
-        newDataChannel.send("Hey there!");
+        //newDataChannel.send("Hey there!");
     });
 
-    newDataChannel.addEventListener("message", (e) => {
-            console.log("New data channel message: ", e);
-    });
+    newDataChannel.addEventListener("message", onMessage);
 }
 
 
@@ -436,7 +449,9 @@ function handleNewICECandidateMessageForData(msg) {
 
     myPeerConnectionForData.ondatachannel = (e) => {
         lastDataChannelId++;
-        e.channel.onmessage = ({data}) => console.log("Received message: ", data);
+//        e.channel.onmessage = ({data}) => console.log("Received message: ", data);
+        e.channel.addEventListener("message", onMessage);
+        e.channel.addEventListener("open", (e) => {console.log("New peer data channel: ", e.channel);});
         rtcDataChannels.set(lastDataChannelId, e.channel);
     }
 }
@@ -471,6 +486,109 @@ function handleFileTransferRespMessage(msg){
 
     const desc = new RTCSessionDescription(msg.candidate);
     myPeerConnectionForData.setRemoteDescription(desc);
+}
+
+
+// Cross-browser stable chunking scheme
+// Key points:
+// 1) Chunking (recommend around 16 KiB), avoid exceeding "actual available message size"
+// 2) Sender backpressure control: observe bufferedAmount
+// 3) Receiver reassembly: group by fileId + seq
+// 4) Integrity verification: can add total length/checksum at application layer
+
+const CHUNK = 16 * 1024 // 16 KiB - good compatibility
+
+/**
+ * Sender: chunk File/ArrayBuffer
+ *
+ */
+
+/*
+ * @param {RTCDataChannel} channel
+ * @param {File} file
+ */
+async function sendFile(channel, file) {
+    console.log("WebRTCDataChannels - sendFile(channel, file)");
+  const fileId = crypto.randomUUID()
+  const buf = await file.arrayBuffer()
+  const total = buf.byteLength
+  const view = new Uint8Array(buf)
+
+  // Send header metadata (filename, size, MIME, chunk count)
+  channel.send(
+    JSON.stringify({
+      t: "file-meta",
+      id: fileId,
+      name: file.name,
+      size: total,
+      type: file.type,
+      chunks: Math.ceil(total / CHUNK)
+    })
+  )
+
+  for (let offset = 0, seq = 0; offset < total; offset += CHUNK, seq++) {
+    // Backpressure: control sending rate
+    while (channel.bufferedAmount > 1 << 16) {
+      await new Promise(r => setTimeout(r, 10));
+    }
+    const slice = view.subarray(offset, Math.min(offset + CHUNK, total));
+
+    // Custom binary header: 8-byte fileId first 8 bytes + 4-byte seq (simplified, production can use more stable protocol)
+    // For simplicity, using JSON header + raw binary here (two messages), balancing overhead
+
+    channel.send(JSON.stringify({ t: "file-chunk", id: fileId, seq }));
+    channel.send(slice);
+  }
+
+  channel.send(JSON.stringify({ t: "file-end", id: fileId }));
+}
+
+/*
+ * Receiver: reassemble file(s)
+ */
+//const receiveState = Object.create(null);
+const receiveState = [null];
+
+/**
+ * @param {MessageEvent} ev
+ */
+function onMessage(ev) {
+    console.log("WebRTCDataChannels - onMessage(ev)", ev);
+    const data = ev.data;
+    if (typeof data === "string") {
+        const msg = JSON.parse(data)
+        if (msg.t === "file-meta") {
+            receiveState[msg.id] = {
+                meta: msg,
+                bufs: [],
+                nextSeq: 0,
+                size: msg.size,
+                received: 0
+            }
+        } else if (msg.t === "file-chunk") {
+            // Record the next seq that should arrive
+            receiveState[msg.id].nextSeq = msg.seq;
+        } else if (msg.t === "file-end") {
+            const st = receiveState[msg.id];
+            // Reassemble (assuming correct order; if unordered, need to sort by seq)
+            const blob = new Blob(st.bufs, { type: st.meta.type });
+            // TODO: verify size/hash; trigger save or preview
+            console.log("file assembled", st.meta.name, blob);
+            appendFilesToChatScreen([blob]);
+        }
+    } else if (data instanceof ArrayBuffer || data instanceof Blob) {
+        // Binary fragment
+        // If using unordered channel, should sort by seq at application layer; omitted here
+        // Unified conversion to ArrayBuffer
+        const p = data instanceof Blob ? data.arrayBuffer() : Promise.resolve(data);
+        p.then(ab => {
+            // Store fragment to the most recent fileId (production should strictly associate seq -> id)
+            const ids = Object.keys(receiveState)
+            const last = receiveState[ids[ids.length - 1]]
+            last.bufs.push(new Uint8Array(ab))
+            last.received += ab.byteLength
+        });
+    }
 }
 
 
