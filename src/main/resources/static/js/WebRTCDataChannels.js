@@ -131,7 +131,6 @@ function main(){
 function fileInputHandler(e){
     console.log("fileInputHandler()");
     if(fileInput.files.length > 0) {
-        // appendFilesToChatScreen(document.getElementById("fileInput").files, "sent");
         appendFilesToPreviewDiv(document.getElementById("fileInput").files);
     } else { console.warn("No photos selected!")}
 }
@@ -149,9 +148,8 @@ function dropHandler(e){
 
 
 async function sendDataMessageToServer(message){
-    // console.debug("WebRTCDataChannels.sendDataMessageToServer() - message: ", message);
-    let msg = JSON.stringify(message);
     console.debug("WebRTCDataChannels.sendDataMessageToServer()");
+    let msg = JSON.stringify(message);
 
     var token_value = "";
     var token_name = "";
@@ -182,7 +180,7 @@ async function sendDataMessageToServer(message){
         // result: { type, url, status, redirected, ok, statusText, headers, body, bodyUsed }
         console.info("POST ", result.status, result.url);
     } catch (error) {
-        error.message = "Error while sending message to server:" + error.message;
+        error.message = "Error while sending data message to server:" + error.message;
         reportDataError(error);
     }
 }
@@ -244,8 +242,7 @@ function appendFilesToChatScreen(files, sentOrReceived){
             img.src = URL.createObjectURL(file);
             //imgsToFreeUrl.add(img.src);
             img.alt = file.name;
-            img.style.setProperty("display", "inline-block");
-            img.style.setProperty("margin", "1%");
+            img.classList.add("chatScreenClass")
             let imgWidth = 80;
             if(files.length > 2) imgWidth = 30;
             else if(files.length === 2) imgWidth = 50;
@@ -253,7 +250,6 @@ function appendFilesToChatScreen(files, sentOrReceived){
 
             // On click, open in a big size preview
             img.addEventListener("click", (e) => {
-                //console.log("click - e.target:", e.target);
                 toggleFullScreen(e.target);
             });
 
@@ -266,14 +262,15 @@ function appendFilesToChatScreen(files, sentOrReceived){
         if(sentOrReceived === "sent"){
             console.log("Sending ", file);
 //            rtcDataChannels.get(1).send(file);
-            sendFile(rtcDataChannels.get(1), file);
+//            sendFile(rtcDataChannels.get(1), file);
+            sendFile(rtcDataChannels.get(file.name), file);
         }
     }
 
-    articleElement.append(headerElement);
+//    articleElement.append(headerElement);
     articleElement.append(imgDivElement);
-    articleElement.append(pElement);
-    articleElement.append(footerElement);
+//    articleElement.append(pElement);
+//    articleElement.append(footerElement);
 
     document.getElementById('chatBox').prepend(articleElement);
 
@@ -284,20 +281,27 @@ function appendFilesToChatScreen(files, sentOrReceived){
 }
 
 
+/**
+ * Go full screen when an element (image) is clicked, etc.
+ */
 function toggleFullScreen(element) {
     if (!document.fullscreenElement) {
         // If the document is not in full screen mode
-        // make the video full screen
+        // make the element full screen
         element.requestFullscreen();
+        element.classList.add("fullscreenElements");
     } else {
         // Otherwise exit the full screen
         document.exitFullscreen?.();
+        element.classList.remove("fullscreenElements");
     }
 }
 
 
 function appendFilesToPreviewDiv(files){
     console.log("appendFilesToPreviewDiv()", files);
+
+    initRtcPeerConnection();
 
     toggleFilePreviewDiv();
 
@@ -323,6 +327,7 @@ function appendFilesToPreviewDiv(files){
     sendFilesButton.setAttribute("type", "button");
     sendFilesButton.setAttribute("id", "sendFilesBtn");
     sendFilesButton.setAttribute("value", `Send to ${targetUsername}`);
+    sendFilesButton.setAttribute("disabled", "");   // enabled at dataChannel open
     sendFilesButton.addEventListener("click", (e) => {
         appendFilesToChatScreen(fileList, "sent");
         });
@@ -341,6 +346,8 @@ function appendFilesToPreviewDiv(files){
             img.style.setProperty("width", imgWidth + "%");
 
             imgDivElement.appendChild(img);
+
+            initDataChannel(file.name);
         }
     }
 
@@ -348,8 +355,8 @@ function appendFilesToPreviewDiv(files){
     filePreviewDiv.append(sendFilesButton);
     chatBox.prepend(filePreviewDiv);
 
-    initRtcPeerConnection();
-    initDataChannel();
+//    initRtcPeerConnection();
+//    initDataChannel();
 }
 
       /*******************************************/
@@ -379,7 +386,7 @@ function initRtcPeerConnection() {
     myPeerConnectionForData.onnegotiationneeded = handleNegotiationNeededEventForData;
 }
 
-function initDataChannel(){
+function initDataChannel(relatedFileName){
     console.debug("WebRTCDataChannels.initDataChannel()");
 
     lastDataChannelId++;
@@ -390,11 +397,13 @@ function initDataChannel(){
 //            , negotiated: true
 //            , id: lastDataChannelId
         });
-    rtcDataChannels.set(lastDataChannelId, newDataChannel);
+//    rtcDataChannels.set(lastDataChannelId, newDataChannel);
+    rtcDataChannels.set(relatedFileName, newDataChannel);
 
     newDataChannel.addEventListener("open", (e) => {
         console.log("New data channel OPEN: ", newDataChannel);
         //newDataChannel.send("Hey there!");
+        document.getElementById("sendFilesBtn").removeAttribute("disabled");    // enable send button when channel is connected TODO better
     });
 
     newDataChannel.addEventListener("message", onMessage);
@@ -547,18 +556,24 @@ async function sendFile(channel, file) {
  * Receiver: reassemble file(s)
  */
 //const receiveState = Object.create(null);
-const receiveState = [null];
+//const receiveState = [null];
+const receiveStateByChannelId = new Map();
 
 /**
  * @param {MessageEvent} ev
  */
 function onMessage(ev) {
-    console.log("WebRTCDataChannels - onMessage(ev)", ev);
     const data = ev.data;
+    const dataChannelID = ev.target.id;
+    if(receiveStateByChannelId.get(dataChannelID) === undefined){
+        receiveStateByChannelId.set(dataChannelID,[null]);
+    }
+    console.log("WebRTCDataChannels - onMessage(ev),dataChannelID", ev,dataChannelID);
     if (typeof data === "string") {
         const msg = JSON.parse(data)
         if (msg.t === "file-meta") {
-            receiveState[msg.id] = {
+//            receiveState[msg.id] = {
+            receiveStateByChannelId.get(dataChannelID)[msg.id] = {
                 meta: msg,
                 bufs: [],
                 nextSeq: 0,
@@ -567,14 +582,16 @@ function onMessage(ev) {
             }
         } else if (msg.t === "file-chunk") {
             // Record the next seq that should arrive
-            receiveState[msg.id].nextSeq = msg.seq;
+//            receiveState[msg.id].nextSeq = msg.seq;
+            receiveStateByChannelId.get(dataChannelID)[msg.id].nextSeq = msg.seq;
         } else if (msg.t === "file-end") {
-            const st = receiveState[msg.id];
+//            const st = receiveState[msg.id];
+            const st = receiveStateByChannelId.get(dataChannelID)[msg.id];
             // Reassemble (assuming correct order; if unordered, need to sort by seq)
             const blob = new Blob(st.bufs, { type: st.meta.type });
             // TODO: verify size/hash; trigger save or preview
             console.log("file assembled", st.meta.name, blob);
-            appendFilesToChatScreen([blob]);
+            appendFilesToChatScreen([blob]);    // TODO check the current screen is the active user or not
         }
     } else if (data instanceof ArrayBuffer || data instanceof Blob) {
         // Binary fragment
@@ -583,8 +600,9 @@ function onMessage(ev) {
         const p = data instanceof Blob ? data.arrayBuffer() : Promise.resolve(data);
         p.then(ab => {
             // Store fragment to the most recent fileId (production should strictly associate seq -> id)
-            const ids = Object.keys(receiveState)
-            const last = receiveState[ids[ids.length - 1]]
+            const ids = Object.keys(receiveStateByChannelId.get(dataChannelID));
+//            const last = receiveState[ids[ids.length - 1]]
+            const last = receiveStateByChannelId.get(dataChannelID)[ids[ids.length - 1]]
             last.bufs.push(new Uint8Array(ab))
             last.received += ab.byteLength
         });

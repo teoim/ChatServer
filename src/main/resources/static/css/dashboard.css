@@ -156,7 +156,9 @@ input#fileInput {
     position: fixed;
 }
 
-
+.fullscreenElements{
+    background-color: #2f2f2f;
+}
 
     /** Message form **/
 
@@ -185,7 +187,7 @@ input#submitBtn, label#fileInputLabel, input#sendFilesBtn {
 	background-color: #456;
 	height: 90%;
 	color: white;
-    font-size: 1.8em;
+    font-size: 1.6em;
 	font-weight: bold;
 	border: 1px solid #456;
 	border-radius: 6px;
@@ -213,7 +215,7 @@ div#filePreviewDiv{
 }
 
 div#imgDivElement {
-    background-color: #3E3E3E;
+    background-color: #2f2f2f;
     width: 90%;
     height: 90%;
     margin: 2.5% 5% 0.1% 5%;
@@ -226,6 +228,11 @@ img.imgPreviewClass{
     max-width: 80%;
     min-width: 30%;
     margin: 1% 1%;
+}
+
+img.chatScreenClass{
+    display: inline-block;
+    margin: 1%;
 }
 
 input#sendFilesBtn {
