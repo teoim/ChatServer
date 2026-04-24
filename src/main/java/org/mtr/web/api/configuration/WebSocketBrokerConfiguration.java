@@ -33,6 +33,11 @@ public class WebSocketBrokerConfiguration implements WebSocketMessageBrokerConfi
                 .setAllowedOrigins(allowedOrigins)
                 .setHandshakeHandler(new StompEndpointHandshakeHandler())
                 .withSockJS();
+
+        registry.addEndpoint("/sendICEMessageForData")
+                .setAllowedOrigins(allowedOrigins)
+                .setHandshakeHandler(new StompEndpointHandshakeHandler())
+                .withSockJS();
     }
 
     @Override

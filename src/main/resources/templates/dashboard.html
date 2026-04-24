@@ -14,6 +14,7 @@
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script type="text/javascript" src="/js/WebSockets.js"></script>
     <script type="text/javascript" src="/js/WebRTC.js"></script>
+    <script type="text/javascript" src="/js/WebRTCDataChannels.js"></script>
     <script type="text/javascript" src="/js/searchUsers.js"></script>
     <script type="text/javascript" src="/js/dashboard.js"></script>
 </head>
@@ -137,11 +138,20 @@
                 </article>
 -->
 
+                <div id="filePreviewDiv">
+                    <input type="button" id="sendFilesBtn" value="Send">
+                </div>
             </div>
 
 
             <!-- form id="sendTextForm" action="sendText" method="post" enctype="text/plain"-->
             <form id="sendTextForm" enctype="text/plain">
+                <label id="fileInputLabel" for="fileInput">
+                    <img id="attachFilesIcon" src="/images/icons/photo-gallery-70.png"/>
+                    <!--  https://www.a11yproject.com/posts/how-to-hide-content/  -->
+                    <input type="file" id="fileInput" name="fileInput" multiple accept="image/*"/>
+                </label>
+
                 <input type="text" id="writeText" placeholder="Write something...">
 
                 <!-- CSRF token hidden field -->
