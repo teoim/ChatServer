@@ -13,6 +13,7 @@
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script type="text/javascript" src="/js/WebSockets.js"></script>
+    <script type="text/javascript" src="/js/wss-mempool.js"></script>
     <script type="text/javascript" src="/js/WebRTC.js"></script>
     <script type="text/javascript" src="/js/WebRTCDataChannels.js"></script>
     <script type="text/javascript" src="/js/searchUsers.js"></script>
@@ -163,6 +164,25 @@
         </div>
 
     </div>
+
+    
+    <footer id="pageFooter" hidden>
+        <p id="footerTitleP">
+            <a href="https://mempool.space" target="_blank">mempool fees(sats/vB)</a>
+        </p>
+        <article id="fastestFee" class="feesArticles"><h4>prio</h4><p id="p1">-</p></article>
+        <article id="halfHourFee" class="feesArticles"><h4>1/2h</h4><p id="p2">-</p></article>
+        <article id="hourFee" class="feesArticles"><h4>1h</h4><p id="p3">-</p></article>
+        <article id="economyFee" class="feesArticles"><h4>econ</h4><p id="p4">-</p></article>
+        <article id="minimumFee" class="feesArticles"><h4>min</h4><p id="p5">-</p></article>
+
+        <article id="conversionsArticle">
+            <label for="conversionsEntries">1BTC /</label>
+            <select id="conversionsEntries"></select>
+            <p id="btcPrice">: ------ </p>
+            <p id="btcPriceTime">@ --:--:-- </p>
+        </article>
+    </footer>
 
 </body>
 </html>
