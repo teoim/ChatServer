@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 @SessionScope
 @Data
@@ -17,4 +20,6 @@ public class UserSession {
     private String email;
     private String username;
     private String bio;
+
+    private Map<String, String> messages = new HashMap<>();
 }

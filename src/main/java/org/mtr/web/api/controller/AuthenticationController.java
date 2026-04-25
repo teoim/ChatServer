@@ -1,6 +1,7 @@
 package org.mtr.web.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.component.UserSession;
 import org.mtr.web.api.controller.dto.AuthenticationDTO;
@@ -10,6 +11,7 @@ import org.mtr.web.api.service.AuthenticationService;
 import org.mtr.web.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,12 +42,19 @@ public class AuthenticationController {
     @GetMapping(path="/authenticate")
     public ModelAndView login(){
         MessageLogger.log( "AuthenticationController - login() - get");
+        ModelAndView mv;
 
         if(isAuthenticated()){
             return new ModelAndView("redirect:/dashboard");
         }
 
-        return new ModelAndView("authenticate");
+//        return new ModelAndView("authenticate");
+        mv = new ModelAndView("authenticate");
+        if(userSession.getMessages().containsKey("error")){
+            mv.addObject("error", userSession.getMessages().get("error"));
+            userSession.getMessages().remove("error");
+        }
+        return mv;
     }
 
     @PostMapping(path="/authenticate-post")
@@ -69,6 +78,7 @@ public class AuthenticationController {
 //            mv = new ModelAndView("redirect:/api/auth/register");
             mv = new ModelAndView("redirect:/authenticate");
             mv.addObject("error", "Wrong username/password combination.");
+            userSession.getMessages().put("error", "Wrong username/password combination.");
         }
         return mv;
     }

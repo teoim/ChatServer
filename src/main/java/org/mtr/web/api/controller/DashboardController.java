@@ -52,6 +52,11 @@ public class DashboardController {
         //    return new ModelAndView("redirect:/api/auth/authenticate");
         //}
 
+        if(userSession.getMessages().containsKey("error")){
+            mv.addObject("error", userSession.getMessages().get("error"));
+            userSession.getMessages().remove("error");
+        }
+        //mv.addObject("error", "test error message lorem ipsum asdasd asdajdaldasdj aodjaljd");
         return mv;
     }
 }
