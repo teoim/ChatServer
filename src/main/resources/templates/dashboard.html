@@ -18,11 +18,16 @@
     <script type="text/javascript" src="/js/WebRTCDataChannels.js"></script>
     <script type="text/javascript" src="/js/searchUsers.js"></script>
     <script type="text/javascript" src="/js/dashboard.js"></script>
+    <script type="text/javascript" src="/js/utils.js"></script>
 </head>
 
 <body>
 
     <div id="mainDiv">
+
+        <div th:if="${error}" id="errMsgDiv">
+            <p th:text="${error}" class="errorMessage"> </p>
+        </div>
 
         <header id="pageHeader">
             <h1>Chat DASHBOARD</h1>
@@ -118,7 +123,7 @@
             </div>
 
             <div id="chattingWithDiv">
-                <img id="chattingWithIcon" src="" alt="">
+                <img id="chattingWithIcon" src="/images/icons/user-64.png" alt="">
                 <h3 id="chattingWithH3">
                     General Chat
                 </h3>

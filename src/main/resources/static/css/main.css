@@ -52,6 +52,19 @@ span#emailSpan {
 }
 
 
+p.errorMessage{
+	z-index: 9999;
+	position: absolute;
+	top: 5%;
+	left: 50%;
+	transform: translate(-50%, 0);
+	padding: 2em;
+	color: red;
+	border-radius: 10px;
+	border: 1px solid red;
+	background-color: #ccf2f3;
+}
+
 	/** FOOTER - mempool fees **/
 footer#pageFooter {
 	width: 100%;

@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
     <link rel="stylesheet" type="text/css" href="/css/commonNotMain.css" />
     <script type="text/javascript" src="/js/authenticate.js"></script>
+    <script type="text/javascript" src="/js/utils.js"></script>
 
     <script type="text/javascript" src="/js/wss-mempool.js"></script>
 
@@ -19,6 +20,9 @@
     </div>
     <div th:if="${param.logout}">
         You have been logged out.
+    </div>
+    <div th:if="${error}" id="errMsgDiv">
+        <p th:text="${error}" class="errorMessage"> </p>
     </div>
 
     <form th:action="@{/api/auth/authenticate-post}" method="post">
@@ -42,9 +46,10 @@
         </div>
     </form>
 
-    <div>
-        <p><a th:href="@{/dashboard}">Dashboard</a></p>
+<!--    <div>-->
+<!--        <p><a th:href="@{/dashboard}">Dashboard</a></p>-->
 <!--        <p><a th:href="@{/api/auth/register}">Register</a></p>-->
+<!--    </div>-->
     </div>
 
 
