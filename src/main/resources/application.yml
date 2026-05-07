@@ -27,7 +27,7 @@ spring:
         format_sql:
         # Custom sql files
         hbm2ddl:
-          import_files: import.sql, messages-1.sql, messages-2.sql, messages-3.sql, messages-4.sql, messages-5.sql
+#          import_files: import.sql, messages-1.sql, messages-2.sql, messages-3.sql, messages-4.sql, messages-5.sql
 
 # API Documentation     [ https://springdoc.org/properties.html ]
 springdoc:

@@ -237,7 +237,7 @@ function setFriendsListEventListener(){
         sessionStorage.setItem("stompClientMessageDestination", "/app/generalChat");
         sessionStorage.setItem("stompClientUsernameDestination", "");
         sessionStorage.setItem("iAmChattingWith", "generalChat");
-        document.getElementById("chattingWithH3").innerText = "General chat";
+        document.getElementById("chattingWithH3").innerText = "General Chat";
         iAmChattingWith = "generalChat";
         loadGeneralChats();
         focusOnMessageInputBox()

@@ -10,12 +10,42 @@ var latestConversions;
 function main(){
     console.log("wss-mempool.main()\nStarting connection to mempool...");
 
+    // keyboard listener: meta-key + 'i'
     window.addEventListener('keydown', function(e) {
         if (e.metaKey == true && e.key.toLowerCase() == "i"){
             document.getElementById("pageFooter").hidden = !document.getElementById("pageFooter").hidden;
             isPaused = !isPaused;
     	  }
     });
+
+    // touch listener: hold + tap
+    let touchMoved = false;
+    let fingerNumber = 0;
+
+    window.addEventListener('touchstart', () => {
+/*        touchMoved = false;*/
+        if(fingerNumber>0){
+            document.getElementById("pageFooter").hidden = !document.getElementById("pageFooter").hidden;
+            isPaused = !isPaused;
+        }
+        fingerNumber++;
+
+    }, { passive: true });
+
+    window.addEventListener('touchmove', () => {
+/*        touchMoved = true;*/
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+/*        if (!touchMoved) {
+            // This is a tap
+            // console.log('Tapped!');
+            e.preventDefault(); // Prevents the subsequent 300ms click event
+        }*/
+        fingerNumber--;
+    }, { passive: false });
+    // END - touch listener: hold + tap
+
 
     wss = new WebSocket("wss://mempool.space/api/v1/ws");
 
