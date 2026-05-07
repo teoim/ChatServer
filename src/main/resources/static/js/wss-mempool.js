@@ -19,30 +19,17 @@ function main(){
     });
 
     // touch listener: hold + tap
-    let touchMoved = false;
-    let fingerNumber = 0;
-
+    let fingersDown = 0;
     window.addEventListener('touchstart', () => {
-/*        touchMoved = false;*/
-        if(fingerNumber>0){
+        if(fingersDown>0){
             document.getElementById("pageFooter").hidden = !document.getElementById("pageFooter").hidden;
             isPaused = !isPaused;
         }
-        fingerNumber++;
-
-    }, { passive: true });
-
-    window.addEventListener('touchmove', () => {
-/*        touchMoved = true;*/
+        fingersDown++;
     }, { passive: true });
 
     window.addEventListener('touchend', (e) => {
-/*        if (!touchMoved) {
-            // This is a tap
-            // console.log('Tapped!');
-            e.preventDefault(); // Prevents the subsequent 300ms click event
-        }*/
-        fingerNumber--;
+        fingersDown--;
     }, { passive: false });
     // END - touch listener: hold + tap
 
