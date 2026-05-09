@@ -60,7 +60,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(path="/authenticate-post")
-    public ModelAndView login(AuthenticationDTO logindto, HttpServletRequest request){
+    public ModelAndView login(AuthenticationDTO loginDto, HttpServletRequest request){
         MessageLogger.log( "AuthenticationController - login(AuthenticationDTO) - post");
 
         // TODO: validari pe input
@@ -71,15 +71,14 @@ public class AuthenticationController {
 
         ModelAndView mv = null;
 
-        UserDAO user = authService.login(logindto, request);
+        UserDAO user = authService.login(loginDto, request);
         if(user != null){
             // Authentication succeeded
             mv = new ModelAndView("redirect:/dashboard");
         } else  {
             // Authentication failed
-//            mv = new ModelAndView("redirect:/api/auth/register");
             mv = new ModelAndView("redirect:/authenticate");
-            mv.addObject("error", "Wrong username/password combination.");
+            //mv.addObject("error", "Wrong username/password combination.");
             userSession.getMessages().put("error", "Wrong username/password combination.");
         }
         return mv;
@@ -97,12 +96,9 @@ public class AuthenticationController {
 
         // TODO: Validari pe input
 
-        //int x = this.userService.registerUser(newUser);
-        //userSession.setEmail( "SQL insert code: " + x + " - " + newUser.getEmail());
-        //MessageLogger.log( "User registration\nSQL insert code: " + x + " - " + newUser.getEmail());
         UserDTO newUserDto = this.userService.registerUser(newUser);
         MessageLogger.log( "User registration\nNew user: \n\t" + newUserDto.toString() + "\n\t - " + newUser.getEmail());
-        return new ModelAndView("redirect:/dashboard");
+        return new ModelAndView("redirect:/");
     }
 
     // https://docs.spring.io/spring-security/reference/servlet/authentication/logout.html

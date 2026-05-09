@@ -6,7 +6,7 @@ let spanLogIn;
 function main(){
     spanLogIn = document.getElementById("spanLogIn");
 
-    executeAsynchronously( spanLogInVisualEffect(spanLogIn));
+    executeAsynchronously( "spanLogInVisualEffect(spanLogIn)");
 }
 
 // Make the "Log In" message turn on and off
