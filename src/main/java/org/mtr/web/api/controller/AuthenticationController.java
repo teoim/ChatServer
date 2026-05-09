@@ -2,6 +2,7 @@ package org.mtr.web.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.mtr.logger.ErrorLogger;
 import org.mtr.logger.MessageLogger;
 import org.mtr.web.api.component.UserSession;
 import org.mtr.web.api.controller.dto.AuthenticationDTO;
@@ -18,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,5 +119,15 @@ public class AuthenticationController {
             return false;
         }
         return authentication.isAuthenticated();
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ModelAndView handleRuntimeException(RuntimeException ex){
+        ErrorLogger.log(ex, this.getClass().getSimpleName(), "handleRuntimeException(ex)");
+
+        //userSession.getMessages().put("error", ex.getMessage());
+        userSession.getMessages().put("error", "System error ...");
+
+        return new ModelAndView("redirect:/");
     }
 }
